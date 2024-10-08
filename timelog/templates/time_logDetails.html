@@ -1,0 +1,506 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+      <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+    <section class="vbox">
+        <section class="scrollable padder">
+
+
+            <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+                <!--<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>-->
+                <!--<li class="active">Jobs</li>-->
+                <a title="TIME LOGS" href="#">TIME SHEETS</a> / LOGS
+            </ul>
+
+
+            <!-- Trigger the modal with a button -->
+            <h2>
+
+            </h2>
+            <h3 class="text-center">
+                <a href="/company/time_log_cycles/224/time_logs">
+                    <i class="fa fa-angle-left text-info" style="font-size: 1.5em"></i>
+                </a>
+
+                <span style="margin-top: -10px;">
+            Week Ending - Sunday, {{ weekend }}
+          </span>
+            </h3>
+
+            <h4 class="text-center">
+                {{ weekstart }} - {{ weekend }}
+            </h4>
+            <button type="button" class="btn btn-info btn-lg pull-right btn-sm" data-toggle="modal"
+                    data-target="#myModal">Report
+            </button>
+
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                            <h4 class="modal-title"> Download TimeLog Report Sheet</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{% url 'time_log' %}"  method="get">
+
+                                {% csrf_token %}
+                                <input type="hidden" name="model_name" id="model_name" value="Task"/>
+                                <div class="form-group col-sm-12">
+                                    <label class="control-label">Select Employee <span
+                                            style="color:red;">*</span></label>
+                                    {% render_field form1.form.name %}
+
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <label class="control-label">Select Column <span style="color:red;">*</span></label>
+                                    <select name="column_names" id="column_names_"
+                                            class="form-control multi-select2-column " required="required">
+
+                                        <option value="All Column">All Column</option>
+                                        <option value="name">Name</option>
+                                        <option value="status">Status</option>
+                                        <option value="start_time">Start Time</option>
+                                        <option value="end_time">End Time</option>
+                                        <option value="created_at">Created At</option>
+                                        <option value="updated_at">Updated At</option>
+                                        <option value="created_at">Created At</option>
+                                        <option value="comments">Comment</option>
+                                    </select>
+                                    <!---->
+                                    <span class="help-block m-b-none">Select Column(s)</span>
+                                </div>
+
+                                {#            <div class="form-group col-sm-6">#}
+                                {#              <label class="control-label">Start Date </label>#}
+                                {#              <input type="text" name="start_date" id="start_date" class="form-control  input-lg datepicker-input" placeholder="Select Start Date" />#}
+                                {#              <!---->#}
+                                {#            </div>#}
+                                {##}
+                                {#            <div class="form-group col-sm-6">#}
+                                {#              <label class="control-label">End Date </label>#}
+                                {#              <input type="text" name="end_date" id="end_date" class="form-control  input-lg datepicker-input" placeholder="Select End Date" />#}
+                                {#              <!---->#}
+                                {#            </div>#}
+
+                                {#            <input type="submit" class="btn btn-default pull-right" />#}
+                                <button type="submit" class="btn btn-default pull-right">Submit</button>
+                            </form>
+                            <div class="row"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {#            <script>#}
+            {#                $(document).ready(function () {#}
+            {#                    $(".multi-select2-employee").select2({placeholder: "Select a Employee(s)"});#}
+            {#                    $(".multi-select2-column").select2({placeholder: "Select a Column(s)"});#}
+            {#                });#}
+            {#            </script>#}
+            <a href="#" id="show-filters" onclick="showFilters();return false"
+               class="btn btn-default btn-sm pull-right mr10">Filter</a>
+
+
+            <form method="get" action="{% url 'timelogDetails' %}">
+                {% csrf_token %}
+                <div style="margin-top: 50px">
+                    <div id="filters" style="display: none">
+                        <input type="hidden" name='search' value='search'/>
+                        <div class="col-sm-4">
+                            <label><b class="label bg-info">Employee</b></label>
+                            {% render_field form.form.name %}
+                        </div>
+                        <div class="col-sm-4">
+                            <label> <b class="label bg-info">Start</b></label>
+                            {% render_field form.form.start_time %}
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label> <b class="label bg-info">End</b></label>
+                            {% render_field form.form.end_time %}
+                        </div>
+
+                        <div class="col-sm-12" style="margin-bottom:20px;">
+                            <a href="{% url 'timelogDetails' %}" class="btn btn-default btn-sm pull-right">Clear</a>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-search"></span> Search
+                            </button>
+                        </div>
+                        <!--<a href="#" onclick="hideFilters();return false" class="pull-right">Hide Filters</a>-->
+                    </div>
+                    <div class="col-sm-12"></div>
+                    <script>
+                        query = ""
+
+                        function filterEmployee() {
+                            if ($('#employee :selected').val() && $('#employee :selected').val() == 'all') {
+                                query = "?all=1"
+                            }
+                            if ($('#employee :selected').val() && $('#employee :selected').val() != '' && $('#employee :selected').val() != 'all') {
+                                query = "?by_employee=" + $('#employee :selected').val();
+
+                            }
+
+//            if ($('#channel :selected').val() != '' ){
+//                if (query== '') {
+//                    query = "?by_channel=" + $('#channel :selected').val();
+//                }
+//                else{
+//                    query = query + "&by_channel=" + $('#channel :selected').val();
+//                }
+//            }
+
+//            if ($('#channel :selected').val() == '' ){
+//                if (query== '') {
+//                    query = "?all_channel=1";
+//                }
+//                else{
+//                    query = query + "&all_channel=1";
+//                }
+//            }
+
+                            if ($("#start").val() != '') {
+                                if (query == '') {
+                                    query = "?start_date=" + $('#start').val();
+                                } else {
+                                    query = query + "&start_date=" + $('#start').val();
+                                }
+                            }
+
+                            if ($("#end").val() != '') {
+                                if (query == '') {
+                                    query = "?end_date=" + $('#end').val();
+                                } else {
+                                    query = query + "&end_date=" + $('#end').val();
+                                }
+                            }
+
+
+                            if (query != '') {
+                                location.href = window.location.pathname + query
+                            }
+                        }
+
+                        function showFilters() {
+                            $('#filters').css("display", "block");
+                        }
+                    </script>
+
+
+                </div>
+            </form>
+            <div class="row"></div>
+            <br>
+            <section class="panel panel-default">
+
+                <header class="panel-heading bg-light">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="active"><a href="#pending-approval" data-toggle="tab">Pending Approval <span
+                                class="badge bg-default">0.19</span></a></li>
+                        <li><a href="#approved" data-toggle="tab">Approved <span
+                                class="badge bg-default">2.05</span></a></li>
+                        <li><a href="#rejected" data-toggle="tab">Rejected <span class="badge bg-default">0.0</span></a>
+                        </li>
+                    </ul>
+
+                </header>
+                <div class="panel-body">
+                    <div class="tab-content">
+
+                        <div class="tab-pane active" id="pending-approval">
+                            <section class="panel-default">
+                                <!--<div class="pull-right" style="margin-bottom: 20px;">-->
+                                <!--</div>-->
+                            </section>
+                            <div class="table-responsive">
+
+                                <table class="table table-striped m-b-none"
+                                       style="font-size:15px;font-weight:300!important;">
+                                    <thead>
+                                    <tr>
+
+                                        <th style="font-weight:500;">Employee</th>
+                                        <th style="font-weight:500;">Task</th>
+                                        <th style="font-weight:500;">Date</th>
+                                        <th style="font-weight:500;">Start</th>
+                                        <th style="font-weight:500;">End</th>
+                                        <th style="font-weight:500;" class="hidden-xs">Hours</th>
+                                        <th style="font-weight:500;" class="hidden-xs">Comment</th>
+                                        <th style="font-weight:500;" class="hidden-xs">Auto Approve <i
+                                                class="fa fa-question-circle text-muted fa-small"
+                                                data-placement="bottom" data-toggle="tooltip" title=""
+                                                data-original-title="Auto Approve: If the time log is not rejected or approved by this date, System will auto approve this at this date. "></i>
+                                        </th>
+                                        <th style="font-weight:500;">Action</th>
+                                    </tr>
+                                    </thead>
+                                {% if timelog_filter %}
+
+                                     <tbody>
+                                    {% for log in timelog_filter.qs %}
+                                        <tr>
+                                            <td><a href="#" class="dropdown-toggle dker" data-toggle="dropdown">
+                                                <span class="text-info">{{ log.name }}</span>
+                                            </a>
+                                            </td>
+                                            <td><a class="text-info"
+                                                   href="{% url 'singleTask' pk=log.task %}">{{ log.task }}</a></td>
+                                            <td>{{ loglog.date }}</td>
+                                            <td>{{ log.start_time }}</td>
+                                            <td>{{ log.end_time }}</td>
+                                            <td class="hidden-xs">0.02</td>
+                                            <td class="hidden-xs">
+                                                <span class="custom-tooltip" data-toggle="tooltip" data-placement="left"
+                                                      title=""
+                                                      data-original-title="dsfWFEWAEF">{{ log.comments }}</span>
+                                            </td>
+                                            <td class="hidden-xs">2020-03-01</td>
+                                            <td class="text-right">
+                                                <a class="btn btn-sm btn-info custom-margin-top-5"
+                                                   href="{% url 'approve' pk=log.id %}">Approve</a>
+                                                <a class="btn btn-sm btn-default custom-margin-top-5"
+                                                   href="{% url 'reject' pk=log.id %}">Reject</a>
+                                                <div class="btn-group">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
+                                                            class="fa fa-pencil"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li><a href="{% url 'singleTimeLog'  pk=log.id %}">Show</a></li>
+                                                        <li class="divider"></li>
+{#                                                        <li><a href="#">Edit</a></li>#}
+                                                        <li class="divider"></li>
+                                                        <li><a style="color:#fb6b5b"
+                                                               data-confirm="Are you sure you want to delete the time log entry?"
+                                                               rel="nofollow" data-method="delete"
+                                                               href="">Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                {% else %}
+                                 <tbody>
+                                    {% for log in pending %}
+                                        <tr>
+                                            <td><a href="#" class="dropdown-toggle dker" data-toggle="dropdown">
+                                                <span class="text-info">{{ log.name }}</span>
+                                            </a>
+                                            </td>
+                                            <td><a class="text-info"
+                                                   href="{% url 'singleTask' pk=log.task %}">{{ log.task }}</a></td>
+                                            <td>{{ loglog.date }}</td>
+                                            <td>{{ log.start_time }}</td>
+                                            <td>{{ log.end_time }}</td>
+                                            <td class="hidden-xs">0.02</td>
+                                            <td class="hidden-xs">
+                                                <span class="custom-tooltip" data-toggle="tooltip" data-placement="left"
+                                                      title=""
+                                                      data-original-title="dsfWFEWAEF">{{ log.comments }}</span>
+                                            </td>
+                                            <td class="hidden-xs">2020-03-01</td>
+                                            <td class="text-right">
+                                                <a class="btn btn-sm btn-info custom-margin-top-5"
+                                                   href="{% url 'approve' pk=log.id %}">Approve</a>
+                                                <a class="btn btn-sm btn-default custom-margin-top-5"
+                                                   href="{% url 'reject' pk=log.id %}">Reject</a>
+                                                <div class="btn-group">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
+                                                            class="fa fa-pencil"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li><a href="{% url 'singleTimeLog'  pk=log.id %}">Show</a></li>
+                                                        <li class="divider"></li>
+                                                        <li><a href="/company/time_logs/243/edit">Edit</a></li>
+                                                        <li class="divider"></li>
+                                                        <li><a style="color:#fb6b5b"
+                                                               data-confirm="Are you sure you want to delete the time log entry?"
+                                                               rel="nofollow" data-method="delete"
+                                                               href="/company/time_logs/243">Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                {% endif %}
+
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+
+
+
+
+
+
+
+
+
+                        <div class="tab-pane" id="approved">
+                            <section class="panel-default">
+                                <!--<div class="pull-right" style="margin-bottom: 20px;">-->
+                                <!--</div>-->
+                            </section>
+                            <div class="table-responsive">
+
+                                <table class="table table-striped m-b-none"
+                                       style="font-size:15px;font-weight:300!important;">
+                                    <thead>
+                                    <tr>
+                                        <th class="no-border-right"></th>
+                                        <th style="font-weight:500;">Employee</th>
+                                        <th style="font-weight:500;">Task</th>
+                                        <th style="font-weight:500;">Date</th>
+                                        <th style="font-weight:500;">Start</th>
+                                        <th style="font-weight:500;">End</th>
+                                        <th style="font-weight:500;" class="hidden-xs">Hours</th>
+                                        <th style="font-weight:500;" class="hidden-xs">Comment</th>
+                                        <th style="font-weight:500;">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for log in approved %}
+                                        <tr>
+                                            <td><a href="#" class="dropdown-toggle dker" data-toggle="dropdown">
+                                                <span class="text-info">{{ log.name }}</span>
+                                            </a>
+                                            </td>
+                                            <td><a class="text-info" href="/company/tasks/131">{{ log.task }}</a></td>
+                                            <td>{{ logloglog.date }}</td>
+                                            <td>{{ log.start_time }}</td>
+                                            <td>{{ log.end_time }}</td>
+                                            <td class="hidden-xs">0.02</td>
+                                            <td class="hidden-xs">
+                                                <span class="custom-tooltip" data-toggle="tooltip" data-placement="left"
+                                                      title="" data-original-title="dsfWFEWAEF">dsfWFEWAEF</span>
+                                            </td>
+                                            <td class="hidden-xs">2020-03-01</td>
+                                            <td class="text-right">
+                                                {#                                            <div class="btn-group">#}
+                                                {#                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil"></i></a>#}
+                                                {#                                                <ul class="dropdown-menu pull-right">#}
+                                                {#                                                    <li> <a href="/company/time_logs/243">Show</a></li>#}
+                                                {#                                                    <li class="divider"></li>#}
+                                                {#                                                    <li><a href="/company/time_logs/243/edit">Edit</a></li>#}
+                                                {#                                                    <li class="divider"></li>#}
+                                                {#                                                    <li><a style="color:#fb6b5b" data-confirm="Are you sure you want to delete the time log entry?" rel="nofollow" data-method="delete" href="/company/time_logs/243">Delete</a></li>#}
+                                                {#                                                </ul>#}
+                                                {#                                            </div>#}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane" id="rejected">
+                            <section class="panel-default">
+                                <!--<div class="pull-right" style="margin-bottom: 20px;">-->
+                                <!--</div>-->
+                            </section>
+                            <div class="table-responsive">
+
+                                <table class="table table-striped m-b-none"
+                                       style="font-size:15px;font-weight:300!important;">
+                                    <thead>
+                                    <tr>
+                                        <th class="no-border-right"></th>
+                                        <th style="font-weight:500;">Employee</th>
+                                        <th style="font-weight:500;">Task</th>
+                                        <th style="font-weight:500;">Date</th>
+                                        <th style="font-weight:500;">Start</th>
+                                        <th style="font-weight:500;">End</th>
+                                        <th style="font-weight:500;" class="hidden-xs">Hours</th>
+                                        <th style="font-weight:500;" class="hidden-xs">Comment</th>
+                                        <th style="font-weight:500;">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for log in rejected %}
+                                        <tr>
+                                            <td><a href="#" class="dropdown-toggle dker" data-toggle="dropdown">
+                                                <span class="text-info">{{ log.name }}</span>
+                                            </a>
+                                            </td>
+                                            <td><a class="text-info" href="/company/tasks/131">{{ log.task }}</a></td>
+                                            <td>{{ loglog.date }}</td>
+                                            <td>{{ log.start_time }}</td>
+                                            <td>{{ log.end_time }}</td>
+                                            <td class="hidden-xs">0.02</td>
+                                            <td class="hidden-xs">
+                                                <span class="custom-tooltip" data-toggle="tooltip" data-placement="left"
+                                                      title="" data-original-title="dsfWFEWAEF">dsfWFEWAEF</span>
+                                            </td>
+                                            <td class="hidden-xs">2020-03-01</td>
+                                            <td class="text-right">
+
+                                                {#                                            <div class="btn-group">#}
+                                                {#                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil"></i></a>#}
+                                                {#                                                <ul class="dropdown-menu pull-right">#}
+                                                {#                                                    <li> <a href="/company/time_logs/243">Show</a></li>#}
+                                                {#                                                    <li class="divider"></li>#}
+                                                {#                                                    <li><a href="/company/time_logs/243/edit">Edit</a></li>#}
+                                                {#                                                    <li class="divider"></li>#}
+                                                {#                                                    <li><a style="color:#fb6b5b" data-confirm="Are you sure you want to delete the time log entry?" rel="nofollow" data-method="delete" href="/company/time_logs/243">Delete</a></li>#}
+                                                {#                                                </ul>#}
+                                                {#                                            </div>#}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="pull-right">
+
+                    </div>
+
+                    <style>
+                        .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+                            background: #4cc0c1;
+                            border-color: #4cc0c1;
+                            color: #fff !important;
+                        }
+
+                        .pagination > li > a {
+                            color: grey;
+                        }
+                    </style>
+
+                    <!--<h5 style="padding:5px;margin-left:20px;">No data available</h5>-->
+
+
+                </div>
+            </section>
+        </section>
+    </section>
+    <a data-target="#nav" data-toggle="class:nav-off-screen" class="hide nav-off-screen-block" href="#"></a>
+        </div>
+      </div>
+{% endblock %}

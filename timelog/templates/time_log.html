@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+{% now "hh:mm p" as today_time_str %}
+{% load widget_tweaks %}
+{% block title %}Time Log {{ block.super }} {% endblock %}
+{% block content %}
+
+{#    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.css" rel="stylesheet" type="text/css" />#}
+{#    <link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />#}
+  <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+        <div class="row">
+                <div class="col-md-8 offset-md-2">
+
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="page-title">New Time Log</h3>
+                                {% include "messages.html" %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+                    {% include "form_errors.html" with form=timeLogForm %}
+                    <!-- Employee Add Form -->
+                    <form method="post">{% csrf_token %}
+                        <div class="row">
+{#                            <div class="col-sm-6">#}
+{#                                <div class="form-group">#}
+                                     <input type="hidden" value={{ timeLogForm.name }}>
+{#                                </div>#}
+{#                            </div>#}
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Project <span class="text-danger">*</span></label>
+                                    {% render_field timeLogForm.project value=timeLogForm.project.id class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Task <span class="text-danger">*</span></label>
+                                    <select name="task" required="required" class="form-control" value=""
+                                            id="id_task">
+                                        <option value="" selected="">---------</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Start Time<span class="text-danger">*</span></label>
+                                    {% render_field timeLogForm.start_time class="form-control timepicker fa fa-clock-o" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>End Time<span class="text-danger">*</span></label>
+                                    {% render_field timeLogForm.end_time class="form-control timepicker fa fa-clock-o" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Comments <span class="text-danger">*</span></label>
+                                    {% render_field timeLogForm.comments class="form-control" required="required" %}
+{#                                    <div class="cal-icon">#}
+                                        {#                                        <input class="form-control datetimepicker" type="text">#}
+{#                                    </div>#}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                    <!-- /Employee Add Form -->
+                </div>
+            </div>
+
+
+
+
+
+
+{#    <section class="content">#}
+{##}
+{#  <section class="vbox">#}
+{#    <section class="scrollable padder">#}
+{##}
+{##}
+{#<ul class="breadcrumb no-border no-radius b-b b-light pull-in">#}
+{#  <!--<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>-->#}
+{#  <!--<li class="active">Jobs</li>-->#}
+{#  <a title="TIME LOGS" href="/company/time_log_cycles">TIME SHEETS</a> / <a options="{:title=>&quot;NEW&quot;}" href="/company/time_logs/new">NEW</a>#}
+{#</ul>#}
+{##}
+{##}
+{#      <div class="col-sm-12">#}
+{#        <section class="panel panel-default">#}
+{#          <header class="panel-heading" style="background:#FFF;">#}
+{#            <h3 style="color:#717171;">Time Log  - Time log</h3>#}
+{#          </header>#}
+{#          <div class="panel-body">#}
+{#  <form class="bs-example form-horizontal jquery-validate-time-log" id="new_time_log" method="post" action="{% url 'time_log' %}" accept-charset="UTF-8" method="post" novalidate="novalidate">#}
+{#      <input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="7cUoRQYiAhwRgrn5UFekyUg23uU1MmopM7xSnGa/bg5oyrQ2iQgyUSOFCBZU3rei8bkTnHj1aqMmxAfFSz1o2Q==">#}
+{##}
+{#      {% csrf_token %}#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label pl0">Date <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#         {% render_field form.date %}#}
+{#          <!--<span class="help-block m-b-none">Start Date and Time</span>-->#}
+{#        </div>#}
+{#      </div>#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label pl0">Start Time <span style="color:red;">*</span></label>#}
+{##}
+{#           <div class="input-group date form_time col-md-5" time-time="{{ today_time_str }}" time-time-format="hh:ii p" data-link-field="dtp_input1">#}
+{#                            <input class="form-control" name="start_time" size="16" type="text" value="" readonly>#}
+{#                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>#}
+{#					        <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>#}
+{#                        </div>#}
+{##}
+{##}
+{#        <label class="col-lg-2 control-label pl0">End Time <span style="color:red;">*</span></label>#}
+{#          <div class="input-group date form_time col-md-5" time-time="{{ today_time_str }}" time-time-format="hh:ii p" data-link-field="dtp_input1">#}
+{#                            <input class="form-control" name="end_time" size="16" type="text" value="" readonly>#}
+{#                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>#}
+{#					        <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>#}
+{#                        </div>#}
+{#    </div>#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label pl0">Comments <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#            {% render_field form.comments %}#}
+{#            <span class="help-block m-b-none text-muted">Memo for the time log entry <a href="#" class="text-info pull-right" onclick="$('.task-field').toggleClass('hidden');">Want to attach a task with this entry?</a></span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group  task-field">#}
+{#        <label class="col-lg-2 control-label pl0">Task <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#          <select class="form-control multi-select-custom select2-hidden-accessible" required="required" name="task" id="task" aria-required="true" tabindex="-1" aria-hidden="true"><option value=""></option>#}
+{#            {% for tasks in task %}#}
+{#              <option selected="selected"value="{{ tasks.id }}">{{ tasks.title }}</option>#}
+{#            {% endfor %}#}
+{#          </select>#}
+{##}
+{#            <span class="help-block m-b-none text-muted">Only started tasks are visible here</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <!--<div class="form-group">-->#}
+{#      <!--<label class="col-sm-2 control-label">Post on Channel</label>-->#}
+{#      <!--<div class="col-sm-10">-->#}
+{#      <!--<label class="switch">-->#}
+{#      <!---->#}
+{#      <!--<input type="checkbox"/>-->#}
+{#      <!--<span onclick="booleanToggler('time_log_post_to_channel')" id="check-input-1"></span>-->#}
+{#      <!--<p class="help-block m-b-none">If checked comments will be posted to Task Channel</p>-->#}
+{#      <!--</label>-->#}
+{#      <!--</div>-->#}
+{#      <!--</div>-->#}
+{##}
+{#      <div class="form-group">#}
+{#        <div class="col-lg-offset-2 col-lg-10">#}
+{#          <input type="submit" name="commit" value="Create" class="btn btn-primary pull-right">#}
+{#        </div>#}
+{#      </div>#}
+{#</form></div>#}
+{##}
+{##}
+{##}
+{#        </section>#}
+{#      </div>#}
+{#    </section>#}
+{#  </section>#}
+{#</section>#}
+        </div>
+  </div>
+
+{% endblock %}

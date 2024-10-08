@@ -1,0 +1,53 @@
+<form id='time_log_update_table' class='event-form' type='post'>
+    {% csrf_token %}
+
+    <div class='input-group'>
+        <input id="time_log_edit_table" class='form-control' hidden type=text value="{{ timelog.id }}"/>
+        <input class='form-control' readonly type=text value="{{ timelog.title }}"/>
+        <input id='update_time_log_table' class='form-control timepicker fa fa-clock-o' type=text
+               value="{{ timelog.time|date:"G:i:s" }}"/>
+        <span class='input-group-append'>
+            {% if timelog.submit_status == 'SAVED' %}
+                <button type='button' class='btn btn-success btn-md time_log_save_table'>Save</button>
+            {% endif %}
+        </span>
+    </div>
+</form>
+<script>
+    $('.time_log_save_table').on("click", function (e) {
+        const id = $('#time_log_update_table').find("input[id=time_log_edit_table]").val();
+        const start_time = $('#time_log_update_table').find("input[id=update_time_log_table]").val();
+        const token = $('#time_log_update_table').find('input[name=csrfmiddlewaretoken]').val()
+        alert(start_time)
+        $.ajax({
+            type: 'POST',
+            url: "/update_time_log/",
+            data: {id, start_time, csrfmiddlewaretoken: token},
+
+            success: function (response) {
+                let events = response["events"];
+            }
+        });
+         $('#edit_timeLog').modal('hide');
+    });
+    $('#time_log_submit_table').on("click", function (e) {
+        e.preventDefault();
+
+        const id = $('#time_log_update_table').find("input[id=time_log_edit_table]").val();
+        const start_time = $('#time_log_update_table').find("input[id=update_time_log_table]").val();
+        const token = $('#time_log_update_table').find('input[name=csrfmiddlewaretoken]').val()
+        const submit_status = 'SUBMITTED'
+        $.ajax({
+            type: 'POST',
+            url: "/update_time_log/",
+            data: {id, start_time, csrfmiddlewaretoken: token, submit_status},
+
+            success: function (response) {
+                let events = response["events"];
+            }
+        });
+
+         $('#edit_timeLog').modal('hide');
+          window.location.reload();
+    });
+</script>

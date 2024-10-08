@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Manual Task{{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Manual Task</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Manual Task</li>
+                        </ul>
+                    </div>
+                    <div class="col-auto float-right ml-auto">
+                        <a href="javascript:void(0)" class="btn add-btn" data-toggle="modal"
+                           data-target="#add_manual_task_name"><i class="fa fa-plus"></i> Add Manual Task</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+            {% include "messages.html" %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>Manual Task Name</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for task in manual_task_names %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ task.name | title }}</td>
+                                    <td class="text-right">
+                                        <span>
+                                                <span class="action-circle large manualTaskNameEdit" data-toggle="modal"
+                                                      data-target="#edit_manual_task_name"
+                                                      data-manualTaskNameEditURL="{% url 'editManualTaskName' manual_task_name_id=task.id %}">
+                                                    <i class="material-icons">edit</i>
+                                                </span>
+                                                <span class="action-circle large delete-btn myDeleteManualTaskName"
+                                                      data-toggle="modal"
+                                                      data-target="#delete_manual_task_name"
+                                                      data-ManualTaskNameDeleteURL="{% url 'deleteManualTaskName' task.id %}">
+                                                    <i class="material-icons">delete</i>
+                                                </span>
+                                            </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Add Manual Task Modal -->
+        <div id="add_manual_task_name" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Manual Task</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add_dep_form" method="post" action="{% url 'createManualTaskName' %}">{% csrf_token %}
+                            <div class="form-group">
+                                <label>Manual Task Name <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="name" required="required">
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Manual Task Modal -->
+
+        <!-- Edit Manual Task Modal -->
+        <div id="edit_manual_task_name" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Manual Task</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="manual-task-name-edit-form-div" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Edit Manual Task Modal -->
+
+        <!-- Delete Manual Task Modal -->
+        <div class="modal custom-modal fade" id="delete_manual_task_name" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Manual Task</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="DeleteManualTaskName" href="" class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Delete Manual Task Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}

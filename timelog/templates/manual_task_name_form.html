@@ -1,0 +1,10 @@
+{% load widget_tweaks %}
+<form id="edit_claim_form" action="{% url 'editManualTaskName' manual_task_name.id %}" method="post">{% csrf_token %}
+    <div class="form-group">
+        <label>Claim Type Name <span class="text-danger">*</span></label>
+        {% render_field form.name class="form-control" required="required"%}
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn float-right">Save</button>
+    </div>
+</form>

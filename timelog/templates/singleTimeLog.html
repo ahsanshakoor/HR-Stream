@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+  <section class="vbox">
+    <section class="scrollable padder">
+
+
+<ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+  <!--<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>-->
+  <!--<li class="active">Jobs</li>-->
+  <a title="TIME LOGS" href="#">TIME SHEETS</a> / {{timelog.date}}
+</ul>
+
+
+      <div class="col-sm-12">
+        <section class="panel panel-default bg-white">
+          <header class="panel-heading" style="background:#FFF;margin-left:10px;">
+            <div class="pull-right">
+              <!---->
+{#              <a class="btn btn-info btn-sm" href="#"><i class="fa fa-pencil"></i> Edit</a>#}
+            </div>
+            <strong><h3>Task  - {{timelog.task.title  | title}}</h3></strong>
+            <p>hello</p>
+          </header>
+          <div style="padding:25px">
+            <div class="seprate"></div><table class="table table-striped m-b-none" cellspacing="0" cellpadding="0" border="0">
+              <tbody>
+              <!--<tr class="row">-->
+                <!--<th>Task</th>-->
+                <!--<td></td>-->
+              <!--</tr>-->
+              <tr class="row">
+                <th>Start</th>
+                <td>{{timelog.start_time}}</td>
+
+              </tr>
+              <tr class="row">
+                <th>End</th>
+                <td>{{timelog.end_time}}</td>
+              </tr>
+              <!--<tr class="row">-->
+                <!--<th>Comments</th>-->
+                <!--<td></td>-->
+              <!--</tr>-->
+              <tr class="row">
+                <th>Total Hours</th>
+                <td>{{ hours }}</td>
+              </tr>
+              <tr class="row">
+                <th>Created At</th>
+                <td>{{timelog.date}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </section>
+
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load  static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% block title %}Time Log{{ block.super }} {% endblock %}
+{% block content %}
+    {% get_company_object user.id %}
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <!-- Page Content -->
+            <div class="content container-fluid">
+                {% include 'messages.html' %}
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="page-title">Time Logs</h3>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Time Logs</li>
+                            </ul>
+                        </div>
+                        <div class="view-icons">
+                        <a href="javascript:void(0)" class="grid-view btn btn-link active"><i class="fa fa-calendar"></i></a>
+                        <a href="{% url 'time_log_table' table='table' %}" class="list-view btn btn-link"><i
+                                class="fa fa-bars"></i></a>
+                    </div>
+                        <div class="col-auto float-right ml-auto">
+                            <a href="javascript:void(0)" class="btn add-btn" data-toggle="modal" data-target="#add_event"><i
+                                    class="fa fa-plus"></i> Add Time Log</a>
+                        </div>
+                        <div class="col-auto float-right ml-auto">
+                            <a href="javascript:void(0)" class="btn add-btn" data-toggle="modal" data-target="#add_event_manual"><i
+                                    class="fa fa-plus"></i> Add Manual Time Log</a>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /Page Header -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+
+                                        <!-- Calendar -->
+                                        <div id="calendar"></div>
+                                        <!-- /Calendar -->
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Content -->
+
+            <!-- Add Event Modal -->
+            <div id="add_event" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Time Log</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>Project <span class="text-danger">*</span></label>
+                                    {% render_field timeLogForm.project value=timeLogForm.project.id class="form-control" required="required" %}
+                                </div>
+{#                                <div class="form-group">#}
+{#                                    <label>Task<span class="text-danger">*</span></label>#}
+{#                                    {% render_field timeLogForm.task class="form-control" %}#}
+{##}
+{#                                </div>#}
+                                <div class="form-group">
+                                    <label>Task <span class="text-danger">*</span></label>
+                                    <select name="task" required="required" class="form-control" value=""
+                                            id="id_task">
+                                        <option value="" selected="">---------</option>
+                                    </select>
+                                </div>
+                                <div id="date_div" class="form-group">
+                                    <label>Date <span class="text-danger">*</span></label>
+                                        {% render_field timeLogForm.date class="form-control" required="required" %}
+                                </div>
+                                <div class="form-group">
+                                    <label>Time <span class="text-danger">*</span></label>
+                                    {% render_field timeLogForm.start_time class="form-control timepicker fa fa-clock-o" required="required" %}
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-form-label">Comments <span
+                                                class="text-danger">*</span></label>
+                                        {% render_field timeLogForm.comments class="form-control" required="required" %}
+                                </div>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Add Event Modal -->
+
+            <!-- Add Manual Event Modal -->
+            <div id="add_event_manual" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Time Log</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'time_log_manual' %}">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                    <label>Task<span class="text-danger">*</span></label>
+                                    {% render_field timeLogManualForm.manual_task class="form-control" %}
+
+                                </div>
+                                <div id="date_div" class="form-group">
+                                    <label>Date <span class="text-danger">*</span></label>
+                                        {% render_field timeLogForm.date class="form-control" required="required" %}
+                                </div>
+                                <div class="form-group">
+                                    <label>Time <span class="text-danger">*</span></label>
+                                    {% render_field timeLogForm.start_time class="form-control timepicker fa fa-clock-o" required="required" %}
+                                </div>
+                                <div class="form-group">
+                                        <label class="col-form-label">Comments <span
+                                                class="text-danger">*</span></label>
+                                        {% render_field timeLogForm.comments class="form-control" required="required" %}
+                                </div>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Add Manual Event Modal -->
+
+            <!-- Event Modal -->
+            <div class="modal custom-modal fade" id="event-modal">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Time Log</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id='time_log_update' class='event-form' type='post'>
+                            {% csrf_token %}
+                            </form>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <button id="time_log_submit" type="button" class="btn btn-primary submit-btn text-white">Submit</button>
+                            <button type="button" class="btn btn-danger submit-btn delete-event" data-dismiss="modal">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Event Modal -->
+
+            <!-- Add Category Modal-->
+            <div class="modal custom-modal fade" id="add-category">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Add a category</h4>
+                        </div>
+                        <div class="modal-body p-20">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="col-form-label">Category Name</label>
+                                        <input class="form-control" placeholder="Enter name" type="text"
+                                               name="category-name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="col-form-label">Choose Category Color</label>
+                                        <select class="form-control" data-placeholder="Choose a color..."
+                                                name="category-color">
+                                            <option value="success">Success</option>
+                                            <option value="danger">Danger</option>
+                                            <option value="info">Info</option>
+                                            <option value="pink">Pink</option>
+                                            <option value="primary">Primary</option>
+                                            <option value="warning">Warning</option>
+                                            <option value="orange">Orange</option>
+                                            <option value="brown">Brown</option>
+                                            <option value="teal">Teal</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger save-category" data-dismiss="modal">Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Add Category Modal-->
+
+        </div>
+        <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+{% endblock %}
