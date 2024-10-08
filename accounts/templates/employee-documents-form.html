@@ -1,0 +1,56 @@
+{% load widget_tweaks %}
+<form method="post" enctype="multipart/form-data" action="{% url 'user_document_form' user.id %}">{% csrf_token %}
+    <div class="form-scroll">
+        <table>
+            {{ formset.management_form }}
+            <tbody>
+            {% for form in formset %}
+                <tr class="dynamic-formDocs">
+                    <td>
+                        <div class="card ">
+                            <div class="card-body">
+                                <h3 class="card-title">Documents
+                                    <a onclick="deleteRowUserDocument();" href="javascript:void(0)"
+                                       class="delete-row delete-icon"><i class="fa fa-trash-o"></i></a>
+                                </h3>
+                                {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                                <div class="row" style="height: 160px">
+                                    <div class="col-sm-12">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.name class="form-control floating" %}
+                                            <label class="focus-label">File Name</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.file class="form-control-file border floating " id="inputGroupFile04"%}
+{#                                             <label class="custom-file-label" for="inputGroupFile04">Choose file</label>#}
+                                            {#                                            <label class="focus-label">File</label>#}
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        {% if form.instance.id %}
+                                            <span class="text-danger float-right m-t-15">Delete Record: {{ form.DELETE }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+{#                                {% if form.instance.id %}#}
+{#                                    <span class="text-danger float-right">Delete Record: {{ form.DELETE }}</span>#}
+{#                                {% endif %}#}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="javascript:void(0);" onclick="addRowUserDocument();" class="add-row"><i class="fa fa-plus-circle"></i>
+            Add More</a>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

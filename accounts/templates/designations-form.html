@@ -1,0 +1,14 @@
+{% load widget_tweaks %}
+<form id="edit_design_form" method="post" action="{% url 'editDesignation' dgn.id %}">{% csrf_token %}
+    <div class="form-group">
+        <label>Designation Name <span class="text-danger">*</span></label>
+        {% render_field form.name class="form-control" required="required" %}
+    </div>
+    <div class="form-group">
+        <label>Department <span class="text-danger">*</span></label>
+        {% render_field form.department class="form-control" required="required" %}
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn float-right">Save</button>
+    </div>
+</form>

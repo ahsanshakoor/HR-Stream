@@ -1,0 +1,60 @@
+{% load widget_tweaks %}
+<form method="post" action="{% url 'user_experience_form' user.id %}">{% csrf_token %}
+    <div class="form-scroll">
+        <table>
+            {{ formset.management_form }}
+            <tbody>
+            {% for form in formset %}
+                <tr class="dynamic-formExp">
+                    <td>
+                        <div class="card ">
+                            <div class="card-body">
+                                <h3 class="card-title">Experience Informations
+                                    <a onclick="deleteRowUserExp();" href="javascript:void(0)"
+                                       class="delete-row delete-icon"><i class="fa fa-trash-o"></i></a>
+                                </h3>
+                                {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.company_name class="form-control floating" %}
+                                            <label class="focus-label">Company Name</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.job_position class="form-control floating" %}
+                                            <label class="focus-label">Job Position</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.period_from class="form-control floating datetimepicker" %}
+                                            <label class="focus-label">Period From</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.period_to class="form-control floating datetimepicker" %}
+                                            <label class="focus-label">Period To</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if form.instance.id %}
+                                    <span class="text-danger float-right">Delete Record: {{ form.DELETE }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="javascript:void(0);" onclick="addRowUserExp();" class="add-row"><i class="fa fa-plus-circle"></i> Add More</a>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

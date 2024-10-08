@@ -1,0 +1,70 @@
+{% load static %}
+{% load widget_tweaks %}
+<form method="post" enctype="multipart/form-data" action="{% url 'clientprofile_edit' client.id %}">{% csrf_token %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="profile-img-wrap edit-img">
+                {% if client.profile_pic %}
+                    <img id="EditProfilePic" class="inline-block" src="{{ client.profile_pic.url }}"
+                         alt="Profile Pic">
+                {% else %}
+                    <img id="EditProfilePic" class="inline-block" src="{% static 'assets/img/user.jpg' %}"
+                         alt="Profile Pic">
+                {% endif %}
+                <div class="fileupload btn">
+                    {% render_field form.profile_pic onchange="previewFile();" %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Stakeholder Name</label>
+                        {% render_field form.stakeholder_name class="form-control" %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Stakeholder Code</label>
+                        {% render_field form.client_code class="form-control" readonly="readonly" %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        {% render_field form.first_name class="form-control" %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        {% render_field form.last_name class="form-control" %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        {% render_field form.cell class="form-control" %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        {% render_field form.email class="form-control" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Address</label>
+                {% render_field form.address class="form-control" %}
+            </div>
+
+        </div>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

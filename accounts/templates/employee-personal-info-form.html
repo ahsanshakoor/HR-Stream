@@ -1,0 +1,32 @@
+{% load widget_tweaks %}
+<form method="post" action="{% url 'user_personalinfo_form' user.id %}">{% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>City</label>
+                {% render_field form.city class="form-control" %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>State</label>
+                {% render_field form.state class="form-control" %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Zip Code</label>
+                {% render_field form.zip_code class="form-control" %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Country</label>
+                {% render_field form.country class="form-control" %}
+            </div>
+        </div>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

@@ -1,0 +1,77 @@
+{% load widget_tweaks %}
+<form method="post" action="{% url 'user_educationinfo_form' user.id %}">{% csrf_token %}
+    <div class="form-scroll">
+        <table>
+            {{ formset.management_form }}
+            <tbody>
+            {% for form in formset %}
+                {#                <tr id="{{ form.prefix }}-row" class="dynamic-form">#}
+                <tr class="dynamic-form">
+                    <td>
+                        <div class="card ">
+                            <div class="card-body">
+                                <h3 class="card-title">Education Information
+                                    {#                                     <a id="remove-{{ form.prefix }}-row" href="javascript:void(0)"#}
+                                    <a  onclick="deleteRow();" href="javascript:void(0)"
+                                       class="delete-row delete-icon"><i class="fa fa-trash-o"></i></a>
+                                </h3>
+{#                                {% if forloop.first %}#}
+                                    {% for hidden in form.hidden_fields %}
+                                        {{ hidden }}
+                                    {% endfor %}
+{#                                {% endif %}#}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.institution class="form-control floating"  %}
+{#                                            {{ form.institution }}#}
+                                            <label class="focus-label">Institution</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {% render_field form.degree class="form-control floating"  %}
+                                            <label class="focus-label">Degree</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {#                                <div class="cal-icon">#}
+                                            {#                                </div>#}
+                                            {% render_field form.starting_date class="form-control floating datetimepicker"  %}
+                                            <label class="focus-label">Starting Date</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus focused">
+                                            {#                                <div class="cal-icon">#}
+                                            {#                                </div>#}
+                                            {% render_field form.ending_date class="form-control floating datetimepicker"  %}
+                                            <label class="focus-label">Complete Date</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if form.instance.id %}
+                                    <span class="text-danger float-right">Delete Record: {{ form.DELETE }}</span>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            {#                <tr>#}
+            {#                    <td class="add-more">#}
+{#                                    <a id="addFormsetRow" href="javascript:void(0);" onclick="addRow();" class="add-row"><i#}
+{#                                            class="fa fa-plus-circle"></i> Add More</a>#}
+            {#                    </td>#}
+            {#                </tr>#}
+            </tbody>
+        </table>
+        <a href="javascript:void(0);" onclick="addRow();" class="add-row"><i class="fa fa-plus-circle"></i> Add More</a>
+    </div>
+
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

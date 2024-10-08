@@ -1,0 +1,51 @@
+{% load widget_tweaks %}
+<form method="post" action="{% url 'user_bankinfo_form' bankinfo_user.id %}">{% csrf_token %}
+    {#                                <h3 class="card-title">Bank Information</h3>#}
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-label">Bank Name</label>
+                {% render_field userBankForm.name class="form-control" required="required" %}
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-label">Routing No.</label>
+                {% render_field userBankForm.routing class="form-control" %}
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-label">Account No.</label>
+                {% render_field userBankForm.account_no class="form-control" required="required" %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="form-group">
+                <label class="col-form-label">Account title</label>
+                {% render_field userBankForm.account_title class="form-control" required="required" %}
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-form-label">Account type</label>
+                {% render_field userBankForm.account_type class="form-control" %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="col-form-label">Bank Address</label>
+                {% render_field userBankForm.address class="form-control" %}
+            </div>
+        </div>
+    </div>
+
+    <div class="submit-section">
+        <button class="btn btn-primary submit-btn float-right" type="submit">Save</button>
+    </div>
+
+</form>

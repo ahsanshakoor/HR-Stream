@@ -1,0 +1,31 @@
+{% load widget_tweaks %}
+<form method="post" action="{% url 'user_emergencycontact_form' user.id %}">{% csrf_token %}
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">Primary Contact</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Name <span class="text-danger">*</span></label>
+                        {% render_field form.name class="form-control" required="required"%}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Relationship <span class="text-danger">*</span></label>
+                        {% render_field form.relationship class="form-control" required="required"%}
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Phone <span class="text-danger">*</span></label>
+                        {% render_field form.phone class="form-control" required="required"%}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

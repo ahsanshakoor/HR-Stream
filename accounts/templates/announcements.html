@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+{% load accounts_tags %}
+{% block title %}Announcment{{ block.super }} {% endblock %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Announcement Tracking</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Announcement Tracking</li>
+                    </ul>
+                </div>
+                 {% if_has_access user.id 'owner announcement' %}
+                <div class="col-auto float-right ml-auto">
+                    <a href="javascript:void(0);" class="btn add-btn" data-toggle="modal"
+                       data-target="#add_announcement"><i
+                            class="fa fa-plus"></i> Add New</a>
+                </div>
+                {% endif_has_access %}
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable">
+                        <thead>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+                            <th>Title</th>
+                            <th>Announced Date</th>
+                            <th>Announced By</th>
+                            <th>Action</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for announcement in announcements %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ announcement.title }}</td>
+                            <td>{{ announcement.created_at }}</td>
+                            <td>{{ announcement.announced_by }}</td>
+                            <td>
+                                <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                   data-target="#show_announcement{{announcement.id}}"><i
+                                        class="fa fa-eye m-r-5"></i></a>
+                                {% if_has_access user.id 'owner announcement' %}
+                                <a class="primary-color-used"
+                                   href="{% url 'delete_announcement_list' pk=announcement.id %}"><i
+                                        class="fa fa-trash-o "></i></a>
+                                {% endif_has_access %}
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /Page Content -->
+
+    <!-- Add Announcement Modal -->
+    <div id="add_announcement" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Announcement</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'announcements' %}">
+                        {% csrf_token %}
+                        {% for error in field.errors %}
+                        <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+
+
+                        <div class="form-group">
+                            <label>Announcement Title<span class="text-danger">*</span></label>
+                            {% render_field form.title rows="4" class="form-control" %}
+                            {% render_field form.title.error %}
+                        </div>
+                        <div class="form-group">
+                            <label>Announcement Details<span class="text-danger">*</span></label>
+                            {% render_field form.description rows="4" class="form-control" %}
+                            {% render_field form.description.error %}
+                        </div>
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Announcement Modal -->
+
+    <!-- Show Announcement Detail Modal -->
+    {% for announcement in announcements %}
+    <div id="show_announcement{{announcement.id}}" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLongTitle">{{announcement.title}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                   <p style="white-space: pre-line"> {{announcement.description}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary submit-btn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- /Show Announcement Detail Modal -->
+
+</div>
+<!-- /Page Wrapper -->
+{% endblock %}

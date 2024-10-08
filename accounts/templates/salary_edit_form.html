@@ -1,0 +1,55 @@
+{% load static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% get_company_object user.id %}
+<form method="post" action="{% url 'edit_salary_form' salary_user.id salary.id %}">{% csrf_token %}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-label">Salary basis <span
+                        class="text-danger">*</span></label>
+                {% render_field form.salary_type class="form-control" %}
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-label">Salary amount <small
+                        class="text-muted">annual</small></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">{{ company_name.currency_sym }}</span>
+                    </div>
+                    {% render_field form.salary class="form-control" %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-label">Salary raise </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">{{ company_name.currency_sym }}</span>
+                    </div>
+                    {% render_field form.salary_raise class="form-control" %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-form-label">Employment type</label>
+                {% render_field form.employment_type class="form-control" %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="col-form-label">Comment</label>
+                {% render_field form.comments class="form-control" %}
+            </div>
+        </div>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+    </div>
+</form>
