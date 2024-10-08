@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Workday Stream</title>
+    <link rel="stylesheet" type="text/css" href="../../../../static/rnr/assets/css/wd/allstyles.css"/>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
+
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="../../../../static/rnr/assets/img/fav.png">
+
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="../../../../static/rnr/style.css">
+    <link rel="stylesheet" type="text/css" href="../../../../static/rnr/assets/css/wd/style.css"/>
+
+    <!-- Modernizer JS -->
+    <script src="../../../../static/rnr/assets/js/vandor/modernizr-3.5.0.min.js"></script>
+</head>
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<body class="home">
+<!-- Preloader Start -->
+<div id="fadeout" class="loader w-100 h-100 position-absolute">
+    <div class="h-100 d-flex justify-content-center align-items-center">
+        <div class="one circle"></div>
+        <div class="two circle"></div>
+    </div>
+</div>
+<!-- Preloader End -->
+<!-- Header Start -->
+<header class="header">
+    <div class="logo">
+        <a href="{% url 'landing_page_home' %}">
+            <img src="../../../../static/rnr/assets/img/wd/logo.png" alt="" width="" height=""/>
+        </a>
+    </div>
+    <nav class="topnav" id="myTopnav">
+        <a href="{% url 'landing_page_home' %}">Home</a>
+        <a href="#">About Us</a>
+        <a href="{% url 'features_page' %}">Features</a>
+        <a href="{% url 'pricing_page' %}">Pricing</a>
+        <a href="{% url 'contact_page' %}">Contact Us</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="fa-solid fa-bars"></i>
+        </a>
+    </nav>
+    <div>
+        {% if userLogin %}
+            <ul class="nav user-menu">
+
+                <li class="nav-item dropdown has-arrow main-drop">
+                    <a href="javascript:void(0)" class="dropdown-toggle nav-link" data-toggle="dropdown">
+
+                        <span>{{ user.username | title }}</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'index' %}">Dashboard</a>
+                        <a class="dropdown-item" href="{% url 'myprofile_detail' user.id %}">My Profile</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        {% else %}
+            <button onclick="window.location.href='{% url 'login' %}'" class="btn">Login</button>
+        {% endif %}
+    </div>
+</header>
+{% block main_content %}
+{% endblock %}
+<footer>
+    <div class="footer">
+        <div class="footerImage">
+            <img src="../../../../static/rnr/assets/img/wd/footerLogo.png" alt="" width="" height=""/>
+            <ul class="main">
+                <li>2307 Beverley Rd, New York</li>
+                <li>+ (0712) 819 79 555</li>
+                <li><span>office@finance.com</span></li>
+            </ul>
+        </div>
+        <div class="footerManu">
+            <h4>Services</h4>
+            <ul class="linking">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Our Team</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Portfolio</a></li>
+            </ul>
+        </div>
+        <div class="footerManu">
+            <h4>Company</h4>
+            <ul class="linking">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Our Team</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Portfolio</a></li>
+            </ul>
+        </div>
+        <div class="footerManu">
+            <h4>Resources</h4>
+            <ul class="linking">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Our Team</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Portfolio</a></li>
+            </ul>
+        </div>
+        <div class="footerSub">
+            <h4>Subscrible</h4>
+            <input type="text"/>
+            <button class="btn" onclick="window.location.href='{% url 'signup' %}'">Get Started</button>
+        </div>
+    </div>
+</footer>
+
+<!-- JS Files -->
+<script src="../../../../static/rnr/assets/js/vandor/jquery-3.2.1.min.js"></script>
+<script src="../../../../static/rnr/assets/js/bootstrap.min.js"></script>
+<script src="../../../../static/rnr/assets/js/popper.min.js"></script>
+<script src="../../../../static/rnr/assets/js/plugins.js"></script>
+<script src="../../../../static/rnr/assets/js/main.js"></script>
+<script src="../../../../static/rnr/assets/js/custom.js"></script>
+<script type="text/javascript " src="../../../../static/rnr/assets/js/wd/jquery.min.js "></script>
+<script src="../../../../static/rnr/assets/js/wd/plugins.js "></script>
+<script src="../../../../static/rnr/assets/js/wd/system.js "></script>
+</body>
+
+</html>

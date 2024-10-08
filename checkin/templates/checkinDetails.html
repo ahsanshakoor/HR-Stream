@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+<div class="table-responsive">
+          <table class="table table-striped m-b-none" style="font-size:15px;font-weight:300!important;">
+            <thead>
+            <tr>
+
+              <th width="15%" style="font-weight:500;">Name</th>
+              <th width="25%" style="font-weight:500;">Date</th>
+              <th width="10%" style="font-weight:500;">Check-In</th>
+              <th width="10%"style="font-weight:500;">Check-Out</th>
+              <th width="15%"style="font-weight:500;"  class="hidden-xs">Created At</th>
+              <th width="10%" style="font-weight:500;" class="hidden-xs">Hours</th>
+              <th width="14%" style="font-weight:500;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>{% for checkin in checkins %}
+                <tr>
+                  <td><a href="#" class="dropdown-toggle dker" data-toggle="dropdown">
+  <span class="text-info">{{checkin.name.username}}</span>
+</a>
+</td>
+
+                  <td>{{checkin.checkin}}</td>
+                  <td>{{checkin.checkin}}</td>
+                  <td>{{checkin.checkout}}</td>
+                  <td class="hidden-xs">{{checkin.checkout}}</td>
+                  <td class="hidden-xs">{{checkin.hour}}</td>
+                  <td class="text-right">
+                    <a href="{% url 'singleCheckin' pk=checkin.id  %}" style="float:left;">Show</a>
+                    <div class="btn-group">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil"></i></a>
+                      <ul class="dropdown-menu pull-right">
+                        <!--<li><a href="">Edit</a></li>-->
+                        <li><a style="color:#fb6b5b" data-confirm="Are you sure you want to delete this attendance record?" rel="nofollow" data-method="delete" href="{% url 'delete_checkin' pk=checkin.id %}">Delete</a></li>
+                      </ul>
+                    </div>
+                  </td>
+
+                </tr>
+
+
+
+                {% endfor %}
+
+            <tbody>
+            </tbody>
+          </table>
+          <div class="pull-right">
+            </div>
+             </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

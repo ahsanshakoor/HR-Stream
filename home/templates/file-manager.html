@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %} File Manager{{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <!-- Page Content -->
+            <div class="content container-fluid">
+                {% include 'messages.html' %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="file-wrap">
+                            <div class="file-sidebar">
+                                <div class="file-header justify-content-center">
+                                </div>
+                                <div class="file-pro-list">
+                                    <div class="file-scroll">
+                                        <ul class="file-menu nav nav-tabs nav-tabs-bottom">
+                                            <li class="nav-item">
+                                                <a href="#tab-project" class="nav-link active"
+                                                   data-toggle="tab">Project</a>
+                                            </li>
+                                            {% for file_directory in file_directories %}
+                                                <li class="nav-item">
+                                                    <a href="#tab-{{ file_directory.id }}"
+                                                       class="nav-link"
+                                                       data-toggle="tab">{{ file_directory.name }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="file-cont-wrap" style="width: 100%;">
+                                <div class="file-cont-inner">
+                                    <div class="file-cont-header">
+                                        <div class="file-options">
+                                            <a href="javascript:void(0)" id="file_sidebar_toggle"
+                                               class="file-sidebar-toggle">
+                                                <i class="fa fa-bars"></i>
+                                            </a>
+                                        </div>
+                                        <span>File Manager</span>
+                                        <div>
+
+
+                                            <a href="javascript:void(0);" class="btn add-btn" data-toggle="modal"
+                                               data-target="#add_file">
+                                                <i class="fa fa-upload"></i> Upload
+                                            </a>
+                                            {% if_has_access user.id 'owner file_manager' %}
+                                                <a href="javascript:void(0);" class="btn add-btn m-r-5"
+                                                   data-toggle="modal"
+                                                   data-target="#add_file_directory"><i class="fa fa-plus"></i> Add File
+                                                    Directory Type</a>
+                                            {% endif_has_access %}
+
+                                        </div>
+                                    </div>
+
+                                    <div class="file-content">
+                                        <div class="file-body">
+                                            <div class="file-scroll">
+                                                <div class="file-content-inner">
+                                                    <div class="card-body">
+                                                        <div class="tab-content pt-0">
+                                                            <div role="tabpanel" id="tab-project"
+                                                                 class="tab-pane fade show active">
+                                                                <h4>Project Files</h4>
+                                                                <div class="row row-sm">
+                                                                    {% for project in projects %}
+                                                                        {% for Pfile in project.project_files.all %}
+                                                                            <div class="col-6 col-sm-4 col-md-3 col-lg-4 col-xl-3">
+                                                                                <div class="card card-file">
+                                                                                    <div class="dropdown-file">
+                                                                                        <a href="" class="dropdown-link"
+                                                                                           data-toggle="dropdown"><i
+                                                                                                class="fa fa-ellipsis-v"></i></a>
+                                                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                                                            {#																			<a href="file-manager.html#" class="dropdown-item">View Details</a>#}
+                                                                                            {#																			<a href="file-manager.html#" class="dropdown-item">Share</a>#}
+                                                                                            <a href="{{ Pfile.file.url }}"
+                                                                                               download="{{ Pfile.file.name }}"
+                                                                                               class="dropdown-item">Download</a>
+                                                                                            {#																			<a href="file-manager.html#" class="dropdown-item">Rename</a>#}
+                                                                                            <a href="{% url 'delete_file' pk=Pfile.id %}"
+                                                                                               class="dropdown-item">Delete</a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="card-file-thumb">
+                                                                                        {% if Pfile.type == 'application/pdf' %}
+                                                                                            <i class="fa fa-file-pdf-o"></i>
+                                                                                        {% elif  Pfile.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' or Pfile.type == 'application/vnd.oasis.opendocument.text' %}
+                                                                                            <i class="fa fa-file-word-o"></i>
+                                                                                        {% elif  Pfile.type == 'image' %}
+                                                                                            <i class="fa fa-file-image-o"></i>
+                                                                                        {% elif  Pfile.type == 'application/xlxs' or Pfile.type == 'application/vnd.oasis.opendocument.spreadsheet' %}
+                                                                                            <i class="fa fa-file-excel-o"></i>
+                                                                                        {% elif  Pfile.type == 'application/opwerpoint' %}
+                                                                                            <i class="fa fa-file-powerpoint-o"></i>
+                                                                                        {% elif  Pfile.type == 'audio' %}
+                                                                                            <i class="fa fa-file-audio-o"></i>
+                                                                                        {% elif  Pfile.type == 'text/text' %}
+                                                                                            <i class="fa fa-file-text-o"></i>
+                                                                                        {% elif  Pfile.type == 'video' %}
+                                                                                            <i class="fa fa-file-video-o"></i>
+                                                                                        {% elif  Pfile.type == 'application/zip' %}
+                                                                                            <i class="fa fa-file-zip-o"></i>
+                                                                                        {% elif Pfile.type == 'application/vnd.rar' %}
+                                                                                            <i class="fa fa-file-archive-o"></i>
+                                                                                        {% elif  Pfile.type == 'text/html' %}
+                                                                                            <i class="fa fa-file-code-o"></i>
+                                                                                        {% elif Pfile.type == 'application' %}
+                                                                                            <i class="fa fa-files-o"></i>
+                                                                                        {% endif %}
+                                                                                    </div>
+                                                                                    <div class="card-body">
+                                                                                        <h6>
+                                                                                            <a href="{{ Pfile.file.url }}">{{ Pfile.file|getfilename }}</a>
+                                                                                        </h6>
+                                                                                        <span>{{ Pfile.file.size|filesizeformat }}</span>
+                                                                                    </div>
+                                                                                    <div class="card-footer">{{ Pfile.created_at }}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        {% endfor %}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                            {% for file_directory in file_directories %}
+                                                                <div role="tabpanel" id="tab-{{ file_directory.id }}"
+                                                                     class="tab-pane fade">
+                                                                    <h4>{{ file_directory.name }}</h4>
+                                                                    <div class="row row-sm">
+                                                                        {% for Pfile in file_directory.fileTypeCompanyFiles.all %}
+                                                                            {% if Pfile.uploaded_by == user or user in Pfile.shared_with.all %}
+                                                                                <div class="col-6 col-sm-4 col-md-3 col-lg-4 col-xl-3">
+                                                                                    <div class="card card-file">
+                                                                                        <div class="dropdown-file">
+                                                                                            <a href=""
+                                                                                               class="dropdown-link"
+                                                                                               data-toggle="dropdown"><i
+                                                                                                    class="fa fa-ellipsis-v"></i></a>
+                                                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                                                {#																			<a href="file-manager.html#" class="dropdown-item">View Details</a>#}
+                                                                                                {% if Pfile.uploaded_by == user %}
+                                                                                                    <a href="javascript:void(0)"
+                                                                                                       data-toggle="modal"
+                                                                                                       data-target="#shared_with_user"
+                                                                                                       class="dropdown-item FileShare"
+                                                                                                       data-FileShare="{% url 'file_share_list' file=Pfile.id %}">Share</a>
+                                                                                                {% endif %}
+                                                                                                <a href="{{ Pfile.file.url }}"
+                                                                                                   download="{{ Pfile.file.name }}"
+                                                                                                   class="dropdown-item">Download</a>
+                                                                                                {#																			<a href="file-manager.html#" class="dropdown-item">Rename</a>#}
+                                                                                                <a href="{% url 'delete_file_manager_file' pk=Pfile.id %}"
+                                                                                                   class="dropdown-item">Delete</a>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="card-file-thumb">
+                                                                                            {% if Pfile.type == 'application/pdf' %}
+                                                                                                <i class="fa fa-file-pdf-o"></i>
+                                                                                            {% elif  Pfile.type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' or Pfile.type == 'application/vnd.oasis.opendocument.text' %}
+                                                                                                <i class="fa fa-file-word-o"></i>
+                                                                                            {% elif  Pfile.type == 'image' %}
+                                                                                                <i class="fa fa-file-image-o"></i>
+                                                                                            {% elif  Pfile.type == 'application/xlxs' or Pfile.type == 'application/vnd.oasis.opendocument.spreadsheet' %}
+                                                                                                <i class="fa fa-file-excel-o"></i>
+                                                                                            {% elif  Pfile.type == 'application/opwerpoint' %}
+                                                                                                <i class="fa fa-file-powerpoint-o"></i>
+                                                                                            {% elif  Pfile.type == 'audio' %}
+                                                                                                <i class="fa fa-file-audio-o"></i>
+                                                                                            {% elif  Pfile.type == 'text/text' %}
+                                                                                                <i class="fa fa-file-text-o"></i>
+                                                                                            {% elif  Pfile.type == 'video' %}
+                                                                                                <i class="fa fa-file-video-o"></i>
+                                                                                            {% elif  Pfile.type == 'application/zip' %}
+                                                                                                <i class="fa fa-file-zip-o"></i>
+                                                                                            {% elif Pfile.type == 'application/vnd.rar' %}
+                                                                                                <i class="fa fa-file-archive-o"></i>
+                                                                                            {% elif  Pfile.type == 'text/html' %}
+                                                                                                <i class="fa fa-file-code-o"></i>
+                                                                                            {% endif %}
+                                                                                        </div>
+                                                                                        <div class="card-body">
+                                                                                            <h6>
+                                                                                                <a href="{{ Pfile.file.url }}">{{ Pfile.file|getfilename }}</a>
+                                                                                            </h6>
+                                                                                            <span>{{ Pfile.file.size|filesizeformat }}</span>
+                                                                                        </div>
+                                                                                        <div class="card-footer">{{ Pfile.created_at }}</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Content -->
+
+        </div>
+        <!-- /Page Wrapper -->
+        <!-- Add Asset Modal -->
+        <div id="add_file" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add File</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'file_manager' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Title</label>
+                                        {% render_field file_form.title class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>File</label>
+                                        {% render_field file_form.file class="form-control upload uploaded_file" required="required" %}
+                                        <span class="uLabel text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>File Type</label>
+                                        {% render_field file_form.directory class="form-control" required="required " %}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="submit-section">
+                                <button class="btn btn-primary submit-btn uButton">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Asset Modal -->
+        <!-- Assign User Modal -->
+        <div id="shared_with_user" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Share With</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="shared_with_list">
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn uButton">Submit</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Assign User Modal -->
+
+
+        <!-- Add File Directory Type Modal -->
+        <div id="add_file_directory" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add File Directory Type</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add_dep_form" method="post"
+                              action="{% url 'createFileDirectoryType' type='file' %}">{% csrf_token %}
+                            <div class="form-group">
+                                <label>File Directory Type Name <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="name" required="required">
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add File Directory Type Modal -->
+
+    </div>
+    <!-- /Main Wrapper -->
+    <script src="{% static 'assets/js/jquery-3.2.1.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+
+            $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
+                var id = $(e.target).attr("href");
+                sessionStorage.setItem('selectedTab', id)
+            });
+
+            var selectedTab = sessionStorage.getItem('selectedTab');
+            if (selectedTab != null) {
+                $('a[data-toggle="tab"][href="' + selectedTab + '"]').tab('show');
+            }
+        });
+    </script>
+
+{% endblock %}

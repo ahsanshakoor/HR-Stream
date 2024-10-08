@@ -1,0 +1,54 @@
+{% extends 'base_team_hierarchy.html' %}
+{% block content %}
+
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            <!-- Page Content -->
+            <div class="content container-fluid">
+
+  <button class="btn btn-primary float-right" onclick="params.funcs.toggleFullScreen()">Fullscreen <span> <i class="fa fa-arrows-alt" aria-hidden="true"></i></span></button>
+  <button class="btn btn-primary " onclick="params.funcs.showMySelf()"> Show myself <span> <i class="fa fa-user" aria-hidden="true"></i></span></button>
+
+  <button class=" btn btn-primary" onclick="params.funcs.search()"> Search <span> <i class="fa fa-search" aria-hidden="true"></i></span></button>
+
+  <button class=" btn btn-primary btn-back" onclick="params.funcs.back()"> Back <span> <i class="fa fa-arrow-left" aria-hidden="true"></i></span></button>
+
+  <div class="department-information">
+    <div class="dept-name">
+      dept name
+    </div>
+    <div class="dept-emp-count">
+      dept description test, this is department description
+    </div>
+     <div class="dept-description">
+      dept description test, this is department description
+    </div>
+  </div>
+
+  <div class="user-search-box">
+    <div class="input-box">
+      <div class="close-button-wrapper"><i onclick="params.funcs.closeSearchBox()" class="fa fa-times" aria-hidden="true"></i></div>
+      <div class="input-wrapper">
+        <input type="text" class="search-input" placeholder="Search" />
+        <div class="input-bottom-placeholder">By Firstname, Lastname, Tags</div>
+      </div>
+      <div>
+      </div>
+    </div>
+    <div class="result-box">
+      <div class="result-header"> RESULTS </div>
+      <div class="result-list">
+
+
+        <div class="buffer"></div>
+      </div>
+    </div>
+  </div>
+  <div id="svgChart"></div>
+  <!--
+   <button class="btn-graphbtn-expand" onclick="params.funcs.expandAll()">Expand All</button>
+-->
+</div>
+        </div>
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends "home/rnr/base.html" %}
+{% load static %}
+{% block main_content %}
+    <main class="main">
+        <section class="banner">
+            <img class="bannerImg" src={% static '/rnr/assets/img/wd/banner.png' %} alt="" width="" height="" />
+            <div class="cont">
+                <div class="bannerContText">
+                    <h1>Simple online Human Resource <span>Management System.</span></h1>
+                    <p>WorkDayStream is a complete solution for your company to manage employees and routine tasks.</p>
+                    <div>
+                        <a href="{% url 'signup' %}">
+                            <button class="btn signup">Sign Up Now</button>
+                        </a>
+                        <button class="btn learnmore">Learn More</button>
+                    </div>
+                </div>
+                <div class="bannerContImg">
+                    <img src="{% static '/rnr/assets/img/wd/Frame.png' %}" alt="" width="" height="" />
+                </div>
+            </div>
+        </section>
+        <section class="moreFeatures">
+            <div class="featureImage">
+                <img src="{% static '/rnr/assets/img/wd/FeatureImage.png' %}" alt="" width="" height="" />
+            </div>
+            <div class="featureText">
+                <div class="innerFeatureText">
+                    <span class="tag">MORE FEATURES</span>
+                    <h1>Eliminate the stress and complexity of employee management for you.</h1>
+                    <div class="featureButtons">
+                        <a href="#">
+                            <img src="{% static '/rnr/assets/img/wd/Onboading.png' %}" alt="" width="" height="" />
+                            <span>Onboading</span>
+                        </a>
+                        <a href="#">
+                            <img src="{% static '/rnr/assets/img/wd/ProjectManagement.png' %}" alt="" width="" height="" />
+                            <span>Project Management</span>
+                        </a>
+                        <a href="#">
+                            <img src="{% static '/rnr/assets/img/wd/PRO.png' %}" alt="" width="" height="" />
+                            <span>PRO Tracking</span>
+                        </a>
+                        <a href="#">
+                            <img src="{% static '/rnr/assets/img/wd/Payroll.png' %}" alt="" width="" height="" />
+                            <span>Payroll Management</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <img class="featuresDots" src="{% static '/rnr/assets/img/wd/FeaturesDots.png' %}" alt="" width="" height="" />
+        </section>
+        <section class="whoIsUsing">
+            <img class="UsingTopLeftWave" src="{% static '/rnr/assets/img/wd/UsingTopLeftWave.png' %}" alt="" width="" height="" />
+            <img class="UsingTopRightCircle" src="{% static '/rnr/assets/img/wd/UsingTopRightCircle.png' %}" alt="" width="" height="" />
+            <img class="UsingLeftBottomCircle" src="{% static '/rnr/assets/img/wd/UsingLeftBottomCircle.png' %}" alt="" width="" height="" />
+            <img class="UsingLeftBottomDot" src="{% static '/rnr/assets/img/wd/UsingLeftBottomDot.png' %}" alt="" width="" height="" />
+            <img class="UsingRightBottomWave" src="{% static '/rnr/assets/img/wd/UsingRightBottomWave.png' %}" alt="" width="" height="" />
+            <img class="UsingLeftMiddleDot" src="{% static '/rnr/assets/img/wd/UsingLeftMiddleDot.png' %}" alt="" width="" height="" />
+            <img class="UsingRightMiddleDot" src="{% static '/rnr/assets/img/wd/UsingRightMiddleDot.png' %}" alt="" width="" height="" />
+            <div class="everyKind">
+                <span class="tag">WHO IS USING</span>
+                <h1 class="main">Tool for every kind of business</h1>
+                <p class="kindofBusiness">Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus
+                    id quod maxime placeat
+                    facere possimus.</p>
+                <div class="usingCards">
+                    <div class="whoCard">
+                        <div class="cardImg">
+                            <img src="{% static '/rnr/assets/img/wd/whoStandard.png' %}" alt="" width="" height="" />
+                        </div>
+                        <h1>Standard</h1>
+                        <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit minus.</p>
+                        <a href="#">Discover more <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" /></a>
+                    </div>
+                    <div class="whoCard">
+                        <div class="cardImg">
+                            <img src="{% static '/rnr/assets/img/wd/whoProfessional.png' %}" alt="" width="" height="" />
+                        </div>
+                        <h1>Professional</h1>
+                        <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit minus.</p>
+                        <a href="#">Discover more <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" /></a>
+                    </div>
+                    <div class="whoCard">
+                        <div class="cardImg">
+                            <img src="{% static '/rnr/assets/img/wd/whoEnterprise.png' %}" alt="" width="" height="" />
+                        </div>
+                        <h1>Enterprise</h1>
+                        <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit minus.</p>
+                        <a href="#">Discover more <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" /></a>
+                    </div>
+                </div>
+            </div>
+            <div class="additionalFeatures">
+                <div class="adittionalText">
+                    <span class="tag">ADDITIONAL FEATURES</span>
+                    <h1>Track your result with Premium Access Feature</h1>
+                    <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime
+                        placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus temporibus autem eius modi.
+                    </p>
+                    <a href="#">Discover more <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" /></a>
+                </div>
+                <div class="adittionalImage">
+                    <img src="{% static '/rnr/assets/img/wd/AddiitionalFeatureImage.png' %}" alt="" width="" height="" />
+                </div>
+            </div>
+            <div class="outer">
+                <div class="quotation">
+                    <div>
+                        <img src="{% static '/rnr/assets/img/wd/quotationImage.png' %}" alt="" width="" height="" />
+                    </div>
+                    <div>
+                        <h1>"It is really refreshing to work with this software which is truly helpful in the client's preferences."
+                        </h1>
+                        <p><strong>Rebecca Calderon</strong><br />Head of marketing, Apple Inc.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="pricingPlan">
+            <img class="pricePlanMiddleWave" src="{% static '/rnr/assets/img/wd/pricePlanMiddleWave.png' %}" alt="" width="" height="" />
+            <div class="innerPricingPlan">
+                <span class="tag">PRICING PLANS</span>
+                <h1 class="main">Pricing that suits your needs</h1>
+                <p class="main">Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
+                    maxime placeat facere possimus.</p>
+                <div class="pricingPlanCards">
+                    <div class="pricingCard">
+                        <h1>Standard</h1>
+                        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut.</p>
+                        <div class="money">
+                            <h2><span>$</span>0</h2>
+                            <h3>/month</h3>
+                        </div>
+                        <a href="{% url 'signup' %}">
+                            <button class="btn">Get Started</button>
+                        </a>
+                        <ul>
+                            <li>Attendance Management</li>
+                            <li>Employee On Boarding</li>
+                            <li>Payroll Management</li>
+                            <li>Project Management</li>
+                        </ul>
+                    </div>
+                    <div class="pricingCard">
+                        <h1>Professional</h1>
+                        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut.</p>
+                        <div class="money">
+                            <h2><span>$</span>3</h2>
+                            <h3>/month</h3>
+                        </div>
+                        <a href="{% url 'signup' %}">
+                            <button class="btn">Get Started</button>
+                        </a>
+                        <ul>
+                            <li>Attendance Management</li>
+                            <li>Employee On Boarding</li>
+                            <li>Payroll Management</li>
+                            <li>Project Management</li>
+                        </ul>
+                    </div>
+                    <div class="pricingCard">
+                        <h1>Enterprise</h1>
+                        <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut.</p>
+                        <h2 class="enterprise">Contact Us</h2>
+                        <a href="{% url 'contact_page' %}">
+                            <button class="btn">Contact Us</button>
+                        </a>
+                        <ul>
+                            <li>Attendance Management</li>
+                            <li>Employee On Boarding</li>
+                            <li>Payroll Management</li>
+                            <li>Project Management</li>
+                        </ul>
+                    </div>
+                </div>
+                <h4 class="ourClients">Some of our clients</h4>
+                <div class="ourClientsLogo">
+                    <div class="clientlogo">
+                        <img src="{% static '/rnr/assets/img/wd/client1.png' %}" alt="" width="" height="" />
+                    </div>
+                    <div class="clientlogo">
+                        <img src="{% static '/rnr/assets/img/wd/client2.png' %}" alt="" width="" height="" />
+                    </div>
+                    <div class="clientlogo">
+                        <img src="{% static '/rnr/assets/img/wd/client3.png' %}" alt="" width="" height="" />
+                    </div>
+                    <div class="clientlogo">
+                        <img src="{% static '/rnr/assets/img/wd/client4.png' %}" alt="" width="" height="" />
+                    </div>
+                    <div class="clientlogo">
+                        <img src="{% static '/rnr/assets/img/wd/client5.png' %}" alt="" width="" height="" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="ourSoftwareFeature">
+            <img class="ourSoftwareTopLeft" src="{% static '/rnr/assets/img/wd/ourSoftwareTopLeft.png' %}" alt="" width="" height="" />
+            <img class="ourSoftwareBottomRight" src="{% static '/rnr/assets/img/wd/ourSoftwareBottomRight.png' %}" alt="" width="" height="" />
+            <div class="ourFeature">
+                <span class="tag">MORE FEATURES</span>
+                <h2>Find out more from our software</h2>
+                <div class="freeLibrary">
+                    <div class="onlyLibrary">
+                        <img class="main" src="{% static '/rnr/assets/img/wd/freeLibary.png' %}" alt="" width="" height="" />
+                        <h4>Free Library</h4>
+                        <p>Neque porro quisquam est, qui dolorem ipsum.</p>
+                        <a href="#">
+                            <span>See the library</span>
+                            <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" />
+                        </a>
+                    </div>
+                    <div class="onlyLibrary">
+                        <img class="main" src="{% static '/rnr/assets/img/wd/freeLibary.png' %}" alt="" width="" height="" />
+                        <h4>Free Library</h4>
+                        <p>Neque porro quisquam est, qui dolorem ipsum.</p>
+                        <a href="#">
+                            <span>See the library</span>
+                            <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" />
+                        </a>
+                    </div>
+                    <div class="onlyLibrary">
+                        <img class="main" src="{% static '/rnr/assets/img/wd/freeLibary.png' %}" alt="" width="" height="" />
+                        <h4>Free Library</h4>
+                        <p>Neque porro quisquam est, qui dolorem ipsum.</p>
+                        <a href="#">
+                            <span>See the library</span>
+                            <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" />
+                        </a>
+                    </div>
+                    <div class="onlyLibrary">
+                        <img class="main" src="{% static '/rnr/assets/img/wd/freeLibary.png' %}" alt="" width="" height="" />
+                        <h4>Free Library</h4>
+                        <p>Neque porro quisquam est, qui dolorem ipsum.</p>
+                        <a href="#">
+                            <span>See the library</span>
+                            <img src="{% static '/rnr/assets/img/wd/rightLongArrow.png' %}" alt="" width="" height="" />
+                        </a>
+                    </div>
+                </div>
+                <h1>Improve your business and make your work easy</h1>
+                <button onclick="window.location.href='{% url 'signup' %}'" class="btn">Start Free Trail</button>
+            </div>
+        </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %}Dashboard {{ block.super }} {% endblock %}
+{% block content %}
+
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        {% include 'messages.html' %}
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="welcome-box">
+                        <div class="welcome-img">
+                            <img alt="" {% if user.profile_pic %}src="{{ user.profile_pic.url }}"{% endif %}>
+                        </div>
+                        <div class="welcome-det">
+                            <h3>Welcome, {{ user.get_full_name | title }}</h3>
+                            <p>{% now "jS F Y H:i" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-md-8">
+                    <section class="dash-section">
+                        <h1 class="dash-sec-title">Goals<a class="btn btn-primary submit-btn float-right"
+                                                           data-toggle="modal"
+                                                           data-target="#add_todo"
+                                                           href="javascript:void(0);">Add New Goal</a></h1>
+                        <div class="dash-sec-content" style="margin-top: 40px;">
+                            {% for todo in todos %}
+                                <div class="dash-info-list">
+                                    <div class="dash-card {% if todo.is_read == False %}text-danger{% endif %}">
+                                        <div class="dash-card-container">
+                                            <div class="dash-card-content">
+                                                <p {% if todo.is_read == True %}
+                                                    style="text-decoration-line: line-through;" {% endif %}>{{ todo.title }}</p>
+                                                {% if todo.is_read == True %}
+                                                    <span class="badge badge-pill bg-primary float-right">Done</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="dash-card-avatars">
+                                                <a class="primary-color-used" style="margin-right: 10px;"
+                                                   href="{% url 'update_todo' pk=todo.id %}"><i
+                                                        class=" fa fa-check"></i></a>
+                                                <a class="primary-color-used" href="{% url 'delete_todo' pk=todo.id %}"><i
+                                                        class="fa fa-trash-o "></i></a></div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% if todos %}
+                                <div class="card-footer text-center">
+                                    <a class="primary-color-used" href="{% url 'todo' %}">View all goals</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+                    {% if announcements %}
+                        <section class="dash-section">
+                            <h1 class="dash-sec-title">Announcements</h1>
+                            <div class="dash-sec-content" style="margin-top: 40px;">
+                                {% for announcement in announcements %}
+                                    <div class="dash-info-list">
+                                        <div class="dash-card">
+                                            <div class="dash-card-container">
+                                                <div class="dash-card-content">
+                                                    <p>{{ announcement.title }}</p><br>
+                                                </div>
+                                                <div class="dash-card-avatars">
+                                                    <a style="margin-right: 10px; float: right"
+                                                       href="javascript:void(0);" data-toggle="modal"
+                                                       data-target="#show_announcement{{ announcement.id }}"><i
+                                                            class=" fa fa-eye"></i></a>
+                                                </div>
+                                            </div>
+                                            <div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="card-footer text-center">
+                                    <a class="primary-color-used" href="{% url 'announcements' %}">View all
+                                        announcements</a>
+                                </div>
+                            </div>
+                        </section>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4 col-md-4">
+                    <div class="dash-sidebar">
+                        <section>
+                            <h5 class="dash-title">Projects</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="time-list">
+                                        <div class="dash-stats-list">
+                                            <h4>{{ user_total_task }}</h4>
+                                            <p>Total Tasks</p>
+                                        </div>
+                                        <div class="dash-stats-list">
+                                            <h4>{{ user_pending_task }}</h4>
+                                            <p>Pending Tasks</p>
+                                        </div>
+                                    </div>
+                                    <div class="request-btn">
+                                        <div class="dash-stats-list">
+                                            <h4>{{ user_project }}</h4>
+                                            <p>Total Projects</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section>
+                            <h5 class="dash-title">Your Leave</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="time-list">
+                                        <div class="dash-stats-list">
+                                            <h4>{{ taken_leaves }}</h4>
+                                            <p>Leave Taken</p>
+                                        </div>
+                                        <div class="dash-stats-list">
+                                            <h4>{{ remaining_days }}</h4>
+                                            <p>Remaining</p>
+                                        </div>
+                                    </div>
+                                    {% if user.leave_policy %}
+                                        <div class="request-btn">
+                                            <a class="btn btn-primary submit-btn" data-toggle="modal"
+                                               data-target="#add_leave"
+                                               href="javascript:void(0);">Apply Leave</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </section>
+                        <section>
+                            <div class="card card-table flex-fill">
+                                <div class="card-header">
+                                    <h3 class="card-title mb-0">Bookmarks</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table custom-table mb-0">
+                                            <thead>
+                                            </thead>
+                                            <tbody>
+                                            {% for bookmark in bookmarks %}
+                                                <tr>
+                                                    <td>
+                                                        <h2 class="table-avatar">
+                                            <span> {% if bookmark.icon %}
+                                                <img class="avatar" alt="icon"
+                                                     src="{{ bookmark.icon.url }}">
+                                            {% else %}
+                                                <img class="avatar" src="{% static 'assets/img/link.webp' %}"
+                                                     alt="icon">{% endif %}
+                                            </span>
+                                                        </h2><a href="{{ bookmark.link }}"
+                                                                target="_blank">{{ bookmark.name }}</a></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            {#            {% if announcements %}#}
+            {#            <div class="row">#}
+            {#                <div class="col-lg-8 col-md-8">#}
+            {#                    <section class="dash-section">#}
+            {#                        <h1 class="dash-sec-title">Announcements</h1>#}
+            {#                        <div class="dash-sec-content" style="margin-top: 40px;">#}
+            {#                            {% for announcement in announcements %}#}
+            {##}
+            {#                                <div class="dash-info-list">#}
+            {#                                    <div class="dash-card">#}
+            {#                                        <a style="color:inherit; text-decoration: none" href="javascript:void(0);"#}
+            {#                                           data-toggle="modal" data-target="#show_announcement{{ announcement.id }}">#}
+            {#                                            <div class="dash-card-container">#}
+            {#                                                <div class="dash-card-content">#}
+            {#                                                    <p>{{ announcement.title }}</p><br>#}
+            {#                                                </div>#}
+            {#                                                <div class="dash-card-avatars">#}
+            {#                                                     <a class="primary-color-used" margin-right: 10px;"#}
+            {#                                                    href="javascript:void(0);" data-toggle="modal"#}
+            {#                                                        data-target="#show_announcement{{ announcement.id }}"><i#}
+            {#                                                        class=" fa fa-eye"></i></a>#}
+            {#                                                </div>#}
+            {#                                            </div>#}
+            {#                                        </a>#}
+            {#                                        <div>#}
+            {#                                        </div>#}
+            {#                                    </div>#}
+            {#                                </div>#}
+            {##}
+            {#                            {% endfor %}#}
+            {#                                <div class="card-footer">#}
+            {#                                    <a class="primary-color-used" href="{% url 'announcements' %}">View all#}
+            {#                                        announcements</a>#}
+            {#                                </div>#}
+            {#                        </div>#}
+            {#                    </section>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#            {% endif %}#}
+        </div>
+        <!-- /Page Content -->
+        <div class="notification-popup hide">
+            <p>
+                <span class="task"></span>
+                <span class="notification-text"></span>
+            </p>
+        </div>
+    </div>
+    <!-- /Page Wrapper -->
+    <!-- Add Leave Modal -->
+    <div id="add_leave" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Leave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for error in field.errors %}
+                            <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+                        <input class="form-control" hidden value="{{ remaining_days }}" type="text"
+                               id="remaining_days_hidden">
+                        <input class="form-control" hidden value="{{ now }}" type="text" id="to_day_date">
+                        <div class="form-group">
+                            <label>Leave Type <span class="text-danger">*</span></label>
+                            {% render_field leave_form.leave_type class="form-control" %}
+                            {% render_field leave_form.leave_type.error %}
+                        </div>
+                        <div class="form-group">
+                            <label>From <span class="text-danger">*</span></label>
+                            {% render_field leave_form.leave_from class="form-control" %}
+                            {% render_field leave_form.leave_from.error %}
+                        </div>
+                        <div class="form-group">
+                            <label>To <span class="text-danger">*</span></label>
+                            {% render_field leave_form.leave_to class="form-control" %}
+                            {% render_field leave_form.leave_to.error %}
+                        </div>
+                        <div class="form-group">
+                            <label>Number of days <span class="text-danger">*</span></label>
+                            {% render_field leave_form.requested_days %}
+                        </div>
+                        <div class="form-group">
+                            <label>Remaining Leaves <span class="text-danger">*</span></label>
+                            <input class="form-control" readonly value="{{ remaining_days }}" type="text"
+                                   id="remaining_days">
+                        </div>
+                        <div class="form-group">
+                            <label>Leave Reason <span class="text-danger">*</span></label>
+                            {% render_field leave_form.reason rows="4" class="form-control" %}
+                            {% render_field leave_form.reason.error %}
+                        </div>
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Leave Modal -->
+
+    <!-- Add Todo Modal -->
+    <div id="add_todo" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Goal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'todo' %}">
+                        {% csrf_token %}
+                        {% for error in field.errors %}
+                            <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+
+
+                        <div class="form-group">
+                            <label>Goal Details<span class="text-danger">*</span></label>
+                            {% render_field todo_form.title rows="4" class="form-control" %}
+                            {% render_field todo_form.title.error %}
+                        </div>
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Add Todo Modal -->
+
+    <!-- Show Announcement Detail Modal -->
+    {% for announcement in announcements %}
+        <div id="show_announcement{{ announcement.id }}" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalLongTitle">{{ announcement.title }}</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p style="white-space: pre-line"> {{ announcement.description }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary submit-btn" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <!-- /Show Announcement Detail Modal -->
+
+{% endblock %}

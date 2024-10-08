@@ -1,0 +1,226 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %} Bookmarks {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Bookmark</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Bookmark</li>
+                        </ul>
+                    </div>
+                    <div class="col-auto float-right ml-auto">
+                        <a href="javascript:void(0);" class="btn add-btn" data-toggle="modal"
+                           data-target="#add_bookmark"><i
+                                class="fa fa-plus"></i> Add Bookmark</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <!-- Search Filter -->
+            {#            <form method="post" id="bookmark-search-form"  class="row filter-row">#}
+            {#                {% csrf_token %}#}
+            {#                <div class="col-sm-6 col-md-3">#}
+            {#                    <div class="form-group form-focus select-focus">#}
+            {#                        <select class="select floating" name="user_id">#}
+            {#                            <option value="">-----</option>#}
+            {#                            <option value="None">None</option>#}
+            {#                            {% for user in users %}#}
+            {#                                <option value="{{ user.id }}">{{ user }}</option>#}
+            {#                            {% endfor %}#}
+            {#                        </select>#}
+            {#                        <label class="focus-label">Employee Name</label>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-sm-6 col-md-3">#}
+            {#                    <div class="form-group form-focus select-focus">#}
+            {#                        <select name="status" class="select floating">#}
+            {#                            <option value=""> -------</option>#}
+            {#                            <option value="Stocked"> Stocked</option>#}
+            {#                            <option value="Deployed"> Deployed</option>#}
+            {#                            <option value="Assigned"> Assigned</option>#}
+            {#                            <option value="Damaged"> Damaged</option>#}
+            {#                        </select>#}
+            {#                        <label class="focus-label">Status</label>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-sm-12 col-md-4">#}
+            {#                    <div class="row">#}
+            {#                        <div class="col-sm-8 col-md-8">#}
+            {#                            <div class="form-group form-focus">#}
+            {#                                <input name="bookmark_name" type="text" class="form-control floating">#}
+            {#                                <label class="focus-label">Bookmark Name</label>#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-sm-6 col-md-2">#}
+            {#                    <button type="submit" class="btn btn-success btn-block"> Search</button>#}
+            {#                </div>#}
+            {#            </form>#}
+            <!-- /Search Filter -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th>Bookmark Name</th>
+                                <th>Bookmark Link</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody id="bookmark-search-table">
+                            {% for bookmark in bookmarks %}
+                                <tr id="bookmark-{{ bookmark.id }}">
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <span> {% if bookmark.icon %}
+                                                <img class="avatar" alt="icon"
+                                                     src="{{ bookmark.icon.url }}">
+                                            {% else %}
+                                                <img class="avatar" src="{% static 'assets/img/link.webp' %}"
+                                                     alt="icon">{% endif %}
+                                            </span>
+                                        </h2>
+                                        <strong>{{ bookmark.name }}</strong>
+                                    </td>
+                                    <td><a href="{{ bookmark.link }}" target="_blank">{{ bookmark.link }}</a></td>
+                                    <td class="text-center">
+                                        <a class="primary-color-used" href="javascript:void(0);">
+                                            {% if bookmark.marked %}
+                                                <i class="fa fa-bookmark m-r-5"></i> Marked
+                                            {% else %}
+                                                <i class="fa fa-bookmark-o m-r-5"></i> Unmarked
+                                            {% endif %}
+                                        </a>
+                                    </td>
+                                    <td class="text-right">
+                                        <a class="EditBookmark primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                           data-BookmarkEditURL="{% url 'bookmark_edit' pk=bookmark.id %}" data-target="#edit_bookmark"><i
+                                                class="fa fa-pencil m-r-5"></i></a>
+                                        <a class="myDeleteBookmark primary-color-used"
+                                           href="javascript:void(0);" data-toggle="modal"
+                                           data-BookmarkDeleteURL="{% url 'bookmark_delete' pk=bookmark.id %}"
+                                           data-target="#delete_bookmark">
+                                            <i class="fa fa-trash-o m-r-5"></i></a>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Add Asset Modal -->
+        <div id="add_bookmark" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Bookmark</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'bookmarks' %}">
+                            {% csrf_token %}
+
+
+                            <div class="form-group">
+                                <label>Bookmark Name</label>
+                                {% render_field bookmarkForm.name class="form-control" required="required" %}
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Bookmark Link</label>
+                                {% render_field bookmarkForm.link class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label>Bookmark Icon</label>
+                                {% render_field bookmarkForm.icon class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block">Status <span class="text-danger">*</span></label>
+                                <div class="status-toggle">
+                                    {% render_field bookmarkForm.marked class="check" id='marked' %}
+                                    <label for="marked" class="checktoggle">checkbox</label>
+                                </div>
+                            </div>
+
+
+                            <div class="submit-section">
+                                <button class="btn btn-primary submit-btn">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Asset Modal -->
+
+        <!-- Edit Asset Modal -->
+        <div id="edit_bookmark" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Bookmark</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="bookmark_edit_form" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Edit Asset Modal -->
+
+        <!-- Delete Asset Modal -->
+        <div class="modal custom-modal fade" id="delete_bookmark" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Bookmark</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="DeleteBookmark" href=""
+                                       class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Delete Asset Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}

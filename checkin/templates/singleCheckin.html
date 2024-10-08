@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <section id="content">
+  <section class="vbox">
+    <section class="scrollable padder">
+
+
+<ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+  <!--<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>-->
+  <!--<li class="active">Jobs</li>-->
+  <a options="{:title=>&quot;{{checkin.name}}&quot;}" href="/company/employees/288">{{checkin.name}}</a> / <a options="{:title=>&quot;ATTENDANCES&quot;}" href="/company/employees/288/attendances">ATTENDANCES</a> / {{ date }}
+</ul>
+
+
+      <div class="col-sm-12">
+        <section class="panel panel-default bg-white">
+          <header class="panel-heading" style="background:#FFF;margin-left:10px;">
+            <div class="pull-right">
+              <!--<a class="btn btn-primary" href="">Edit</a>-->
+            </div>
+            <strong><h3>Employee Details</h3></strong>
+          </header>
+          <div style="padding:25px">
+            <table class="table table-striped m-b-none" cellspacing="0" cellpadding="0" border="0">
+              <tbody>
+              <tr class="row">
+                <th>Name</th>
+                <td>{{checkin.name}}</td>
+              </tr>
+              <tr class="row">
+                <th>Checkin Time</th>
+                <td>{{checkin_time}}</td>
+              </tr>
+              <tr class="row">
+                <th>checkout Time</th>
+                <td>{{checkout_time}}</td>
+              </tr>
+              <tr class="row">
+                <th>Date</th>
+                <td>{{ date }}</td>
+              </tr>
+              <tr class="row">
+                <th>Total Hours</th>
+                <td>{{hours}}</td>
+              </tr>
+              <tr class="row">
+                <th>Comments</th>
+                <td>{{checkin.comment}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </section>
+</section>
+{% endblock %}

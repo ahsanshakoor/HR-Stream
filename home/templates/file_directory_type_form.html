@@ -1,0 +1,11 @@
+{% load widget_tweaks %}
+<form id="edit_file_directory_form" action="{% url 'editFileDirectoryType' file_directory_type.id %}" method="post">{% csrf_token %}
+    <div class="form-group">
+        <label>File Directory Type Name <span class="text-danger">*</span></label>
+{#        <input class="form-control" type="text" name="dep_name" required="required">#}
+        {% render_field form.name class="form-control" required="required"%}
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn float-right">Save</button>
+    </div>
+</form>

@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% block content %}
+
+
+
+
+    {##}
+    {#  Home Ttile#}
+    <div class="m-b-md" id="name-com">
+        <a href="#" class="hidden-xs pull-right" title="Help"><i class="fa fa-question-circle"
+                                                                               style="color:#8EC165;font-size:16px;"></i></a>
+        <h3 class="m-b-none"></h3>
+        <small>Welcome back, {{ user.username }}</small>
+    </div>
+    {#    end home title#}
+
+
+    {#    working details#}
+    <div>
+
+        <section class="panel panel-default">
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light">
+    <span class="fa-stack fa-2x pull-left m-r-sm">
+                      <i class="fa fa-circle fa-stack-2x text-grey"></i>
+                      <i class="fa fa-sort-numeric-asc fa-stack-1x text-info"></i>
+                       <span class="easypiechart pos-abt easyPieChart" data-percent="300" data-line-width="4"
+                             data-track-color="#fff" data-scale-color="false" data-size="50" data-animate="2000"
+                             data-update="0" style="width: 50px; height: 50px; line-height: 50px;"><canvas width="50"
+                                                                                                           height="50"></canvas></span>
+                    </span>
+                    <a class="clear" href="#" ata-placement="bottom" data-toggle="tooltip" title=""
+                       data-original-title="Hours since you are clocked in your attendance">
+                        <span class="h3 block m-t-xs"><strong>{{ last_checkin_ago }}</strong></span>
+                        <small class="text-muted text-uc">Hours Since Checked-In</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                      <i class="fa fa-circle fa-stack-2x text-grey"></i>
+                      <i class="fa fa-calendar fa-stack-1x text-info"></i>
+                        <!--<span class="easypiechart pos-abt" data-percent="100" data-line-width="4" data-track-Color="#fff"-->
+                        <!--data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="2000" data-target="#lea333v" data-update="3000"></span>-->
+                    </span>
+                    <a class="clear" href="#" ata-placement="bottom" data-toggle="tooltip" title=""
+                       data-original-title="Total approved leaves during this cycle">
+                        <span class="h3 block m-t-xs"><strong id="leav">0</strong></span>
+                        <small class="text-muted text-uc">Total Leaves</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                      <i class="fa fa-circle fa-stack-2x text-grey"></i>
+                      <i class="fa fa-clock-o fa-stack-1x text-info"></i>
+                        <!--<span class="easypiechart pos-abt" data-percent="100" data-line-width="3" data-track-Color="#fff"-->
+                        <!--data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="3000" data-target="#loggedho333ur" data-update="5000"></span>-->
+                    </span>
+                    <a class="clear" href="#" ata-placement="bottom" data-toggle="tooltip" title=""
+                       data-original-title="Total time logged during this week">
+                        <span class="h3 block m-t-xs"><strong id="loggedhour">{{ total_logged_hour }}</strong></span>
+                        <small class="text-muted text-uc">Logged Hours</small>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                      <i class="fa fa-circle fa-stack-2x text-grey"></i>
+                      <i class="fa fa-edit fa-stack-1x text-info"></i>
+                    </span>
+                    <a class="clear" href="#" ata-placement="bottom" data-toggle="tooltip" title=""
+                       data-original-title="Total assigned tasks">
+                        <span class="h3 block m-t-xs"><strong id="firers"> {{ assigned_task }}</strong></span>
+                        <small class="text-muted text-uc">Assigned Tasks</small>
+                    </a>
+                </div>
+
+            </div>
+
+            <style>
+                .text-grey {
+                    color: #fff
+                }
+            </style>
+        </section>
+
+    </div>
+    {#    end working details#}
+
+
+    {#    Highchart#}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <div class="" id="working-hours-graph">
+        <section class="panel panel-default">
+            <!--<header class="panel-heading font-bold">Current Month Working Statistics</header>-->
+            <div class="panel-body">
+                <div id="container" style="margin-top:20px;" class="hidden-xs" data-highcharts-chart="1">
+
+                </div>
+
+                <div id="container-small" style="margin-top: 20px;" class="visible-xs" data-highcharts-chart="2">
+
+                </div>
+
+
+                <!--<div id="flot-1ine" style="height:210px"></div>-->
+            </div>
+
+
+            <footer class="panel-footer bg-white no-padder">
+                <div class="row text-center no-gutter">
+                    <div class="col-xs-3 b-r b-light">
+                        <span class="h5 font-bold m-t block">{{ total_hour }}</span>
+                        <small class="text-muted m-b block">Current Month Checked-In Hours </small>
+                    </div>
+                    <div class="col-xs-3 b-r b-light">
+                        <span class="h5 font-bold m-t block">{{ total_logged_hour }}</span>
+                        <small class="text-muted m-b block">Current Month Logged Hours</small>
+                    </div>
+                    <div class="col-xs-3 b-r b-light">
+                        <span class="h5 font-bold m-t block">0.0</span>
+                        <small class="text-muted m-b block">Current Month Leaves</small>
+                    </div>
+                    <div class="col-xs-3">
+                        <span class="h5 m-t block">{{ last_checkin_ago }} minutes Ago</span>
+                        <small class="text-muted m-b block">Last Checkin</small>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    </div>
+    {#    Highchart end#}
+
+    <div class="row">
+
+        {#    todo1#}
+
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="{% static '/apps/css/todo-list.css' %}" rel="stylesheet" type="text/css">
+
+        <div class="col-md-8">
+
+            <main>
+
+                <div class="row mt">
+                    <div class="col-md-12">
+                        <section class="task-panel tasks-widget">
+                            <div class="panel-heading">
+                                <div class="pull-left">
+                                    <h5><i class="fa fa-tasks"></i> Todo List</h5>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="panel-body">
+                                <div class="task-content">
+                                    <ul class="task-list">
+                                        {% for todo in todos %}
+                                            <li>
+                                                <div class="task-checkbox">
+                                                    <a href="{% url 'update_home_todo' pk=todo.id %}"> <input
+                                                            type="checkbox" class="list-child" value=""
+                                                            {% if todo.is_read == True %} checked {% endif %}/></a>
+                                                </div>
+                                                <div class="task-title">
+                                                    <span class="task-title-sp"    {% if todo.is_read == True %}
+                                                          style="text-decoration-line: line-through;" {% endif %}>{{ todo.title }}</span>
+                                                    {% if todo.is_read == True %}
+                                                        <span class="badge bg-theme">Done</span>
+                                                    {% endif %}
+                                                    <div class="pull-right hidden-phone">
+                                                        <a class="btn btn-success btn-xs"
+                                                           href="{% url 'update_home_todo' pk=todo.id %}"><i
+                                                                class=" fa fa-check"></i></a>
+                                                        <a class="btn btn-danger btn-xs"
+                                                           href="{% url 'delete_todo' pk=todo.id %}"><i
+                                                                class="fa fa-trash-o "></i></a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="panel panel-default" style="margin-top:40px;">
+                            <div class="btn-group m-b" data-toggle="buttons">
+                                <label class="btn btn-sm btn-default active">
+                                    <input type="radio" name="options" id="option1"> Assigned Tasks
+                                </label>
+                            </div>
+                            <section class="comment-lis block ml20 mr10" id="assigned_tasks">
+                                {% for assigned in assigned_tasks %}
+                                    <article id="comment-id-2" class="comment-item">
+                                        <!--<span class="fa-stack pull-left m-l-xs">-->
+                                        <!--<i class="fa fa-circle text-info fa-stack-2x"></i>-->
+                                        <!--<i class="fa fa-edit text-white fa-stack-1x"></i>-->
+                                        <!--</span>-->
+                                        <section class="comment-body mb20">
+                                            <header>
+                                                <a href="{% url 'singleTask' pk=assigned.id %}"
+                                                   class="text-info"><strong>{{ assigned.title }}</strong></a>
+                                                <!--was assigned to you by <b></b>-->
+                                                <span class="text-muted text-xs">
+                         12 days ago
+                        </span>
+                                            </header>
+                                            <div><p data-toggle="tooltip" title=""
+                                                    data-original-title="check working of time log">{{ assigned.descreption }}</p>
+                                            </div>
+                                        </section>
+                                    </article>
+                                    <hr>
+                                {% endfor %}
+                                <div class="pull-right">
+                                    <a href="{% url 'task' %}" class="text-info">Show All</a>
+                                </div>
+                                <br>
+                            </section>
+
+                        </section>
+                    </div>
+
+
+                    <style>
+                        .lined-paper {
+                            background-color: white;
+                            background-image: linear-gradient(#FFFFFF 1px, transparent 1px), linear-gradient(#8BD6D6 1px, transparent 1px), linear-gradient(#f3ecec 1px, transparent 1px);
+                            background-position: 30px 0px, 33px 0px, 0 -1px;
+                            background-repeat: repeat-y, repeat-y, repeat;
+                            background-size: 1px 1px, 1px 1px, 30px 30px;
+                            font-family: Georgia, serif;
+                            font-style: italic;
+                            line-height: 30px;
+                            /*padding: 30px 15px 30px 6px !important;*/
+                            padding: 0px 5px 0px 6px !important;
+                            position: relative;
+                        }
+                    </style>
+
+                    <!-- /col-md-12-->
+                </div>
+
+
+            </main>
+
+
+        </div>
+
+
+        {#    end todo#}
+
+
+        {# today's checkin       #}
+        {% if_has_access user.id 'owner hr_requests' %}
+            <div class="col-md-4">
+
+                <div class="panel panel-default col-md-12" style="margin-top:20px;">
+                    <div class="btn-group m-b" data-toggle="buttons">
+                        <label class="btn btn-sm btn-default active" style="margin-left: -15px;">
+                            <input type="radio" name="options" id="option1"> Today's Attendance
+                        </label>
+                    </div>
+                    {% for attend in attendance %}
+                        <section class="comment-list block">
+                            <article id="comment-id-2" class="comment-item">
+                    <span class="fa-stack pull-left m-l-xs">
+                      <i class="fa fa-circle fa-stack-2x" style="color: #E3E3E3!important;"></i>
+                      <i class="fa fa-clock-o text-white fa-stack-1x"></i>
+                    </span>
+                                <section class="comment-body m-b-lg">
+                                    <header>
+                                        <a href="#"><strong></strong></a><strong><a
+                                            href="/company/employees/291">{{ attend.name }}</a></strong> Checked-In
+                                        <span class="text-muted text-xs">
+                         about {{ attend.hour }} hours ago
+                        </span>
+                                    </header>
+                                    <div><p>At {{ attend.checkin }}</p></div>
+                                </section>
+                            </article>
+                        </section>
+                    {% endfor %}
+                    <a href="{% url 'checkin' %}" class="text-info pull-right m-b"> Show All</a>
+
+                </div>
+            </div>
+        {% endif_has_access %}
+        {# end today's checkin   #}
+
+    </div>
+
+
+    <div class="panel-body">
+        <div id="time-log-graph" style="margin-top:20px;" class="hidden-xs" data-highcharts-chart="1">
+
+        </div>
+
+
+    </div>
+
+
+
+
+    <script src="{% static '/apps/scripts/lib/jquery/jquery.min.js' %}"></script>
+    <script src="{% static '/apps/scripts/lib/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script class="include" type="text/javascript"
+            src="{% static '/apps/scripts/lib/jquery.dcjqaccordion.2.7.js' %}"></script>
+    <script src="{% static '/apps/scripts/lib/jquery.scrollTo.min.js' %}"></script>
+    <script src="{% static '/apps/scripts/lib/jquery.nicescroll.js' %}" type="text/javascript"></script>
+    <!--common script for all pages-->
+    <script src="{% static '/apps/scripts/lib/common-scripts.js' %}"></script>
+    <!--script for this page-->
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="{% static '/apps/scripts/lib/tasks.js' %}" type="text/javascript"></script>
+    <script>
+        jQuery(document).ready(function () {
+            TaskList.initTaskWidget();
+        });
+
+        $(function () {
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+        });
+    </script>
+
+    <script type="text/javascript">
+
+        Highcharts.chart('time-log-graph', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '{{ user.username }} - Time Sheet'
+            },
+            credits: {
+                enabled: false
+            },
+            subtitle: {
+                text: 'Current Week'
+            },
+            xAxis: {
+                categories: [
+                    {% for timelog in timelogs %}
+                        '{{ timelog.date }}',
+                    {% endfor %}
+                ]
+            },
+            tooltip: {
+                pointFormat: '<span>{series.name}</span>: <b>{point.y}</b><br/>'
+            },
+            yAxis: {
+                title: {
+                    text: 'Hours'
+                }
+            },
+            plotOptions: {
+                column: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: true,
+                    grouping: true,
+
+
+                },
+                series: {
+                    pointWidth: 50
+                },
+
+            },
+            series: [{
+                name: 'Approved Hours ',
+                data: [
+                    {% for logged in timelog_list %}
+                        {{ logged }},
+                    {% endfor %}
+                ],
+                color: "#3FB4B5"
+            }]
+        });
+
+    </script>
+    <script type="text/javascript">
+
+        Highcharts.chart('container', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: '{{ user.username }} - Attendance'
+            },
+            credits: {
+                enabled: false
+            },
+            subtitle: {
+                text: 'Checked-In Hours'
+            },
+            tooltip: {
+                pointFormat: '<span>{series.name}</span>: <b>{point.y}</b><br/>'
+            },
+            xAxis: {
+                categories: [
+                    {% for checkin in checkin_date %}
+                        "{{ checkin }}",
+                    {% endfor %}
+                ]
+            },
+            yAxis: {
+                title: {
+                    text: 'Hours'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: true
+                }
+            },
+            series: [{
+                name: 'Working Hours',
+                data: [
+                    {% for checkin in checkin_hour %}
+                        {{ checkin }},
+                    {% endfor %}
+                ]
+                ,
+                color: "#4cc0c1"
+            }]
+
+        });
+
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% block title %}Assign Policies {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <form method="post" action="{% url 'add_custom_policy' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group form-focus select-focus">
+                            <select class="select floating" id="id_policy_type" name="policy_type">
+                                <option></option>
+                                <option id="1">Payroll Policy</option>
+                                <option id="5">Attendance Policy</option>
+                                <option id="3">Leave Policy</option>
+                                <option id="7">Health Insurance</option>
+
+                            </select>
+                            <label class="focus-label">Policy Type</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group form-focus select-focus">
+                            <select class="select floating" id="id_policy" name="policy">
+                            </select>
+                            <label class="focus-label">Policy Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group leave-duallist m-t-30">
+                    <div class="row">
+                        <div class="col-lg-5 col-sm-5">
+                            <label>Unassigned Employees</label>
+                            <select name="customleave_from" id="customleave_select" class="form-control"
+                                    size="5"
+                                    multiple="multiple">
+                            </select>
+                        </div>
+                        <div class="multiselect-controls col-lg-2 col-sm-2 m-t-30">
+                            <button type="button" id="customleave_select_rightAll"
+                                    class="btn btn-block btn-white"><i
+                                    class="fa fa-forward"></i></button>
+                            <button type="button" id="customleave_select_rightSelected"
+                                    class="btn btn-block btn-white"><i
+                                    class="fa fa-chevron-right"></i></button>
+                            <button type="button" id="customleave_select_leftSelected"
+                                    class="btn btn-block btn-white"><i
+                                    class="fa fa-chevron-left"></i></button>
+                            <button type="button" id="customleave_select_leftAll"
+                                    class="btn btn-block btn-white"><i
+                                    class="fa fa-backward"></i></button>
+                        </div>
+                        <div class="col-lg-5 col-sm-5">
+                            <label>Assigned Employees</label>
+                            <select name="customleave_to" id="customleave_select_to" class="form-control"
+                                    size="8"
+                                    multiple="multiple"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button class="btn btn-primary submit-btn float-right">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

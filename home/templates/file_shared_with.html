@@ -1,0 +1,80 @@
+{% load static %}
+<form method="post" action="{% url 'share_file' file=file.id %}" class="chat-user-list share-file-scroll">
+    {% csrf_token %}
+    <li>
+        {#        <a href="javascript:void(0)">#}
+        <div class="media">
+                        <span class="avatar">
+                            <img src="{% static 'assets/img/user.jpg' %}"
+                                 alt="Profile Pic"></span>
+            <div class="media-body align-self-center text-nowrap">
+                <div class="user-name">All</div>
+            </div>
+            <div class="float-right">
+                <input class="check" type="checkbox" name="share_all" id="share_all">
+                <label for="share_all" class="checktoggle">checkbox</label>
+            </div>
+        </div>
+        {#    </a>#}
+    </li>
+
+    {% for member in members %}
+        <li>
+            {#            {% if member.id in already_shared %} <a href="javascript:void(0)">#}
+            {#                <div class="media">#}
+            {#                    <span class="avatar">#}
+            {#                        {% if member.profile_pic %}#}
+            {#                            <img alt="Profile Pic" src="{{ member.profile_pic.url }}">#}
+            {#                        {% else %}#}
+            {#                            <img src="{% static 'assets/img/user.jpg' %}"#}
+            {#                                 alt="Profile Pic">#}
+            {#                        {% endif %}</span>#}
+            {#                    <div class="media-body align-self-center text-nowrap">#}
+            {#                        <div class="user-name">{{ member }}</div>#}
+            {#                        <span class="designation">{{ member.role.last }}</span>#}
+            {#                        <span class="designation"><i class="fa fa-share"></i>shared</span>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="status-toggle">#}
+            {#                    <input class="check" type="text" id="radio-{{ member.id }}">#}
+            {#                    <label for="radio-{{ member.id }}" class="checktoggle">checkbox</label>#}
+            {#                </div>#}
+            {#            </a>#}
+            {#            {% else %}#}
+            {#            <a href="{% url 'share_file' file=file.id user=member.id %}">#}
+            <div class="media">
+                        <span class="avatar">{% if member.profile_pic %}
+                            <img alt="Profile Pic" src="{{ member.profile_pic.url }}">{% else %}
+                            <img src="{% static 'assets/img/user.jpg' %}"
+                                 alt="Profile Pic">{% endif %}</span>
+                <div class="media-body align-self-center text-nowrap">
+                    <div class="user-name">{{ member }}</div>
+                    <span class="designation">{{ member.role.last }}</span>
+                </div>
+                <div class="float-right">
+                    <input class="check" type="checkbox" name="share" id="{{ member.id }}" value="{{ member.id }}"
+                           {% if member in already_shared %}checked{% endif %}>
+                    <label for="{{ member.id }}" class="checktoggle">checkbox</label>
+                </div>
+            </div>
+
+
+            {#            </a>#}
+            {#                </div>#}
+            {#            {% endif %}#}
+
+        </li>
+    {% endfor %}
+
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>
+<script src="../../static/assets/js/jquery-3.2.1.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#share_all').click(function () {
+            $('input[type="checkbox"]').prop('checked', this.checked);
+        })
+    });
+</script>

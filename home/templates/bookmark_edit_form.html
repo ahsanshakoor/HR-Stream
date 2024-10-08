@@ -1,0 +1,26 @@
+{% load widget_tweaks %}
+<form method="post" enctype="multipart/form-data" action="{% url 'bookmark_form_edit' pk=bookmark_id %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>Bookmark Name</label>
+        {% render_field bookmarkForm.name class="form-control" required="required" %}
+    </div>
+    <div class="form-group">
+        <label>Bookmark Link</label>
+        {% render_field bookmarkForm.link class="form-control" %}
+    </div>
+    <div class="form-group">
+        <label>Bookmark Icon</label>
+        {% render_field bookmarkForm.icon class="form-control" %}
+    </div>
+    <div class="form-group">
+        <label class="d-block">Status <span class="text-danger">*</span></label>
+        <div class="status-toggle">
+            {% render_field bookmarkForm.marked class="check" id='marked_edit' %}
+            <label for="marked_edit" class="checktoggle">checkbox</label>
+        </div>
+    </div>
+    <div class="submit-section">
+        <button class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>
