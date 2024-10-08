@@ -1,0 +1,57 @@
+{% load widget_tweaks %}
+<form method="post" enctype="multipart/form-data" action="{% url 'add_card' pk=board_id %}">
+    {% csrf_token %}
+    {% render_field form.board hidden="hidden" %}
+    <div class="form-group">
+        <label>Task Name</label>
+        {% render_field form.name class="form-control" %}
+    </div>
+    <div class="form-group">
+        <label>Task Description</label>
+        {% render_field form.description class="form-control" row='4' %}
+    </div>
+    <div class="form-group">
+        <label>Task Status</label>
+        {% render_field form.status class="form-control select" %}
+    </div>
+    <div class="form-group">
+        <label>Task Priority</label>
+        {% render_field form.priority class="form-control select" %}
+    </div>
+    <div class="form-group">
+        <label>Task Progress</label>
+        {% render_field form.progress class="form-control select" %}
+    </div>
+    <div class="form-group">
+        <label>Due Date</label>
+        <div >{% render_field form.due_date class="form-control" type="date" %}</div>
+    </div>
+    <div class="form-group">
+        <label>Task Assignee</label>
+        <div class="task-follower-list">
+            {% render_field form.assign_to %}
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Task Followers</label>
+        <div class="task-follower-list">
+            {% render_field form.follower %}
+
+        </div>
+    </div>
+    {{ fileformset.management_form }}
+    {% for fileform in fileformset %}
+        {% for hidden in  fileform.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <div class="form-group">
+            <label>Upload Files</label>
+            {% render_field fileform.file class="form-control uploaded_file" %}
+            {% render_field fileform.error %}
+        </div>
+    {% endfor %}
+    <div class="submit-section text-center">
+        <button class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

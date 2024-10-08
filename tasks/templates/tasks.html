@@ -1,0 +1,214 @@
+{% extends 'base_project_task.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Project Tasks {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        {% include 'messages.html' %}
+        <div class="chat-main-row">
+            <div class="chat-main-wrapper">
+                <div class="col-lg-12 message-view task-view task-left-sidebar">
+                    <div class="chat-window">
+                        <div class="fixed-header">
+                            <div class="navbar">
+                                {% if project %}
+                                    <div class="float-left mr-auto">
+                                        <div class="add-task-btn-wrapper">
+												<span class="add-task-btn btn btn-white btn-sm">
+													Add Task
+												</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <a class="task-chat profile-rightbar float-right" id="task_chat"
+                                   href="javascript:void(0);"><i class="fa fa fa-comment"></i></a>
+                                {#                                <ul class="nav float-right custom-menu">#}
+                                {#                                    <li class="nav-item dropdown dropdown-action">#}
+                                {#                                        <a href="" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i#}
+                                {#                                                class="fa fa-cog"></i></a>#}
+                                {#                                        {% if project %}#}
+                                {#                                        <div class="dropdFown-menu dropdown-menu-right">#}
+                                {#                                            <a class="dropdown-item" href="{% url 'tasks_with_status' pk=project.id status='pending' %}" >Pending Tasks</a>#}
+                                {#                                            <a class="dropdown-item" href="{% url 'tasks_with_status' pk=project.id status='Finished'  %}" >Completed Tasks</a>#}
+                                {#                                            <a class="dropdown-item" href="{% url 'tasks_project' pk=project.id %}">All Tasks</a>#}
+                                {#                                        </div>#}
+                                {#                                        {% endif %}#}
+                                {#                                    </li>#}
+                                {#                                </ul>#}
+                            </div>
+                        </div>
+                        <div class="chat-contents">
+                            <div class="chat-content-wrap">
+                                <div class="chat-wrap-inner">
+                                    <div class="chat-box">
+                                        <div class="task-wrapper">
+                                            <div class="task-list-container">
+                                                <div class="task-list-body">
+                                                    <ul id="task-list">
+                                                        {% for task in project.task_project.all %}
+                                                            <li {% if task.status == 'Finished' %}
+                                                                class="task completed" {% else %}
+                                                                class="task" {% endif %}>
+                                                                <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span data-TasktEdit="{% url 'update_task_status' task.id %}"
+                                                                                  class="action-circle large complete-btn"
+                                                                                    {% if task.status == 'Finished' %}
+                                                                                  title="Mark Incomplete" {% else %}
+                                                                                  title="Mark Complete" {% endif %}>
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                    <span class="task-label"
+                                                                          data-ChatModal="{% url 'open_chat' pk=task.id %}"
+                                                                          contenteditable="true"
+                                                                          readonly>{{ task.name }}</span>
+                                                                    <span class="task-action-btn task-btn-right">
+																			<span data-ProjectTask="{% url 'assign_task_modal' project_id=project.id task_id=task.id %}"
+                                                                                  class="action-circle large assignee-btn"
+                                                                                  title="Assign">
+																				<i class="material-icons">person_add</i>
+																			</span>
+																			<span data-TasktDelete="{% url 'delete_task' task.id %}"
+                                                                                  class="action-circle large delete-btn"
+                                                                                  title="Delete Task">
+																				<i class="material-icons">delete</i>
+																			</span>
+																		</span>
+                                                                </div>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                                {% if projects %}
+                                                    <div class="task-list-footer">
+                                                        <form method="post" class="new-task-wrapper">
+                                                            {% csrf_token %}
+                                                            {% render_field task_form.project hidden="hidden" %}
+                                                            {% render_field task_form.name id="new-task" placeholder="Enter new task here. . ." %}
+                                                            <span class="error-message hidden">You need to enter a task first</span>
+
+                                                            <button type="submit" class="add-new-task-btn btn">Add
+                                                                Task
+                                                            </button>
+                                                            <span class="btn" id="close-task-panel">Close</span>
+                                                        </form>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="notification-popup hide">
+                                            <p>
+                                                <span class="task"></span>
+                                                <span class="notification-text"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {#                <div class="col-lg-5 message-view task-chat-view task-right-sidebar" id="task_window">#}
+                {##}
+                {#                </div>#}
+            </div>
+        </div>
+
+
+        <!-- Assignee Modal -->
+        <div id="assignee" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Assign to this task</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="assignee-form" class="modal-body">
+                        {#                        <div class="input-group m-b-30">#}
+                        {#                            <input placeholder="Search to add" class="form-control search-input" type="text">#}
+                        {#                            <span class="input-group-append">#}
+                        {#										<button class="btn btn-primary">Search</button>#}
+                        {#									</span>#}
+                        {#                        </div>#}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Assignee Modal -->
+
+        <!-- Task Followers Modal -->
+        <div id="task_followers" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add followers to this task</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group m-b-30">
+                            <input placeholder="Search to add" class="form-control search-input" type="text">
+                            <span class="input-group-append">
+										<button class="btn btn-primary">Search</button>
+									</span>
+                        </div>
+                        <div>
+                            <ul class="chat-user-list">
+                                <li>
+                                    <a href="tasks.html#">
+                                        <div class="media">
+                                            <span class="avatar"><img alt=""
+                                                                      src="assets/img/profiles/avatar-16.jpg"></span>
+                                            <div class="media-body media-middle text-nowrap">
+                                                <div class="user-name">Jeffery Lalor</div>
+                                                <span class="designation">Team Leader</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="tasks.html#">
+                                        <div class="media">
+                                            <span class="avatar"><img alt=""
+                                                                      src="assets/img/profiles/avatar-08.jpg"></span>
+                                            <div class="media-body media-middle text-nowrap">
+                                                <div class="user-name">Catherine Manseau</div>
+                                                <span class="designation">Android Developer</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="tasks.html#">
+                                        <div class="media">
+                                            <span class="avatar"><img alt=""
+                                                                      src="assets/img/profiles/avatar-26.jpg"></span>
+                                            <div class="media-body media-middle text-nowrap">
+                                                <div class="user-name">Wilmer Deluna</div>
+                                                <span class="designation">Team Leader</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn">Add to Follow</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Task Followers Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->
+
+{% endblock %}

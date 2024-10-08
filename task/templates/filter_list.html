@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+    {% block mycss %}
+{#         <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">#}
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link href="{% static '/apps/css/task.css'%}" rel="stylesheet" type="text/css">
+     {% endblock %}
+
+
+    <section id="team" class="pb-5">
+
+        <h5 class="section-title h1">Task</h5>
+        <div class="row">
+            <!-- Team member -->
+            {% for filter_task in filter.qs %}
+
+
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              <div class="image-flip" ontouchstart="this.classList.toggle('hover');">
+                  <div class="mainflip">
+                      <div class="frontside">
+                          <div class="card">
+                              <div class="card-body text-center">
+                                  <p><img class=" img-fluid"{% if filter_task.file %} src="{{ filter_task.file.url }}" {% else %} src="{% static 'layouts/layout/img/avatar3.jpg' %}" {% endif %}></p>
+                                  <h4 class="card-title">{{filter_task.assign_to}}</h4>
+                                  <p class="card-text">{{filter_task.title}}</p>
+                                  <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="backside">
+                          <div class="card">
+                              <div class="card-body text-center mt-4">
+                                  <h4 class="card-title">{{filter_task.title}}</h4>
+                                  <p class="card-text">{{filter_task.description}}.</p>
+                                   <ul class="list-inline">
+                                        <li class="list-inline-item">
+                                            <a class="social-icon text-xs-center" target="_blank" href="{% url 'update_task' pk=filter_task.id %}">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a class="social-icon text-xs-center" target="_blank" href="{% url 'singleTask' pk=filter_task.id %}">
+                                                <i class="fa fa-check"></i>
+                                            </a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a class="social-icon text-xs-center"  href="{% url 'delete_task' pk=filter_task.id %}">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+            {% endfor %}
+            <!-- ./Team member -->
+
+
+
+    </div>
+</section>
+{% endblock %}

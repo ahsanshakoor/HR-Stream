@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% block title %}Expanded Tasks List {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        <div class="chat-main-row">
+            <div class="chat-main-wrapper">
+                <div class="col-lg-7 message-view task-view task-left-sidebar">
+                    <div class="chat-window">
+                        <div class="fixed-header">
+                            <div class="navbar">
+                                <div class="float-left mr-auto">
+                                    <div class="add-task-btn-wrapper">
+                                        <span class="title">{{ board.name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-contents">
+                            <div class="chat-content-wrap">
+                                <div class="chat-wrap-inner">
+                                    <div class="chat-box">
+                                        <div class="task-wrapper">
+                                            <div class="task-list-container">
+                                                <div class="task-list-body">
+                                                    <ul id="task-list">
+                                                        {% for card in cards %}
+                                                            {% if not card.archived %}
+                                                                <li class="task">
+                                                                    <a href="javascript:void(0)" id="GetCard"
+                                                                       data-GetCard="{% url 'get_card' card.id %}">
+                                                                        <div class="task-container">{{ card.name }}</div>
+                                                                    </a>
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {#                <div class="col-lg-5 message-view task-chat-view task-right-sidebar" id="task_window">#}
+                {#                    <div class="chat-window">#}
+                {#                        <div class="chat-contents task-chat-contents">#}
+                {#                            <div class="chat-content-wrap">#}
+                {#                                <div class="chat-wrap-inner">#}
+                {#                                    <div class="chat-box">#}
+                {#                                        <div class="chats">#}
+                {#                                            <h4>Hospital Administration Phase 1</h4>#}
+                {#                                            <div class="task-header">#}
+                {#                                                <div class="assignee-info">#}
+                {#                                                    <a href="tasks.html#" data-toggle="modal" data-target="#assignee">#}
+                {#                                                        <div class="avatar">#}
+                {#                                                            <img alt="" src="assets/img/profiles/avatar-02.jpg">#}
+                {#                                                        </div>#}
+                {#                                                        <div class="assigned-info">#}
+                {#                                                            <div class="task-head-title">Assigned To</div>#}
+                {#                                                            <div class="task-assignee">John Doe</div>#}
+                {#                                                        </div>#}
+                {#                                                    </a>#}
+                {#                                                    <span class="remove-icon">#}
+                {#																<i class="fa fa-close"></i>#}
+                {#															</span>#}
+                {#                                                </div>#}
+                {#                                                <div class="task-due-date">#}
+                {#                                                    <a href="tasks.html#" data-toggle="modal" data-target="#assignee">#}
+                {#                                                        <div class="due-icon">#}
+                {#																	<span>#}
+                {#																		<i class="material-icons">date_range</i>#}
+                {#																	</span>#}
+                {#                                                        </div>#}
+                {#                                                        <div class="due-info">#}
+                {#                                                            <div class="task-head-title">Due Date</div>#}
+                {#                                                            <div class="due-date">Mar 26, 2019</div>#}
+                {#                                                        </div>#}
+                {#                                                    </a>#}
+                {#                                                    <span class="remove-icon">#}
+                {#																<i class="fa fa-close"></i>#}
+                {#															</span>#}
+                {#                                                </div>#}
+                {#                                            </div>#}
+                {#                                            <hr class="task-line">#}
+                {#                                            <div class="task-desc">#}
+                {#                                                <div class="task-desc-icon">#}
+                {#                                                    <i class="material-icons">subject</i>#}
+                {#                                                </div>#}
+                {#                                                <div class="task-textarea">#}
+                {#                                                    <textarea class="form-control" placeholder="Description"></textarea>#}
+                {#                                                </div>#}
+                {#                                            </div>#}
+                {#                                            <hr class="task-line">#}
+                {#                                        </div>#}
+                {#                                    </div>#}
+                {#                                </div>#}
+                {#                            </div>#}
+                {#                        </div>#}
+                {#                        <div class="chat-footer">#}
+                {#                            <div class="project-members task-followers">#}
+                {#                                <span class="followers-title">Followers</span>#}
+                {#                                <a class="avatar" href="tasks.html#" data-toggle="tooltip" title="Jeffery Lalor">#}
+                {#                                    <img alt="" src="assets/img/profiles/avatar-16.jpg">#}
+                {#                                </a>#}
+                {#                                <a class="avatar" href="tasks.html#" data-toggle="tooltip" title="Richard Miles">#}
+                {#                                    <img alt="" src="assets/img/profiles/avatar-09.jpg">#}
+                {#                                </a>#}
+                {#                                <a class="avatar" href="tasks.html#" data-toggle="tooltip" title="John Smith">#}
+                {#                                    <img alt="" src="assets/img/profiles/avatar-10.jpg">#}
+                {#                                </a>#}
+                {#                                <a class="avatar" href="tasks.html#" data-toggle="tooltip" title="Mike Litorus">#}
+                {#                                    <img alt="" src="assets/img/profiles/avatar-05.jpg">#}
+                {#                                </a>#}
+                {#                                <a href="tasks.html#" class="followers-add" data-toggle="modal"#}
+                {#                                   data-target="#task_followers"><i class="material-icons">add</i></a>#}
+                {#                            </div>#}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
+            </div>
+        </div>
+
+        <!-- Show Card Modal -->
+        <div id="show_card_modal" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Task Details</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div id="show_card" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Show Card Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}

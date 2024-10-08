@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <section class="vbox">
+    <section class="scrollable padder">
+      
+
+<ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+  <!--<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>-->
+  <!--<li class="active">Jobs</li>-->
+  <a title="TASKS" href="/company/tasks">TASKS</a> /{{ singletask.title }}
+</ul>
+
+
+      <div class="col-sm-12">
+        <section class="panel panel-default bg-white">
+          <header class="panel-heading" style="background:#FFF;margin-left:10px;">
+            <div class="pull-right">
+               {% if singletask.status != 'finished' %}
+              <a class="btn btn-info btn-sm" href="{% url 'singleTaskUpdate' pk=singletask.id %}">
+                  {% if  singletask.status != 'start' %}
+                      Finish
+                  {% else %}
+                  {{singletask.status}}
+                  {% endif %}
+                      </a>
+                {% if singletask.status != 'start' %}
+              <a class="btn btn-info btn-sm" href="{% url 'time_log' pk=101 log=singletask.id %}">Log Time</a>
+                {% endif %}
+              <a class="btn btn-info btn-sm" href="{% url 'update_task' pk=singletask.id %}"><i class="fa fa-pencil"></i> Edit</a>
+                {% endif %}
+            </div>
+            <strong><h3>{{singletask.title}}</h3></strong>
+
+            <p>{{ singletask.description }}<br></p>
+          </header>
+            <div style="padding:25px">
+              <table class="table table-striped m-b-none" cellspacing="0" cellpadding="0" border="0">
+              <tbody>
+              <tr class="row">
+                <th>Priority</th>
+                <td>{{ singletask.priority }}</td>
+              </tr>
+              <tr class="row">
+                <th>Due Date</th>
+                <td>{{ singletask.due_date}}</td>
+              </tr>
+              <tr class="row">
+                <th>Assign To</th>
+                <td>{{ singletask.assign_to }}</td>
+              </tr>
+              <tr class="row">
+                <th>Channel</th>
+                <td></td>
+              </tr>
+              <tr class="row">
+                <th>Created by</th>
+                <td>{{user.report_to}}</td>
+              </tr>
+              <tr class="row">
+                <th>Created At</th>
+                <td>{{ singletask.created_at }}</td>
+              </tr>
+              <tr class="row">
+                <th>Status</th>
+                <td><b class="badge bg-success">{{ singletask.status }}</b></td>
+              </tr>
+              <tr class="row employment"> <th> </th> <td> Attachments </td> </tr>
+                  <tr class="row">
+                      {% if singletask.file  %}
+                          <th>Attachment: {{ singletask.title }} </th>e
+                          <td><a class="btn btn-info btn-xs"  href="{{ singletask.file.url }}" target="_blank" ><i class="fa fa-download"></i> DOWNLOAD</a></td>
+                      {% else %}
+                          <th> No Attachment for: {{ singletask.title }} </th>
+                          <td><h4  ><i class="fa fa-download"></i> Nothing To DOWNLOAD</h4></td>
+                      {% endif %}
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </section>
+{% endblock %}

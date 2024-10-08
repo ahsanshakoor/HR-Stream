@@ -1,0 +1,42 @@
+{% load widget_tweaks %}
+<form method="post" action="{% url 'add_task_to_form' pk=project_id status=status %}">
+    {% csrf_token %}
+    {% render_field form.project hidden="hidden" %}
+    <div class="form-group">
+        <label>Task Name</label>
+        {% render_field form.name class="form-control" %}
+    </div>
+    <div class="form-group">
+        <label>Task Description</label>
+        {% render_field form.description class="form-control" row='4' %}
+    </div>
+    <div class="form-group">
+        <label>Task Priority</label>
+        {% render_field form.priority class="form-control select" %}
+    </div>
+    <div class="form-group">
+        <label>Task Progress</label>
+        {% render_field form.progress class="form-control select" %}
+    </div>
+    <div class="form-group">
+        <label>Due Date</label>
+        <div >{% render_field form.due_date class="form-control" type="date"%}</div>
+    </div>
+    <div class="form-group">
+        <label>Task Assignee</label>
+        <div class="task-follower-list">
+            {% render_field form.assign_to %}
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Task Followers</label>
+        <div class="task-follower-list">
+            {% render_field form.follower %}
+
+        </div>
+    </div>
+    <div class="submit-section text-center">
+        <button class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>

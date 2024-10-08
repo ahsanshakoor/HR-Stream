@@ -1,0 +1,28 @@
+{% load static %}
+<div>
+    {% for member in members %}
+        <ul class="chat-user-list">
+        <li>
+            <a href="{% url 'assign_task' assignee=member.id task=task_id %}">
+                <div class="media">
+                    <span class="avatar">
+                        <img alt=""
+                                {% if member.profile_pic %}
+                             src="{{ member.profile_pic.url }}"
+                                {% else %}
+                             src="{% static 'assets/img/user.jpg' %}"
+                                {% endif %}>
+                    </span>
+                    <div class="media-body align-self-center text-nowrap">
+                        <div class="user-name">{{ member.get_full_name | title }}</div>
+                        <span class="designation">Designation: {{ member.designation }}</span>
+                    </div>
+                </div>
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{#<div class="submit-section">#}
+{#    <button type="submit" class="btn btn-primary submit-btn">Assign</button>#}
+{#</div>#}

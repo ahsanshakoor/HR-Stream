@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block content %}
+
+    <form class="" action="" method="post" enctype="multipart/form-data">
+
+            {% csrf_token %}
+            <div class="row">
+             <div class="form-group col-sm-3 col-md-2">
+
+              {% render_field form.title %}
+            </div>
+             <div class="form-group col-sm-3 col-md-2">
+
+              {% render_field form.description %}
+            </div>
+            <div class="form-group col-sm-3 col-md-2">
+
+              {% render_field form.assign_to %}
+            </div>
+
+             <div class="form-group col-sm-3 col-md-2">
+              {% render_field form.priority  %}
+            </div>
+            <div class="form-group col-sm-3 col-md-2">
+                {{form.status}}
+            </div>
+
+             <div class="form-group col-sm-3 col-md-2">
+
+              {% render_field form.file  class="form-control uploaded_file" %}
+            </div>
+                 <div class="form-group col-sm-3 col-md-2">
+
+              {% render_field form.due_date %}
+            </div>
+  </div>
+
+
+
+      <button type="submit" class="btn btn-primary">Update Task</button>
+
+    </form>
+
+
+{% endblock %}

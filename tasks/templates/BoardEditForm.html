@@ -1,0 +1,43 @@
+{% load widget_tweaks %}
+
+<form method="post" action="{% url 'edit_task_board' pk=board_id %}">
+    {% csrf_token %}
+    {% render_field board_form.project hidden="hidden" %}
+    <div class="form-group">
+        <label>Task Board Name</label>
+        {% render_field board_form.name class="form-control" %}
+    </div>
+    <div class="form-group task-board-color">
+        <label>Task Board Color</label>
+        <div class="board-color-list">
+            <label class="board-control board-primary">
+                <input name="radio" type="radio" class="board-control-input" value="primary"
+                       checked="">
+                <span class="board-indicator"></span>
+            </label>
+            <label class="board-control board-success">
+                <input name="radio" type="radio" class="board-control-input" value="success">
+                <span class="board-indicator"></span>
+            </label>
+            <label class="board-control board-info">
+                <input name="radio" type="radio" class="board-control-input" value="info">
+                <span class="board-indicator"></span>
+            </label>
+            <label class="board-control board-purple">
+                <input name="radio" type="radio" class="board-control-input" value="purple">
+                <span class="board-indicator"></span>
+            </label>
+            <label class="board-control board-warning">
+                <input name="radio" type="radio" class="board-control-input" value="warning">
+                <span class="board-indicator"></span>
+            </label>
+            <label class="board-control board-danger">
+                <input name="radio" type="radio" class="board-control-input" value="danger">
+                <span class="board-indicator"></span>
+            </label>
+        </div>
+    </div>
+    <div class="m-t-20 text-center">
+        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+    </div>
+</form>

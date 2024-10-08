@@ -1,0 +1,51 @@
+{% load widget_tweaks %}
+<form>
+    <div class="form-group">
+        <label>Task Name</label>
+        {% render_field form.name class="form-control" readonly="readonly" readonly="readonly" %}
+    </div>
+    <div class="form-group">
+        <label>Task Description</label>
+        {% render_field form.description class="form-control" row='4' readonly="readonly" %}
+    </div>
+    <div class="form-group">
+        <label>Task Status</label>
+        {% render_field form.status class="form-control select" readonly="readonly" %}
+    </div>
+    <div class="form-group">
+        <label>Task Priority</label>
+        {% render_field form.priority class="form-control select" readonly="readonly" %}
+    </div>
+    <div class="form-group">
+        <label>Task Progress</label>
+        {% render_field form.progress class="form-control select" readonly="readonly" %}
+    </div>
+    <div class="form-group">
+        <label>Due Date</label>
+        <div>{% render_field form.due_date class="form-control" type="date" readonly="readonly" %}</div>
+    </div>
+    <div class="form-group">
+        <label>Task Assignee</label>
+        <div class="task-follower-list">
+            {% render_field form.assign_to disabled="disabled" %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Task Followers</label>
+        <div class="task-follower-list">
+            {% render_field form.follower disabled="disabled" %}
+        </div>
+    </div>
+
+    {% for fileObj in card.cardfiles.all %}
+        {% if fileObj and fileObj.file %}
+            <div class="">
+                <a href="{{ fileObj.file.url }}" target="_blank"
+                   class="name"><span>{{ fileObj.filename }}</span></a>
+
+                (<span class="time">{{ fileObj.file.size | filesizeformat }}</span>)
+            </div>
+        {% endif %}
+    {% endfor %}
+
+</form>
