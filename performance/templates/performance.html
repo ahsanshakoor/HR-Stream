@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %} Performance{{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Performance</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Performance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+            <form method="post" action="{% url 'performance' %}">
+                {% csrf_token %}
+                <section class="review-section information">
+                    <div class="review-header text-center">
+                        <h3 class="review-title">Employee Basic Information</h3>
+                        <p class="text-muted"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-nowrap review-table mb-0">
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Employee</label>
+                                                        {% render_field performance_form.employee class="form-control" %}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Date</label>
+                                                        {% render_field performance_form.date class="form-control" required="required" %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                <label>Comment</label>
+                                            <div>
+                                                {% render_field performance_form.comment cols="118" rows="3" required="required" %}
+                                            </div>
+                                            {#                                            <div class="form-group">#}
+                                            {#                                                <label for="depart3">Department</label>#}
+                                            {#                                                <input type="text" class="form-control" id="depart3">#}
+                                            {#                                            </div>#}
+                                            {#                                            <div class="form-group">#}
+                                            {#                                                <label for="departa">Designation</label>#}
+                                            {#                                                <input type="text" class="form-control" id="departa">#}
+                                            {#                                            </div>#}
+                                            {#                                            <div class="form-group">#}
+                                            {#                                                <label for="qualif">Qualification: </label>#}
+                                            {#                                                <input type="text" class="form-control" id="qualif">#}
+                                            {#                                            </div>#}
+                                        </td>
+                                        {#                                        <td>#}
+                                        {#                                            <div class="form-group">#}
+                                        {#                                                <label for="doj">Emp ID</label>#}
+                                        {#                                                <input type="text" class="form-control" value="DGT-009">#}
+                                        {#                                            </div>#}
+                                        {#                                            <div class="form-group">#}
+                                        {#                                                <label for="doj">Date of Join</label>#}
+                                        {#                                                <input type="text" class="form-control" id="doj">#}
+                                        {#                                            </div>#}
+                                        {#                                            <div class="form-group">#}
+                                        {#                                                <label for="doc">Date of Confirmation</label>#}
+                                        {#                                                <input type="text" class="form-control" id="doc">#}
+                                        {#                                            </div>#}
+                                        {#                                            <div class="form-group">#}
+                                        {#                                                <label for="qualif1">Previous years of Exp</label>#}
+                                        {#                                                <input type="text" class="form-control" id="qualif1">#}
+                                        {#                                            </div>#}
+                                        {#                                        </td>#}
+                                        {#                                        <td>#}
+                                        {#                                            <div class="form-group">#}
+                                        {#                                                <label for="name1"> RO's Name</label>#}
+                                        {#                                                <input type="text" class="form-control" id="name1">#}
+                                        {#                                            </div>#}
+                                        {#                                            <div class="form-group">#}
+                                        {#                                                <label for="depart1"> RO Designation: </label>#}
+                                        {#                                                <input type="text" class="form-control" id="depart1">#}
+                                        {#                                            </div>#}
+                                        {#                                        </td>#}
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="review-section professional-excellence">
+                    <div class="review-header text-center">
+                        <h3 class="review-title">Professional Excellence</h3>
+                        <p class="text-muted"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered review-table mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th style="width:40px;">#</th>
+                                        <th>Key Performance Indicators</th>
+                                        <th>Total</th>
+                                        <th>Obtained</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{ performance_indicator_form.management_form }}
+                                    {% for form in performance_indicator_form %}
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{% render_field form.name class="form-control" %}</td>
+                                            <td>{% render_field form.total_weightage class="form-control" %}</td>
+                                            <td>{% render_field form.obtained_weightage %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}

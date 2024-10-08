@@ -1,0 +1,195 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %} Performance Indicator{{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+        {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Performance Indicator</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Performance</li>
+                        </ul>
+                    </div>
+                    <div class="col-auto float-right ml-auto">
+                        <a href="performance-indicator.html#" class="btn add-btn" data-toggle="modal"
+                           data-target="#add_indicator"><i class="fa fa-plus"></i> Add New</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th>Performance Indicator</th>
+                                <th>Points</th>
+                                <th>Added By</th>
+                                <th>Create At</th>
+                                <th>Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for indicator in indicators %}
+                            <tr>
+                                <td>{{ indicator.name }}</td>
+                                <td>{{ indicator.total_weightage }}</td>
+                                <td>
+                                    <h2 class="table-avatar">
+                                                        <a href="{% url 'myprofile_detail' indicator.created_by.id %}" >
+                                                            <img class="avatar" alt=""
+                                                                {% if indicator.created_by.profile_pic %}
+                                                                 src="{{ indicator.created_by.profile_pic.url }}"
+                                                                {% endif %}>
+                                                        </a>
+                                                        <a href="{% url 'myprofile_detail' indicator.created_by.id %}">{{ indicator.created_by.get_full_name }}
+                                                            <span>{{ indicator.created_by.role.last }}</span></a>
+                                                    </h2>
+                                </td>
+                                <td>
+                                    {{ indicator.created_at}}
+                                </td>
+                                <td>
+                                    <div class="dropdown action-label">
+                                        <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                           href="performance-indicator.html#" data-toggle="dropdown"
+                                           aria-expanded="false">
+                                            {% if indicator.status %}
+                                            <i class="fa fa-dot-circle-o text-success"></i> Active
+                                            {% else %}
+
+                                            <i class="fa fa-dot-circle-o text-danger"></i> Inactive
+                                            {% endif %}
+                                        </a>
+{#                                        <div class="dropdown-menu">#}
+{#                                            <a class="dropdown-item" href="performance-indicator.html#"><i#}
+{#                                                    class="fa fa-dot-circle-o text-success"></i> Active</a>#}
+{#                                            <a class="dropdown-item" href="performance-indicator.html#"><i#}
+{#                                                    class="fa fa-dot-circle-o text-danger"></i> Inactive</a>#}
+{#                                        </div>#}
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="performance-indicator.html#" class="action-icon dropdown-toggle"
+                                           data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item EditIndicator" data-IndicatorEditURL="{% url 'indicator_edit' pk=indicator.id %}" href="javascript:void(0)"
+                                               data-toggle="modal" data-target="#edit_indicator"><i
+                                                    class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item IndicatorDelete" href="performance-indicator.html#"
+                                               data-toggle="modal" data-IndicatorDelete="{% url 'indicator_delete' pk=indicator.id %}" data-target="#delete_indicator"><i
+                                                    class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Add Performance Indicator Modal -->
+        <div id="add_indicator" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Set New Performance Indicator</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'indicator' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Performance Indicator</label>
+                                {% render_field indicator_form.name class="form-control" required="required" %}
+                            </div>
+                            <div class="form-group">
+                                <label>points</label>
+                                {% render_field indicator_form.total_weightage class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block">Status <span class="text-danger">*</span></label>
+                                <div class="status-toggle">
+                                    {% render_field indicator_form.status class="check" id='status' %}
+                                    <label for="status" class="checktoggle">checkbox</label>
+                                </div>
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Performance Indicator Modal -->
+
+        <!-- Edit Performance Indicator Modal -->
+        <div id="edit_indicator" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Performance Indicator</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="indicator_edit_form">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Edit Performance Indicator Modal -->
+
+        <!-- Delete Performance Indicator Modal -->
+        <div class="modal custom-modal fade" id="delete_indicator" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Performance Indicator List</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="IndicatorDeleteLink" href="" class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Delete Performance Indicator Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->
+
+    </div>
+{% endblock %}

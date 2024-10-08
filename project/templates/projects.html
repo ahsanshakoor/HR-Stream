@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% block title %} Projects{{ block.super }} {% endblock %}
+{% block content %}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+        {% include 'messages.html' %}
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Projects</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Projects</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    {% if user.user_type != 'client' %}
+                        {% if_has_access user.id 'owner projects' %}
+                            <a href="javascript:void(0)" class="btn add-btn" data-toggle="modal"
+                               data-target="#create_project"><i class="fa fa-plus"></i> Create Project</a>
+                        {% endif_has_access %}
+                    {% endif %}
+                    <div class="view-icons">
+                        <a href="javascript:void(0)" class="grid-view btn btn-link active"><i class="fa fa-th"></i></a>
+                        <a href="{% url 'project_list' list='list' %}" class="list-view btn btn-link"><i
+                                class="fa fa-bars"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+    {% if user.user_type != 'client' %}
+        <!-- Search Filter -->
+        <form method="post" action="{% url 'project_search' %}" class="row filter-row">
+            {% csrf_token %}
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" name="client_id">
+                        <option></option>
+                        {% for client in clients %}
+                            <option value="{{ client.id }}">{{ client.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="focus-label">Client Name</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" name="user_id">
+                        <option></option>
+                        {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="focus-label">Employee Name</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" name="lead">
+                        <option></option>
+                        {% for lead in leads %}
+                            <option value="{{ lead.id }}">{{ lead }}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="focus-label">Team Lead</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <button type="submit" class="btn btn-success btn-block"> Search</button>
+            </div>
+        </form>
+        <!-- Search Filter -->
+    {% endif %}
+        <div class="row">
+            {% for project in projects %}
+            <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                    {% if user.user_type != 'client' %}
+                        {% if_has_access user.id 'owner projects' %}
+                            <div class="dropdown dropdown-action profile-action">
+                            <a href="javascript:void(0)" class="action-icon dropdown-toggle"
+                               data-toggle="dropdown" aria-expanded="false"><i
+                                    class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a id="ProjectEdit"
+                                   data-ProjectEdit="{% url 'project_edit' pk=project.id type='simple' %}"
+                                   class="dropdown-item" href="javascript:void(0)" data-toggle="modal"><i
+                                        class="fa fa-pencil m-r-5"></i> Edit</a>
+                                <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal"
+                                   data-target="#delete_project-{{ project.id }}"><i
+                                        class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            </div>
+                        </div>
+                        {% endif_has_access %}
+                    {% endif %}
+                        <h4 class="project-title"><a
+                                href="{% url 'project' pk=project.id %}">{{ project.name }}</a></h4>
+                        {#									<small class="block text-ellipsis m-b-15">#}
+                        {#										<span class="text-xs">1</span> <span class="text-muted">open tasks, </span>#}
+                        {#										<span class="text-xs">9</span> <span class="text-muted">tasks completed</span>#}
+                        {#									</small>#}
+                        <p class="text-muted">
+                            {% autoescape off %}{{ project.description  | truncatewords:10 }}{% endautoescape %}
+                        </p>
+                        <div class="pro-deadline m-b-15">
+                            <div class="sub-title">
+                                Deadline:
+                            </div>
+                            <div class="text-muted">
+                                {{ project.end_date }}
+                            </div>
+                        </div>
+                        <div class="project-members m-b-15">
+                            <div>Project Leader :</div>
+                            <ul class="team-members">
+                                <li>
+                                    <a href="{% url 'myprofile_detail' pk=project.lead_by.id %}"
+                                       data-toggle="tooltip" title="{{ project.lead_by }}">
+                                        {% if project.lead_by.profile_pic %}<img alt="Profile Pic"
+                                                                                 src="{{ project.lead_by.profile_pic.url }}">{% else %}
+                                            <img src="{% static 'assets/img/user.jpg' %}"
+                                                 alt="Profile Pic">{% endif %}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="project-members m-b-15">
+                            <div>Team :</div>
+                            <ul class="team-members text-nowrap">
+                                <li>
+                                    <a href="{% url 'myprofile_detail' pk=project.team.first.id %}"
+                                       data-toggle="tooltip" title="{{ project.team.first }}">
+                                        {% if project.team.first.profile_pic %}<img alt="Profile Pic"
+                                                                                    src="{{ project.team.first.profile_pic.url }}">{% else %}
+                                            <img src="{% static 'assets/img/user.jpg' %}">{% endif %}</a>
+                                </li>
+
+                                <li class="dropdown avatar-dropdown">
+                                    <a href="javascript:void(0)" class="all-users dropdown-toggle"
+                                       data-toggle="dropdown"
+                                       aria-expanded="false">+{{ project.team.count }}</a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="avatar-group">
+                                            {% for member in project.team.all %}
+
+                                                <a class="avatar avatar-xs"
+                                                   href="{% url 'myprofile_detail' pk=member.id %}"
+                                                   data-toggle="tooltip" title="{{ member }}">
+                                                    {% if member.profile_pic %}<img alt="Profile Pic"
+                                                                                    src="{{ member.profile_pic.url }}">{% else %}
+                                                        <img src="{% static 'assets/img/user.jpg' %}">{% endif %}
+                                                </a>
+
+                                            {% endfor %}
+                                        </div>
+                                        <div class="avatar-pagination">
+                                            <ul class="pagination">
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#" aria-label="Previous">
+                                                        <span aria-hidden="true">«</span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                </li>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="l#" aria-label="Next">
+                                                        <span aria-hidden="true">»</span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <p class="m-b-5">Progress <span class="text-success float-right">{{ project.progress }}</span>
+                        </p>
+                        <div class="progress progress-xs mb-0">
+                            <div class="progress-bar bg-success" role="progressbar" data-toggle="tooltip"
+                                 title="{{ project.progress }}" style="width: {{ project.progress }}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Create Project Modal -->
+    <div id="create_project" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% if clients_count != 0 %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Project Name</label>
+                                        {% render_field form.name class="form-control" %}
+                                        {% render_field form.name.error %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Project Code</label>
+                                        {% render_field form.code class="form-control" readonly="readonly" %}
+                                        {% render_field form.code.error %}
+                                    </div>
+                                </div>
+{#                                <div class="col-sm-6">#}
+{#                                    <div class="form-group">#}
+{#                                        <label>Client1</label>#}
+{#                                        {% render_field form.client class="form-control" %}#}
+{#                                        {% render_field form.client.error %}#}
+{#                                    </div>#}
+{#                                </div>#}
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        {#                                        <div class="cal-icon">#}
+                                        <div>
+                                            {% render_field form.start_date class="form-control" %}
+                                            {% render_field form.start_date.error %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        {#                                        <div class="cal-icon">#}
+                                        <div>
+                                            {% render_field form.end_date class="form-control" %}
+                                            {% render_field form.end_date.error %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+{#                                <div class="col-sm-3">#}
+{#                                    <div class="form-group">#}
+{#                                        <label>Rate</label>#}
+{#                                        {% render_field form.rate placeholder="$50" class="form-control" %}#}
+{#                                        {% render_field form.rate.error %}#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                <div class="col-sm-3">#}
+{#                                    <div class="form-group">#}
+{#                                        <label>&nbsp;</label>#}
+{#                                        {% render_field form.rate_type class="form-control" %}#}
+{#                                        {% render_field form.rate_type.error %}#}
+{#                                    </div>#}
+{#                                </div>#}
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Priority</label>
+                                        {% render_field form.priority class="form-control" %}
+                                        {% render_field form.priority.error %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Project Estimated Time</label>
+                                        {% render_field form.estimated_time class="form-control" %}
+                                        {% render_field form.estimated_time.error %}
+                                        <span class="text-muted-light">Time in hours</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Add Project Leader</label>
+                                        {% render_field form.lead_by class="form-control " %}
+                                        {% render_field form.lead_by.error %}
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Add Team</label>
+                                        {% render_field form.team class="form-control" %}
+                                        {% render_field form.team.error %}
+                                    </div>
+                                </div>
+{#                                <div class="col-sm-6">#}
+{#                                    <div class="form-group">#}
+{#                                        <label>Project Estimated Time</label>#}
+{#                                        {% render_field form.estimated_time class="form-control" %}#}
+{#                                        {% render_field form.estimated_time.error %}#}
+{#                                        <span class="text-muted-light">Time in hours</span>#}
+{#                                    </div>#}
+{#                                </div>#}
+                            </div>
+                            <div class="form-group">
+                                <label>Description<span class="text-danger">*</span></label>
+                                {% render_field form.description rows="4" class="form-control" placeholder="Enter your description here" required="required" %}
+                                {% render_field form.description.error %}
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                {% render_field fileform.file class="form-control uploaded_file"  %}
+                                {% render_field fileform.file.error %}
+                                <span class="uLabel text-danger"></span>
+                            </div>
+                            <div class="submit-section">
+                                <button class="btn btn-primary submit-btn uButton">Submit</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <h2 class="primary-color-used">Client is Necessary for Project Creation.Please Create Client
+                            First.</h2>
+                        <a href="{% url 'view_clients' %}" class="btn add-btn"> Go To Client</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Create Project Modal -->
+
+    <!-- Edit Project Modal -->
+
+    <div id="edit_project" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="project-edit-form" class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /Edit Project Modal -->
+
+    <!-- Delete Project Modal -->
+    {% for project in projects %}
+        <div class="modal custom-modal fade" id="delete_project-{{ project.id }}" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Project</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="{% url 'delete_project' pk=project.id %}"
+                                       class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <!-- /Delete Project Modal -->
+
+</div>
+<!-- /Page Wrapper -->
+{% endblock %}

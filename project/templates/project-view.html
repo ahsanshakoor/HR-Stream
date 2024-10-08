@@ -1,0 +1,589 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %} Project Detail{{ block.super }} {% endblock %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+
+    <!-- Page Content -->
+    <div class="content container-fluid">
+        {% include "messages.html" %}
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">{{ project.name }}</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Project</li>
+                    </ul>
+                </div>
+                <div class="col-auto float-right ml-auto">
+                {% if user.user_type != 'client' %}
+                    {% if_has_access user.id 'owner projects' %}
+                        <a id="ProjectEdit" data-ProjectEdit="{% url 'project_edit' pk=project.id type='alist' %}"
+                           href="javascript:void(0)" class="btn add-btn" data-toggle="modal"
+                           data-target="#edit_project"><i class="fa fa-plus"></i> Edit Project</a>
+                    {% endif_has_access %}
+                {% endif %}
+                    <a href="{% url 'task_board' pk=project.id %}" class="btn btn-white float-right m-r-10"
+                       data-toggle="tooltip" title="Task Board"><i class="fa fa-tasks"></i> Task Board</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Header -->
+
+        <div class="row">
+            <div class="col-lg-8 col-xl-9">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="project-title">
+                            <h5 class="card-title">{{ project.name }}</h5>
+                            <small class="block text-ellipsis m-b-15"><span class="text-xs">{{ open_task }}</span> <span
+                                    class="text-muted">open tasks, </span><span
+                                    class="text-xs">{{ completed_task }}</span> <span
+                                    class="text-muted">tasks completed</span></small>
+                        </div>
+                        <p>{% autoescape off %}{{ project.description }}. {% endautoescape %}</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-20">Uploaded image files</h5>
+                        <div class="row">
+{#                        {% for project in projects %}#}
+                            {% for Pfile in project.project_files.all %}
+                                {% if  Pfile.type == 'image' %}
+                                    <div class="col-md-3 col-sm-4 col-lg-4 col-xl-3">
+                                        <div class="uploaded-box">
+                                            <div class="uploaded-img">
+
+                                                <a href="{{ Pfile.file.url}}" target="_blank">
+                                                    <img src="{{ Pfile.file.url }}" class="img-fluid" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="uploaded-img-name">
+                                                {{ Pfile.filename }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+{#                        {% endfor %}#}
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-20">Uploaded files</h5>
+                        <ul class="files-list">
+                            {% for Pfile in project.project_files.all %}
+                                {% if  Pfile.type != 'image' %}
+                                    <li>
+                                        <div class="files-cont">
+                                            <div class="file-type">
+                                                <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                            </div>
+                                            <div class="files-info">
+                                                <span class="file-name text-ellipsis"><a
+                                                        href="{{ Pfile.file.url }}" target="_blank">
+                                                    {{ Pfile.file|getfilename }}</a></span>
+                                                <span class="file-author"><a
+                                                        href="{% url 'myprofile_detail' Pfile.uploaded_by.id %}">{{ Pfile.uploaded_by }}</a></span>
+                                                <span class="file-date">May 31st at 6:53 PM</span>
+                                                <div class="file-size">Size: {{ Pfile.file.size|filesizeformat }}</div>
+                                            </div>
+                                            <ul class="files-action">
+                                                <li class="dropdown dropdown-action">
+                                                    <a href="" class="dropdown-toggle btn btn-link"
+                                                       data-toggle="dropdown" aria-expanded="false"><i
+                                                            class="material-icons">more_horiz</i></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="{{ Pfile.file.url }}"
+                                                           download="{{ Pfile.file.name }}">Download</a>
+                                                        {#															<a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#share_files">Share</a>#}
+                                                        <a class="dropdown-item"
+                                                           href="{% url 'delete_file' pk=Pfile.id %}">Delete</a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="project-task">
+                    <ul class="nav nav-tabs nav-tabs-top nav-justified mb-0">
+                        <li class="nav-item"><a class="nav-link active" href="#all_tasks" data-toggle="tab"
+                                                aria-expanded="true">All Tasks</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#pending_tasks" data-toggle="tab"
+                                                aria-expanded="false">Pending Tasks</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#completed_tasks" data-toggle="tab"
+                                                aria-expanded="false">Completed Tasks</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="all_tasks">
+                            <div class="task-wrapper">
+                                <div class="task-list-container">
+                                    <div class="task-list-body">
+                                        <ul id="task-list">
+                                            {% for task in all_tasks %}
+                                                <li {% if task.status == 'finished' %}class="task completed"
+                                                    {% else %}class="task"{% endif %}>
+                                                    <div class="task-container">
+                                                        <span class="task-action-btn task-check">
+                                                            <span data-TasktEdit="{% url 'update_card_status' task.id %}"
+                                                                  class="action-circle large complete-btn"
+                                                                    {% if task.status == 'finished' %}
+                                                                  title="Mark Inomplete" {% else %}
+                                                                  title="Mark Complete" {% endif %}>
+                                                                <i class="material-icons">check</i>
+                                                            </span>
+                                                        </span>
+                                                        <span class="task-label" contenteditable="false"
+                                                              readonly>{{ task.name }}</span>
+                                                        {% if_has_access user.id 'owner projects' %}
+                                                            <span class="task-action-btn task-btn-right">
+{#                                                                <span data-ProjectTask="{% url 'assign_task_modal' project_id=project.id task_id=task.id %}"#}
+{#                                                                      class="action-circle large assignee-btn"#}
+{#                                                                      title="Assign">#}
+{#                                                                    <i class="material-icons">person_add</i>#}
+{#                                                                </span>#}
+                                                                <span data-TasktDelete="{% url 'delete_card' task.id %}"
+                                                                      class="action-circle large delete-btn"
+                                                                      title="Delete Task">
+                                                                    <i class="material-icons">delete</i>
+                                                                </span>
+                                                            </span>
+                                                        {% endif_has_access %}
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-popup hide">
+                                <p>
+                                    <span class="task"></span>
+                                    <span class="notification-text"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="pending_tasks">
+                            <div class="task-wrapper">
+                                <div class="task-list-container">
+                                    <div class="task-list-body">
+                                        <ul id="task-list">
+                                            <div id="task-list-pending">
+                                                {% for task in all_tasks %}
+                                                    {% if task.status == 'pending' %}
+                                                        <li class="task">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span data-TasktEdit="{% url 'update_card_status' task.id %}"
+                                                                                  class="action-circle large complete-btn"
+                                                                                  title="Mark Complete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label"
+                                                                      data-ChatModal="{% url 'open_chat' pk=task.id %}"
+                                                                      contenteditable="false"
+                                                                      readonly>{{ task.name }}</span>
+                                                                {% if_has_access user.id 'owner projects' %}
+                                                                    <span class="task-action-btn task-btn-right">
+{#                                                                        <span data-ProjectTask="{% url 'assign_task_modal' project_id=project.id task_id=task.id %}"#}
+{#                                                                              class="action-circle large assignee-btn"#}
+{#                                                                              title="Assign">#}
+{#                                                                            <i class="material-icons">person_add</i>#}
+{#                                                                        </span>#}
+                                                                        <span data-TasktDelete="{% url 'delete_card' task.id %}"
+                                                                              class="action-circle large delete-btn"
+                                                                              title="Delete Task">
+                                                                            <i class="material-icons">delete</i>
+                                                                        </span>
+                                                                    </span>
+                                                                {% endif_has_access %}
+                                                            </div>
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="completed_tasks">
+                            <div class="task-wrapper">
+                                <div class="task-list-container">
+                                    <div class="task-list-body">
+                                        <ul id="task-list">
+                                            <div id="task-list-complete">
+                                                {% for task in all_tasks %}
+                                                    {% if task.status == 'finished' %}
+                                                        <li class="task completed">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span data-TasktEdit="{% url 'update_card_status' task.id %}"
+                                                                                  class="action-circle large complete-btn"
+                                                                                  title="Mark Incomplete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label"
+                                                                      data-ChatModal="{% url 'open_chat' pk=task.id %}"
+                                                                      contenteditable="false"
+                                                                      readonly>{{ task.name }}</span>
+                                                                {% if_has_access user.id 'owner projects' %}
+                                                                    <span class="task-action-btn task-btn-right">
+                                                                        <span data-TasktDelete="{% url 'delete_card' task.id %}"
+                                                                              class="action-circle large delete-btn"
+                                                                              title="Delete Task">
+                                                                            <i class="material-icons">delete</i>
+                                                                        </span>
+                                                                    </span>
+                                                                {% endif_has_access %}
+                                                            </div>
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-xl-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title m-b-15">Project details</h6>
+                        <table class="table table-striped table-border">
+                            <tbody>
+
+{#                            {% if_has_access user.id 'owner projects' %}#}
+{#                                <tr>#}
+{#                                    <td>Cost:</td>#}
+{#                                    <td class="text-right">${{ project.rate }}</td>#}
+{#                                </tr>#}
+{#                            {% endif_has_access %}#}
+                            {% if project.estimated_time %}
+                                <tr>
+                                    <td>Total Hours:</td>
+                                    <td class="text-right">{{ project.estimated_time }} Hours</td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <td>Created:</td>
+                                <td class="text-right">{{ project.created_at }}</td>
+                            </tr>
+                            <tr>
+                                <td>Deadline:</td>
+                                <td class="text-right">{{ project.end_date }}</td>
+                            </tr>
+                            <tr>
+                                <td>Priority:</td>
+                                <td class="text-right">
+                                    <div class="btn-group">
+                                        <a href="javascript:void(0)"
+                                           class="badge {% if project.priority == 'High' %}badge-info{% elif project.priority == 'Medium' %} badge-primary{% elif project.priority == 'Low' %} badge-success{% endif %}
+                                            {% if user.user_type != 'client' %}dropdown-toggle {% endif %}"
+                                           {% if user.user_type != 'client' %}data-toggle="dropdown" {% endif %}>{{ project.priority }} priority</a>
+                                    {% if user.user_type != 'client' %}
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_priority' pk=project.id priority='High' type='alist' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> High priority</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_priority' pk=project.id priority='Medium' type='alist' %}"><i
+                                                    class="fa fa-dot-circle-o text-primary"></i> Medium priority</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_priority' pk=project.id priority='Low' type='alist' %}"><i
+                                                    class="fa fa-dot-circle-o text-success"></i> Low priority</a>
+                                        </div>
+                                    {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Created by:</td>
+                                <td class="text-right"><a
+                                        href="{% url 'myprofile_detail' project.created_by.id %}">{{ project.created_by }}</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Status:</td>
+                                <td class="text-right">{{ project.Project_status }}</td>
+                            </tr>
+                            <tr>
+                                <td>Progress:</td>
+                                <td class="text-right">
+                                    <div class="btn-group">
+                                        <a href="javascript:void(0)" class="badge badge-info {% if user.user_type != 'client' %}dropdown-toggle{% endif %}"
+                                           data-toggle="dropdown">{{ project.progress }} </a>
+                                        {% if user.user_type != 'client' %}
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='0%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 0%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='10%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 10%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='20%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 20%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='30%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 30%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='40%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 40%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='50%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 50%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='60%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 60%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='70%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 70%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='80%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 80%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='90%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 90%</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_project_progress' pk=project.id progress='100%' %}"><i
+                                                    class="fa fa-dot-circle-o text-info"></i> 100%</a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <p class="m-b-5">Progress <span class="text-success float-right">{{ project.progress }}</span>
+                        </p>
+                        <div class="progress progress-xs mb-0">
+                            <div class="progress-bar bg-success" role="progressbar" data-toggle="tooltip"
+                                 title="{{ project.progress }}" style="width: {{ project.progress }}"></div>
+                        </div>
+                    </div>
+                </div>
+            {% if user.user_type != 'client' %}
+                {% if_has_access user.id 'owner projects' %}
+                    <div class="card project-user">
+                        <div class="card-body">
+                            <h6 class="card-title m-b-20">Assigned Leader
+                                <button type="button" class="float-right btn btn-primary btn-sm" data-toggle="modal"
+                                        data-target="#assign_leader"><i class="fa fa-plus"></i></button>
+                            </h6>
+                            <ul class="list-box">
+                                <li>
+                                    <a href="{% url 'myprofile_detail' project.lead_by.id %}">
+                                        <div class="list-item">
+                                            <div class="list-left">
+                                                <span class="avatar">{% if project.lead_by.profile_pic %}
+                                                    <img alt="Profile Pic"
+                                                         src="{{ project.lead_by.profile_pic.url }}">{% else %}
+                                                    <img src="{% static 'assets/img/user.jpg' %}"
+                                                         alt="Profile Pic">{% endif %}</span>
+                                            </div>
+                                            <div class="list-body">
+                                                <span class="message-author">{{ project.lead_by }}</span>
+                                                <div class="clearfix"></div>
+                                                <span class="message-content">{{ project.lead_by.deignation }}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card project-user">
+                        <div class="card-body">
+                            <h6 class="card-title m-b-20">
+                                Assigned users
+                                <button type="button" class="float-right btn btn-primary btn-sm" data-toggle="modal"
+                                        data-target="#assign_user"><i class="fa fa-plus"></i></button>
+                            </h6>
+                            <ul class="list-box">
+                                {% for member in project.team.all %}
+                                    <li>
+                                        <a href="{% url 'myprofile_detail' member.id %}">
+                                            <div class="list-item">
+                                                <div class="list-left">
+                                                    <span class="avatar">{% if member.profile_pic %}
+                                                        <img alt="Profile Pic"
+                                                             src="{{ member.profile_pic.url }}">{% else %}
+                                                        <img src="{% static 'assets/img/user.jpg' %}"
+                                                             alt="Profile Pic">{% endif %}></span>
+                                                </div>
+                                                <div class="list-body">
+                                                    <span class="message-author">{{ member }}</span>
+                                                    <div class="clearfix"></div>
+                                                    <span class="message-content">{{ member.designation }}</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif_has_access %}
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Assign Leader Modal -->
+    <div id="assign_leader" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Leader to this project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {#								<div class="input-group m-b-30">#}
+                    {#									<input placeholder="Search to add a leader" class="form-control search-input" type="text">#}
+                    {#									<span class="input-group-append">#}
+                    {#										<button class="btn btn-primary">Search</button>#}
+                    {#									</span>#}
+                    {#								</div>#}
+                    <div>
+                        <ul class="chat-user-list">
+                            {% for member in membersLead %}
+                                <li>
+                                    <a href="{% url 'assign_lead' project=project.id user=member.id %}">
+                                        <div class="media">
+                                            <span class="avatar">{% if member.profile_pic %}
+                                                <img alt="Profile Pic" src="{{ member.profile_pic.url }}">{% else %}
+                                                <img src="{% static 'assets/img/user.jpg' %}"
+                                                     alt="Profile Pic">{% endif %}</span>
+                                            <div class="media-body align-self-center text-nowrap">
+                                                <div class="user-name">{{ member }}</div>
+                                                <span class="designation">{{ member.role.last }}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    </div>
+                    {#								<div class="submit-section">#}
+                    {#									<button class="btn btn-primary submit-btn">Submit</button>#}
+                    {#								</div>#}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assign Leader Modal -->
+
+    <!-- Assign User Modal -->
+    <div id="assign_user" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign the user to this project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {#								<div class="input-group m-b-30">#}
+                    {#									<input placeholder="Search a user to assign" class="form-control search-input" type="text">#}
+                    {#									<span class="input-group-append">#}
+                    {#										<button class="btn btn-primary">Search</button>#}
+                    {#									</span>#}
+                    {#								</div>#}
+                    <div>
+                        <ul class="chat-user-list">
+                            {% for member in members %}
+                                <li>
+                                    <a href="{% url 'assign_member' project=project.id user=member.id %}">
+                                        <div class="media">
+                                            <span class="avatar">{% if member.profile_pic %}
+                                                <img alt="Profile Pic" src="{{ member.profile_pic.url }}">{% else %}
+                                                <img src="{% static 'assets/img/user.jpg' %}"
+                                                     alt="Profile Pic">{% endif %}</span>
+                                            <div class="media-body align-self-center text-nowrap">
+                                                <div class="user-name">{{ member }}</div>
+                                                <span class="designation">{{ member.role.last }}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {#								<div class="submit-section">#}
+                    {#									<button class="btn btn-primary submit-btn">Submit</button>#}
+                    {#								</div>#}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assign User Modal -->
+
+    <!-- Edit Project Modal -->
+
+    <div id="edit_project" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="project-edit-form" class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /Edit Project Modal -->
+    <!-- Assignee Modal -->
+    <div id="assignee" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign to this task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="assignee-form" class="modal-body">
+                    {#                        <div class="input-group m-b-30">#}
+                    {#                            <input placeholder="Search to add" class="form-control search-input" type="text">#}
+                    {#                            <span class="input-group-append">#}
+                    {#										<button class="btn btn-primary">Search</button>#}
+                    {#									</span>#}
+                    {#                        </div>#}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Assignee Modal -->
+</div>
+<!-- /Page Wrapper -->
+{% endblock %}

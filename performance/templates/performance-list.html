@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %} Performance List{{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Performance List</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Performance</li>
+                        </ul>
+                    </div>
+                    <div class="col-auto float-right ml-auto">
+
+                        {#                        <a href="performance-indicator.html#" class="btn add-btn" data-toggle="modal"#}
+                        {#                           data-target="#add_indicator"><i class="fa fa-plus"></i> Add New</a>#}
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th>Evaluated By</th>
+                                <th>Employee</th>
+                                <th>Create At</th>
+{#                                <th>comment</th>#}
+{#                                <th>Obtained / Total</th>#}
+                                <th>Detail</th>
+                                <th class="text-center">Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            {% for performance in performances %}
+                                <tr>
+                                    <td><h2 class="table-avatar">
+                                        <a href="{% url 'myprofile_detail' performance.performance.created_by.id %}">
+                                            <img class="avatar" alt=""{% if performance.performance.created_by.profile_pic %}
+                                             src="{{ performance.performance.created_by.profile_pic.url }}"{% endif %}>
+                                        </a>
+                                        <a href="{% url 'myprofile_detail' performance.performance.created_by.id %}">
+                                            {{ performance.performance.created_by.get_full_name }}
+                                            <span>{{ performance.performance.created_by.role.last }}</span>
+                                        </a>
+                                    </h2></td>
+                                    <td>{{ performance.performance.employee }}</td>
+                                    <td>{{ performance.performance.date }}</td>
+{#                                    <td class="text-center">#}
+{#                                        <div style="width: 100px;white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">#}
+{#                                            {{ performance.performance.comment }}#}
+{#                                        </div>#}
+{#                                        <a class"primary-color-used" style="margin-right: 10px;"#}
+{#                                                href="javascript:void(0);" data-toggle="modal"#}
+{#                                                data-target="#show_performance{{ performance.performance.id }}"><i#}
+{#                                                class=" fa fa-eye"></i></a></td>#}
+{#                                    <td class="text-center">#}
+{#                                        <div>{{ performance.obtained.obtained_weightage__sum }}/{{ performance.total.total_weightage__sum }}#}
+{#                                        </div>#}
+{#                                        <a class"primary-color-used" style="margin-right: 10px;"#}
+{#                                           href="javascript:void(0);" data-toggle="modal"#}
+{#                                           data-target="#show_performance_indicator{{ performance.performance.id }}"><i#}
+{#                                                class=" fa fa-eye"></i></a>#}
+{#                                    </td>#}
+                                    <td>
+                                        <a class="primary-color-used" style="margin-right: 10px;"
+                                           href="{% url 'performance_detail'  pk=performance.performance.id %}"
+                                           ><i class="fa fa-eye"></i></a>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <div class="dropdown action-label">
+                                            <a class="btn btn-white btn-sm btn-rounded {% if performance.performance.published %}
+                                            {% else %} dropdown-toggle"{% endif %} href=""
+                                               data-toggle="dropdown" aria-expanded="false">
+                                                {% if performance.performance.published %}
+                                                    <i class="fa fa-dot-circle-o text-success"></i>
+                                                {% else  %}
+                                                    <i class="fa fa-dot-circle-o text-danger"></i>
+                                                {% endif %}
+                                                {% if performance.performance.published %}
+                                                Published
+                                                {% else %}
+                                                Not Published
+                                                {% endif %}
+                                            </a>
+                                        {% if performance.performance.published %}
+                                            {% else %}
+
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item"
+                                                   href="{% url 'performance_status'  performance_id=performance.performance.id %}"><i
+                                                        class="fa fa-dot-circle-o text-success"></i> Publish</a>
+                                        </div>
+                                        {% endif %}
+                                        </div>
+                                    </td>
+                                {% if performance.performance.published %}
+                                    <td class="text-right">
+
+                                    </td>
+                                            {% else %}
+                                    <td class="text-right">
+                                        <div class="dropdown dropdown-action">
+                                            <a href="javascript:void(0)" class="action-icon dropdown-toggle"
+                                               data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item DeletePerformance" href="javascript:void(0)"
+                                                   data-PerformanceDeleteURL="{% url 'performance_delete' pk=performance.performance.id %}"
+                                                   data-toggle="modal" data-target="#delete_performance"><i
+                                                        class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% endif %}
+
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Show Comment Modal -->
+        {% for performance in performances %}
+            <div id="show_performance{{ performance.performance.id }}" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="exampleModalLongTitle">Comment</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p style="white-space: pre-line"> {{ performance.performance.comment }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary submit-btn" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Show Comment Modal -->
+
+
+        <!-- Delete Performance Modal -->
+        <div class="modal custom-modal fade" id="delete_performance" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Comment</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="DeletePerformanceLink" href=""
+                                       class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Delete Asset Modal -->
+
+
+        <!-- Show Performance Indicator Modal -->
+        {% for performance in performances %}
+            <div id="show_performance_indicator{{ performance.performance.id }}" class="modal custom-modal fade"
+                 role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="exampleModalLongTitle">Performance Indicator Detail</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped custom-table mb-0 datatable">
+                                    <thead>
+                                    <tr>
+                                        <th>Indicator Name</th>
+                                        <th>Obtained</th>
+                                        <th>Total</th>
+                                    </tr>
+                                    </thead>
+                                    {#                                    {% for performance in performances %}#}
+                                    {% for performance in performance.performance.performanceindicators.all %}
+
+                                        <tr>
+                                            <td>{{ performance.indicator }}</td>
+                                            <td>{{ performance.obtained_weightage }}</td>
+                                            <td>{{ performance.total_weightage }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    {#                                    {% endfor %}#}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary submit-btn" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Show Performance Indicator Modal -->
+
+
+    </div>
+    <!-- /Page Wrapper -->
+
+    </div>
+{% endblock %}

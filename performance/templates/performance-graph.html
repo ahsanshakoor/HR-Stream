@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+{% block title %} Performance Graph{{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Performance Graph</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Performance Graph</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- /Page Header -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-body">
+                                <h4 class="card-title">Comment</h4>
+                                    <div class="row">
+                                        <div class="text-justify">
+                                            <div class="mb-4">
+                                                <p class="pl-3 pr-3">{{ performance.comment }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive share-file-scroll">
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th>Performance Indicator</th>
+                                <th>Obtained</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            {% for performance_a in performance.performanceindicators.all %}
+
+                                <tr>
+                                    <td>{{ performance_a.indicator }}</td>
+                                    <td>{{ performance_a.obtained_weightage }}</td>
+                                    <td>{{ performance_a.total_weightage }}</td>
+                                    <td hidden><a style="margin-right: 10px;" class="SpiderWebGraph primary-color-used"
+                                                  hidden id="PerformanceGraphUrl"
+                                                  href="javascript:void(0);" data-toggle="modal"
+                                                  data-SpiderWebGraph="{% url 'performance_graph'  pk=performance_a.performance.id %}"
+                                                  data-target="#spider_web_graph"><i class="fa fa-deviantart"></i></a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Add Performance Indicator Modal -->
+
+            <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+            <script src="https://code.highcharts.com/highcharts.js"></script>
+            <script src="https://code.highcharts.com/highcharts-more.js"></script>
+            <script src="https://code.highcharts.com/modules/exporting.js"></script>
+            <script src="https://code.highcharts.com/modules/export-data.js"></script>
+            <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+            <figure class="highcharts-figure">
+                <div id="container"></div>
+                <p class="highcharts-description">
+                </p>
+            </figure>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+    <script>
+
+
+        $(document).ready(function (e) {
+            let SpiderWebGraphURL = $("#PerformanceGraphUrl").attr('data-SpiderWebGraph');
+
+            {#e.preventDefault();#}
+            $.ajax({
+                type: 'GET',
+                url: SpiderWebGraphURL,
+                data: {},
+
+                success: function (response) {
+                    let data = response["data"];
+                    new Highcharts.chart('container', {
+
+                        chart: {
+                            polar: true,
+                            type: 'line'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+
+                        accessibility: {
+                            description: 'A spiderweb chart compares the allocated '
+                        },
+
+
+                        title: {
+                            text: 'Performance Graph',
+                            x: -80
+                        },
+
+                        pane: {
+                            size: '80%'
+                        },
+
+                        xAxis: {
+                            categories: data[0].name,
+                            tickmarkPlacement: 'on',
+                            lineWidth: 0
+                        },
+
+                        yAxis: {
+                            gridLineInterpolation: 'polygon',
+                            lineWidth: 0,
+                            min: 0
+                        },
+
+                        tooltip: {
+                            shared: true,
+                            pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
+                        },
+
+                        legend: {
+                            align: 'right',
+                            verticalAlign: 'middle',
+                            layout: 'vertical'
+                        },
+
+                        series: [{
+                            name: 'Obtained',
+                            data: data[0].obtained,
+                            pointPlacement: 'on'
+                        }, {
+                            name: 'Total',
+                            data: data[0].total,
+                            pointPlacement: 'on'
+                        }],
+
+                        responsive: {
+                            rules: [{
+                                condition: {
+                                    maxWidth: 500
+                                },
+                                chartOptions: {
+                                    legend: {
+                                        align: 'center',
+                                        verticalAlign: 'bottom',
+                                        layout: 'horizontal'
+                                    },
+                                    pane: {
+                                        size: '70%'
+                                    }
+                                }
+                            }]
+                        }
+
+                    });
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    let err = response["error"];
+                    alert(err);
+                }
+            });
+
+        });
+    </script>
+{% endblock %}

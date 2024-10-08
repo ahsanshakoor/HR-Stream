@@ -1,0 +1,127 @@
+{% load static %}
+{% load widget_tweaks %}
+<form method="post" enctype="multipart/form-data" action="{% url 'project_edit' pk=project_id type=type %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Project Name</label>
+                {% render_field form.name class="form-control" %}
+                {% render_field form.name.error %}
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Stakeholders</label>
+                {% render_field form.client class="select form-control" %}
+                {% render_field form.client.error %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Start Date</label>
+                {#                <div class="cal-icon">#}
+                <div>
+                    {% render_field form.start_date class="form-control" type="date" %}
+                    {% render_field form.error %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>End Date</label>
+                {#                <div class="cal-icon">#}
+                <div>
+                    {% render_field form.end_date class="form-control" type="date" %}
+                    {% render_field form.error %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+{#        <div class="col-sm-3">#}
+{#            <div class="form-group">#}
+{#                <label>Rate</label>#}
+{#                {% render_field form.rate placeholder="$50" class="form-control" %}#}
+{#                {% render_field form.error %}#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-sm-3">#}
+{#            <div class="form-group">#}
+{#                <label>&nbsp;</label>#}
+{#                {% render_field form.rate_type class="form-control select" %}#}
+{#                {% render_field form.error %}#}
+{#            </div>#}
+{#        </div>#}
+         <div class="col-sm-6">
+            <div class="form-group">
+                <label>Project Estimated Time</label>
+                {% render_field form.estimated_time class="form-control" %}
+                {% render_field form.estimated_time.error %}
+                <span class="text-muted-light">Time in hours</span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Priority</label>
+                {% render_field form.priority class="form-control select" %}
+                {% render_field form.error %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Add Project Leader</label>
+                {% render_field form.lead_by class="form-control select" %}
+                {% render_field form.error %}
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Project Code</label>
+                {% render_field form.code class="form-control" readonly="readonly" %}
+                {% render_field form.code.error %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Add Team</label>
+                {% render_field form.team class="form-control" %}
+                {% render_field form.error %}
+            </div>
+        </div>
+{#        <div class="col-sm-6">#}
+{#            <div class="form-group">#}
+{#                <label>Project Estimated Time</label>#}
+{#                {% render_field form.estimated_time class="form-control" %}#}
+{#                {% render_field form.estimated_time.error %}#}
+{#                <span class="text-muted-light">Time in hours</span>#}
+{#            </div>#}
+{#        </div>#}
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        {% render_field form.description rows="4" class="form-control" placeholder="Enter your message here" %}
+        {% render_field form.error %}
+    </div>
+
+    {{ fileformset.management_form }}
+    {% for fileform in fileformset %}
+        {% for hidden in  fileform.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <div class="form-group">
+            <label>Upload Files</label>
+            {% render_field fileform.file class="form-control uploaded_file" %}
+            {% render_field fileform.error %}
+        </div>
+    {% endfor %}
+    <div class="submit-section">
+        <button class="btn btn-primary submit-btn">Submit</button>
+    </div>
+</form>
