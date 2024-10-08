@@ -1,0 +1,124 @@
+{% extends 'base_payroll_settings.html' %}
+{% load static %}
+{% block title %} Payroll Policies {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+                    {% include 'messages.html' %}
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h3 class="page-title">Payroll Policies</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+									<li class="breadcrumb-item active">Payroll Policies</li>
+								</ul>
+							</div>
+							<div class="col-auto float-right ml-auto">
+								<a href="{% url 'payroll_policy' %}" class="btn add-btn" ><i class="fa fa-plus"></i> Add Payroll Policy</a>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table class="table table-striped custom-table datatable mb-0">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Name</th>
+											<th>Payroll Policy Cycle</th>
+											<th>Payroll Policy Start Date</th>
+											<th>Payroll Policy End Date</th>
+                                            <th>Next Period Start Date</th>
+                                            <th>Next Period End Date</th>
+                                            <th>Payroll Items</th>
+											<th>Created By</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+                                    {% for policy in payroll_policies %}
+										<tr>
+											<td>
+												{{forloop.counter}}
+											</td>
+                                            <td>
+                                                <h2 class="table-avatar">
+                                                    <a class="primary-color-used" href="{% url 'payroll_item' pk=policy.id %}">{{ policy.name }}</a>
+                                                </h2>
+                                            </td>
+                                            <td>{{ policy.payroll_cycle }}</td>
+											<td>{{ policy.pay_period_start_date }}</td>
+											<td>{{ policy.pay_period_end_date }}</td>
+                                            <td>{{ policy.next_pay_period_start_date }}</td>
+											<td>{{ policy.next_pay_period_end_date }}</td>
+                                            <td><a class="primary-color-used"  href="{% url 'payroll_item' pk=policy.id %}"><i class="fa fa-folder-open m-r-5"></i></a></td>
+											<td>{{ policy.created_by }}</td>
+{#                                            <td>#}
+{#												<div class="dropdown action-label">#}
+{#													<a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false">#}
+{#														 {% if policy.policy_status %}#}
+{#														<i class="fa fa-dot-circle-o text-success"></i> Active#}
+{#                                                        {% else %}#}
+{#                                                            <i class="fa fa-dot-circle-o text-danger"></i> Inactive#}
+{#                                                        {% endif %}#}
+{#													</a>#}
+{#													<div class="dropdown-menu dropdown-menu-right">#}
+{#														<a class="dropdown-item" href="{% url 'edit_payroll_policy_status' pk=policy.id status='active' %}"><i class="fa fa-dot-circle-o text-success"></i> Active</a>#}
+{#														<a class="dropdown-item" href="{% url 'edit_payroll_policy_status' pk=policy.id status='inactive' %}"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a>#}
+{#													</div>#}
+{#												</div>#}
+{#											</td>#}
+											<td>
+{#												<a class="primary-color-used" href="{% url 'edit_payroll_policy' pk=policy.id %}" ><i class="fa fa-pencil m-r-5"></i></a>#}
+                                                <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal" data-target="#delete_leavetype-{{ policy.id }}"><i class="fa fa-trash-o m-r-5"></i></a>
+
+											</td>
+									{% endfor %}	</tr>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+                </div>
+				<!-- /Page Content -->
+
+				<!-- Delete Leavetype Modal -->
+            {% for policy in payroll_policies %}
+				<div class="modal custom-modal fade" id="delete_leavetype-{{ policy.id }}" role="dialog">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-header">
+									<h3>Delete Payroll Policy</h3>
+									<p>Are you sure want to delete?</p>
+								</div>
+								<div class="modal-btn delete-action">
+									<div class="row">
+										<div class="col-6">
+											<a href="{% url 'delete_payroll_policy' pk=policy.id %}" class="btn btn-primary continue-btn">Delete</a>
+										</div>
+										<div class="col-6">
+											<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+            {% endfor %}
+				<!-- /Delete Leavetype Modal -->
+
+            </div>
+			<!-- /Page Wrapper -->
+{% endblock %}

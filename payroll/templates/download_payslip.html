@@ -1,0 +1,345 @@
+<html lang="en">
+{% load static %}
+{% load accounts_tags %}
+<head>
+    {% get_company_object user.pk %}
+    <meta charset="utf-8">
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">#}
+{#    <meta name="description" content="WorkDayStream - A Complete Solution of Employee Management">#}
+{#    <meta name="keywords"#}
+{#          content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">#}
+{#    <meta name="author" content="WorkDayStream">#}
+{#    <meta name="robots" content="noindex, nofollow">#}
+
+{#    <!-- Favicon -->#}
+{#    <link rel="shortcut icon" type="image/x-icon" href="{% static 'rnr/assets/img/fav.png' %}">#}
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}">
+
+    <!-- Lineawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/line-awesome.min.css' %}">
+
+    <!-- Chart CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/morris/morris.css' %}">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/dataTables.bootstrap4.min.css' %}">
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/select2.min.css' %}">
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+    <!-- Calendar CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/fullcalendar.min.css' %}">
+
+    <!-- Tagsinput CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+			<script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
+			<script src="{% static 'assets/js/respond.min.js' %}"></script>
+		<![endif]-->
+</head>
+<body>
+<!-- Main Wrapper -->
+{#<div class="main-wrapper">#}
+{#    <div class="page-wrapper">#}
+        <div class="content container-fluid">
+            <div class="row" id="slip">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="payslip-title">Payslip Period: {{ payroll.start_date }}
+                                - {{ payroll.end_date }}</h4>
+                            <div class="row">
+                                <div class="col-sm-6 m-b-20">
+                                    <img {% if company_name.logo %}src="{{ company_name.logo.url }}"{% endif %}
+                                         class="inv-logo"
+                                         alt="Company Logo">
+                                    <ul class="list-unstyled mb-0">
+                                        <li> {{ company_name.name | title }}</li>
+                                        {% if company_name.address %}
+                                            <li>{{ company_name.address }}</li>
+                                        {% endif %}
+
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6 m-b-20">
+                                    <div class="invoice-details">
+                                        <h3 class="text-uppercase">Payslip #{{ payroll.payroll_code }}</h3>
+                                        {#												<ul class="list-unstyled">#}
+                                        {#													<li>Salary Period: <span>{{ payroll.start_date }} - {{ payroll.end_date }}</span></li>#}
+                                        {#												</ul>#}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 m-b-20">
+                                    <ul class="list-unstyled">
+                                        <li><h5 class="mb-0"><strong>{{ payroll.user.get_full_name | title }}</strong>
+                                        </h5></li>
+                                        <li>Employee ID: {{ payroll.user.user_code }}</li>
+                                        <li>Joining Date: {{ payroll.user.joining_date }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div>
+                                        <h4 class="m-b-10"><strong>Earnings</strong></h4>
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                            <tr>
+                                                <td><strong>Gross Salary</strong>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right">{{ company_name.currency_sym }} {{ payroll.gross_salary }}</span>
+                                                    {% else %}
+                                                        <span class="float-right">{{ payroll.gross_salary }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Benefits
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right">{{ company_name.currency_sym }} {{ total_benefits }}</span>
+                                                    {% else %}
+                                                        <span class="float-right">{{ total_benefits }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </strong></td>
+                                            </tr>
+
+                                            {% for adjustment in payroll.payroll_salary_adjustments.all %}
+                                                {% if adjustment.adjustment_type == 'benefit' %}
+                                                    <tr>
+                                                        <td><span class="px-4">
+                                                                    {{ adjustment.name }}
+                                                            {% if company_name.currency_dir == 'left' %}
+                                                                <span class="float-right">{{ company_name.currency_sym }} {{ adjustment.amount }}</span>
+                                                            {% else %}
+                                                                <span class="float-right">{{ adjustment.amount }} {{ company_name.currency_sym }}</span>
+                                                            {% endif %}
+                                                                    </span>
+                                                        </td>
+                                                    </tr>
+
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if total_claims_amount %}
+                                                <tr>
+                                                    <td><strong>Claims
+                                                        {% if company_name.currency_dir == 'left' %}
+                                                            <span class="float-right">{{ company_name.currency_sym }} {{ total_claims_amount }}</span>
+                                                        {% else %}
+                                                            <span class="float-right">{{ total_claims_amount }} {{ company_name.currency_sym }}</span>
+                                                        {% endif %}
+                                                    </strong></td>
+                                                </tr>
+
+                                                {% for adjustment in payroll.payroll_salary_adjustments.all %}
+                                                    {% if adjustment.adjustment_type == 'claim' %}
+                                                        <tr>
+                                                            <td><span class="px-4">
+                                                                    {{ adjustment.name }}
+                                                                {% if company_name.currency_dir == 'left' %}
+                                                                    <span class="float-right">{{ company_name.currency_sym }} {{ adjustment.amount }}</span>
+                                                                {% else %}
+                                                                    <span class="float-right">{{ adjustment.amount }} {{ company_name.currency_sym }}</span>
+                                                                {% endif %}
+                                                                    </span>
+                                                            </td>
+                                                        </tr>
+
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+
+                                            {% if payroll.overtime %}
+                                                <tr>
+                                                    <td><strong>Extra Hours ({{ payroll.overtime }})</strong>
+                                                        {% if company_name.currency_dir == 'left' %}
+                                                            <span class="float-right">{{ company_name.currency_sym }} {{ payroll.overtime_amount }}</span>
+                                                        {% else %}
+                                                            <span class="float-right">{{ payroll.overtime_amount }} {{ company_name.currency_sym }}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+
+                                            {#                                                        <tr>#}
+                                            {#															<td><strong>Total Earnings</strong> <span class="float-right"><strong>${{total_earnings}}</strong></span></td>#}
+                                            {#														</tr>#}
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div>
+                                        <h4 class="m-b-10"><strong>Deductions</strong></h4>
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                            <tr>
+                                                <td><strong>Deductions
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right">{{ company_name.currency_sym }} {{ total_deductions }}</span>
+                                                    {% else %}
+                                                        <span class="float-right">{{ total_deductions }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </strong></td>
+                                            </tr>
+                                            {% for adjustment in payroll.payroll_salary_adjustments.all %}
+                                                {% if adjustment.adjustment_type == 'deduction' %}
+                                                    <tr>
+                                                        <td><span class="px-4">
+                                                                    {{ adjustment.name }}
+                                                            {% if company_name.currency_dir == 'left' %}
+                                                                <span class="float-right">{{ company_name.currency_sym }} {{ adjustment.amount }}</span>
+                                                            {% else %}
+                                                                <span class="float-right">{{ adjustment.amount }} {{ company_name.currency_sym }}</span>
+                                                            {% endif %}
+                                                                    </span>
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <tr>
+                                                <td><strong>Taxes
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right">{{ company_name.currency_sym }} {{ total_taxes_amount }}</span>
+                                                    {% else %}
+                                                        <span class="float-right">{{ total_taxes_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </strong>
+                                                </td>
+                                            </tr>
+                                            {% for tax in payroll.payroll_taxes.all %}
+                                                <tr>
+                                                    <td><span class="px-4">
+                                                                {{ tax.name }} ({{ tax.percentage }}%)
+                                                        {% if company_name.currency_dir == 'left' %}
+                                                            <span class="float-right">{{ company_name.currency_sym }} {{ tax.tax_amount }}</span>
+                                                        {% else %}
+                                                            <span class="float-right">{{ tax.tax_amount }} {{ company_name.currency_sym }}</span>
+                                                        {% endif %}
+                                                                </span>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            <tr>
+                                                <td><strong>401K Amount</strong>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right"><strong>{{ company_name.currency_sym }} {{ payroll.amount_401K }}</strong></span>
+                                                    {% else %}
+                                                        <span class="float-right"><strong>{{ payroll.amount_401K }} {{ company_name.currency_sym }}</strong></span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total Deductions</strong>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right"><strong>{{ company_name.currency_sym }} {{ all_total_deductions }}</strong></span>
+                                                    {% else %}
+                                                        <span class="float-right"><strong>{{ all_total_deductions }} {{ company_name.currency_sym }}</strong></span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <p>
+                                        {% if company_name.currency_dir == 'left' %}
+                                            <strong>Net
+                                                Salary: {{ company_name.currency_sym }} {{ payroll.net_salary }}</strong>
+                                        {% else %}
+                                            <strong>Net
+                                                Salary: {{ payroll.net_salary }} {{ company_name.currency_sym }}</strong>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{#    </div>#}
+
+{#</div>#}
+<!-- /Main Wrapper -->
+
+<!-- jQuery -->
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+<script src="{% static 'assets/js/jquery.ui.touch-punch.js' %}"></script>
+
+
+<!-- Bootstrap Core JS -->
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+
+<!-- Slimscroll JS -->
+<script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+
+
+<!-- Mask JS -->
+<script src="{% static 'assets/js/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'assets/js/mask.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'assets/plugins/morris/morris.min.js' %}"></script>
+<script src="{% static 'assets/plugins/raphael/raphael.min.js' %}"></script>
+<script src="{% static 'assets/js/chart.js' %}"></script>
+
+{#<script src="{% static 'assets/js/jquery.formset.js' %}"></script>#}
+<script src="{% static 'assets/js/hrstream.js' %}"></script>
+<script src="{% static 'assets/js/hrstream1.js' %}"></script>
+
+<!-- Select2 JS -->
+<script src="{% static 'assets/js/select2.min.js' %}"></script>
+
+
+<!-- Datetimepicker JS -->
+<script src="{% static 'assets/js/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+<!-- Datatable JS -->
+<script src="{% static 'assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Calendar JS -->
+<script src="{% static 'assets/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'assets/js/fullcalendar.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.fullcalendar.js' %}"></script>
+
+<!-- Summernote JS -->
+{#<script src="{% static 'assets/plugins/summernote/dist/summernote-bs4.min.js' %}"></script>#}
+
+<!-- Task JS -->
+<script src="{% static 'assets/js/task.js' %}"></script>
+
+<!-- Custom JS -->
+<script src="{% static 'assets/js/app.js' %}"></script>
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+{% block base_js %}{% endblock %}
+
+</body>
+</html>

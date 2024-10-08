@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="table-responsive">
+          <table class="table table-striped m-b-none" style="font-size:15px;font-weight:300!important;">
+            <thead>
+            <tr>
+              <!--<th style="font-weight:500;">ID</th>-->
+              <th style="font-weight:500;">Employee Name</th>
+              <th style="font-weight:500;">Amount</th>
+              <th style="font-weight:500;" class="hidden-xs">Current Salary</th>
+              <th style="font-weight:500;">Deductions</th>
+              <th style="font-weight:500;">Benefits</th>
+              <th style="font-weight:500;">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+               {% for payroll in payrolls %}
+                <tr>
+                  <!--<td></td>-->
+                  <td><a href="#" class="dropdown-toggle dker" data-toggle="dropdown">
+  <span class="text-info">{{ payroll.payroll.user }}</span>
+</a>
+</td>
+                  <td>{{ payroll.payroll.net_salary}}</td>
+                  <td class="hidden-xs">{{ payroll.payroll.gross_salary }}</td>
+                  <td>{{payroll.deduction}}</td>
+                  <td>{{payroll.benifit}}</td>
+                  <td class="text-right">
+                    <a href="{% url 'singlePayroll' pk=payroll.payroll.id %}" style="float:left;">Show </a>
+{#                    <div class="btn-group">#}
+{#                          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-pencil"></i></a>#}
+{#                          <ul class="dropdown-menu pull-right">#}
+{#                            <li><a href="/company/payrolls/61/edit">Edit</a></li>#}
+{#                            <li class="divider"></li>#}
+{#                            <li><a style="color:#fb6b5b" confirm="Are you sure?" rel="nofollow" data-method="delete" href="/company/payrolls/61">Delete</a></li>#}
+{#                          </ul>#}
+{##}
+{#                    </div>#}
+                  </td>
+                </tr>
+               {% endfor %}
+
+            </tbody>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+{% endblock %}

@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% block title %} Leave {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            {% for error in form.errors %}
+                <span class="help-block">{{ error }}</span>
+            {% endfor %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Leaves</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Leaves</li>
+                        </ul>
+                    </div>
+                    {% if leave_user.leave_policy %}
+                        <div class="col-auto float-right ml-auto">
+                            <a href="javascript:void(0);" class="btn add-btn" data-toggle="modal"
+                               data-target="#add_leave"><i class="fa fa-plus"></i> Apply Leave</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <!-- Leave Statistics -->
+            <div class="row">
+                {% if leave_user.leave_policy == false %}
+                    <h3 style="color:red;">There is no Leave Policy assigned to you.</h3>
+                {% endif %}
+                {% for leave in leave_statics_list %}
+                    <div class="col-md-3">
+                        <div class="stats-info">
+                            <h6>{{ leave.current_leave.name }}-Consumed</h6>
+                            <h4>{% if leave.leave_static == None %}
+                                0
+                            {% else %}
+                                {{ leave.current_leave.days|subtractLeave:leave.leave_static.remaining_days}}
+                            {% endif %} /{{ leave.current_leave.days }}</h4>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% if remaining_days %}
+                    <div class="col-md-3">
+                        <div class="stats-info">
+                            <h6>Total Remaining Leave</h6>
+                            <h4>{{ remaining_days }}</h4>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <!-- /Leave Statistics -->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>No of Days</th>
+                                <th class="text-center">Status</th>
+                                <th>Approved by</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for leave in leave_request %}
+                                <tr>
+                                    <td>{{ leave.leave_type }}</td>
+                                    <td>{{ leave.leave_from }}</td>
+                                    <td>{{ leave.leave_to }}</td>
+                                    <td>{{ leave.requested_days }} days</td>
+                                    <td class="text-center">
+                                        <div class="action-label">
+                                            <a class="btn btn-white btn-sm btn-rounded">
+                                                <i class="fa fa-dot-circle-o text-purple"></i> {{ leave.status }}
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a href="javascript:void(0);" class="avatar avatar-xs">
+                                                {% if leave.approved_by.profile_pic %}
+                                                    <img src="{{ leave.approved_by.profile_pic.url }}" alt=""/>
+                                                {% else %}
+                                                    <img src="{% static 'assets/img/user.jpg' %}" alt=""/>
+                                                {% endif %}
+                                            </a>
+
+                                            <a>{{ leave.approved_by }}</a>
+                                        </h2>
+                                    </td>
+                                    <td>
+
+
+
+                                        <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                           data-target="#show_leave-{{ leave.id }}"><i class="fa fa-eye m-r-5"></i></a>
+                                        {% if leave.status == 'New' %}
+                                        <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                           data-target="#delete_approve-{{ leave.id }}"><i
+                                                class="fa fa-trash-o m-r-5"></i></a>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Add Leave Modal -->
+        <div id="add_leave" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Leave</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for error in field.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
+                            <input class="form-control" hidden value="{{ remaining_days }}" type="text"
+                                   id="remaining_days_hidden">
+                            <input class="form-control" hidden value="{{ now }}" type="text" id="to_day_date">
+                            <input class="form-control" hidden value="{{ leave_user.id }}" type="text" id="id_user_id">
+                            <div class="form-group">
+                                <label>Leave Type <span class="text-danger">*</span></label>
+                                {% render_field form.leave_type class="form-control" %}
+                                {% render_field form.leave_type.error %}
+                            </div>
+                            <div class="form-group">
+                                <label>From <span class="text-danger">*</span></label>
+                                    {% render_field form.leave_from class="form-control" %}
+                                    {% render_field form.leave_from.error %}
+                            </div>
+                            <div class="form-group">
+                                <label>To <span class="text-danger">*</span></label>
+                                    {% render_field form.leave_to class="form-control" %}
+                                    {% render_field form.leave_to.error %}
+                            </div>
+                            <div class="form-group">
+                                <label>Number of days <span class="text-danger">*</span></label>
+                                {% render_field form.requested_days %}
+                            </div>
+                            <div class="form-group">
+                                <label>Remaining Leaves <span class="text-danger">*</span></label>
+                                <input class="form-control" readonly value="{{ remaining_days }}" type="text"
+                                       id="remaining_days">
+                            </div>
+                            <div class="form-group">
+                                <label>Leave Reason <span class="text-danger">*</span></label>
+                                {% render_field form.reason rows="4" class="form-control" %}
+                                {% render_field form.reason.error %}
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Leave Modal -->
+
+        <!-- Edit Leave Modal -->
+        <div id="edit_leave" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Leave</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="edit_leave_form" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Edit Leave Modal -->
+
+        <!-- Delete Leave Modal -->
+        {% for leave in leave_request %}
+            <div class="modal custom-modal fade" id="delete_approve-{{ leave.id }}" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="form-header">
+                                <h3>Delete Leave</h3>
+                                <p>Are you sure want to delete this leave?</p>
+                            </div>
+                            <div class="modal-btn delete-action">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="{% url 'delete_leave_request' pk=leave.id user='employee' %}"
+                                           class="btn btn-primary continue-btn">Delete</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="javascript:void(0);" data-dismiss="modal"
+                                           class="btn btn-primary cancel-btn">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- /Delete Leave Modal -->
+        <!-- Show Leave Detail Modal -->
+        {% for leave in leave_request %}
+            <div id="show_leave-{{ leave.id }}" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Leave Detail</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <div class="form-group">
+                                    <label>Leave Type </label>
+                                    <div class="form-control" readonly>
+                                        {{ leave.leave_type }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>From </label>
+                                    <div>
+                                        <input value='{{ leave.leave_from }}' class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>To </label>
+                                    <div>
+                                        <input value='{{ leave.leave_to }}' class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Requested Days </label>
+                                    <div>
+                                        <input value='{{ leave.requested_days }}' class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Leave Reason </label>
+                                    <textarea rows="4" class="form-control" name="reason"
+                                              readonly>{{ leave.reason }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Show Leave Detail Modal -->
+        <!-- /Page Wrapper -->
+        <div class="notification-popup hide">
+            <p>
+                <span class="task"></span>
+                <span class="notification-text"></span>
+            </p>
+        </div>
+    </div>
+    <!-- /Page Wrapper -->
+
+{% endblock %}

@@ -1,0 +1,479 @@
+{% extends 'base_payroll_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% block title %}Pay Slip {{ block.super }} {% endblock %}
+{% block content %}
+    {% get_company_object user.id %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Pay Slip Details</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Pay Slip Details</li>
+                        </ul>
+                    </div>
+                    <div class="col-auto float-right ml-auto">
+                        <div class="btn-group btn-group-sm">
+                            {#									<button class="btn btn-white">CSV</button>#}
+                            {#									<button onclick="printPageArea('slip')" class="btn btn-white">PDF</button>#}
+                            {#									<button onclick="printPageArea('slip')" class="btn btn-white"><i class="fa fa-print fa-lg"></i> Print</button>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <div class="row" id="slip">
+                <div class="col-md-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6 m-b-20">
+                                    <div id="accordion">
+                                        <div class="card">
+                                            <div class="card-header" id="headingOne">
+                                                <h5 class="mb-0">
+                                                    <button class="btn  collapsed" data-toggle="collapse"
+                                                            data-target="#collapseOne" aria-expanded="false"
+                                                            aria-controls="collapseOne">
+                                                        Gross Salary
+                                                    </button>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="btn collapsed float-right">{{ company_name.currency_sym }} {{ gross_salary }}</span>
+                                                    {% else %}
+                                                        <span class="btn collapsed float-right">{{ gross_salary }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </h5>
+                                            </div>
+                                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                                                 data-parent="#accordion">
+                                                <div class="card-body">
+                                                    <div class="panel-body pl-4"><strong>Gross Salary </strong>
+                                                        {% if company_name.currency_dir == 'left' %}
+                                                            <span class="float-right pr-4">{{ company_name.currency_sym }} {{ gross_salary }}</span>
+                                                        {% else %}
+                                                            <span class="float-right pr-4">{{ gross_salary }} {{ company_name.currency_sym }}</span>
+                                                        {% endif %}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-header" id="headingTwo">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link collapsed" data-toggle="collapse"
+                                                            data-target="#collapseTwo" aria-expanded="false"
+                                                            aria-controls="collapseTwo">
+                                                        Benefits
+                                                    </button>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="btn collapsed float-right">{{ company_name.currency_sym }} {{ pendingPayroll.benefit_amount }}</span>
+                                                    {% else %}
+                                                        <span class="btn collapsed float-right">{{ pendingPayroll.benefit_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </h5>
+                                            </div>
+                                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                                                 data-parent="#accordion">
+                                                <div class="card-body">
+                                                    <ul class="list-unstyled">
+                                                        {% for b in benefits %}
+                                                            <li class="pl-4"><strong>{{ b.name }}</strong>
+                                                                {% if company_name.currency_dir == 'left' %}
+                                                                    <span class="float-right pr-4">{{ company_name.currency_sym }} {{ b.amount }}</span>
+                                                                {% else %}
+                                                                    <span class="float-right pr-4">{{ b.amount }} {{ company_name.currency_sym }}</span>
+                                                                {% endif %}
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    <strong class="pl-4">Total Benefits</strong>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right pr-4">{{ company_name.currency_sym }} {{ pendingPayroll.benefit_amount }}</span>
+                                                    {% else %}
+                                                        <span class="float-right pr-4">{{ pendingPayroll.benefit_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-header" id="headingThree">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link collapsed" data-toggle="collapse"
+                                                            data-target="#collapseThree" aria-expanded="false"
+                                                            aria-controls="collapseThree">
+                                                        Deductions
+                                                    </button>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="btn collapsed float-right pr-4">{{ company_name.currency_sym }} {{ pendingPayroll.deduction_amount }}</span>
+                                                    {% else %}
+                                                        <span class="btn collapsed float-right pr-4">{{ pendingPayroll.deduction_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </h5>
+                                            </div>
+                                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                                                 data-parent="#accordion">
+                                                <div class="card-body">
+                                                    <ul class="list-unstyled">
+                                                        {% for d in deductions %}
+                                                            <li><strong class="pl-4">{{ d.name }}</strong>
+                                                                {% if company_name.currency_dir == 'left' %}
+                                                                    <span class="float-right pr-4">{{ company_name.currency_sym }} {{ d.amount }}</span>
+                                                                {% else %}
+                                                                    <span class="float-right pr-4">{{ d.amount }} {{ company_name.currency_sym }}</span>
+                                                                {% endif %}
+                                                            </li>
+
+                                                        {% endfor %}
+                                                    </ul>
+                                                    <strong class="pl-4">Total Deductions</strong>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right pr-4"> {{ company_name.currency_sym }} {{ pendingPayroll.deduction_amount }}</span>
+                                                    {% else %}
+                                                        <span class="float-right pr-4"> {{ pendingPayroll.deduction_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-header" id="headingFour">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link collapsed" data-toggle="collapse"
+                                                            data-target="#collapseFour" aria-expanded="false"
+                                                            aria-controls="collapseFour">
+                                                        Taxes
+                                                    </button>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="btn collapsed float-right pr-4">{{ company_name.currency_sym }} {{ taxes_amount }}</span>
+                                                    {% else %}
+                                                        <span class="btn collapsed float-right pr-4">{{ taxes_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </h5>
+                                            </div>
+                                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                                                 data-parent="#accordion">
+                                                <div class="card-body">
+                                                    <ul class="list-unstyled">
+                                                        {% if all_taxes_amounts.items %}
+                                                            {% for key, value in all_taxes_amounts.items %}
+                                                                <li><strong class="pl-4">{{ key }}</strong>
+                                                                    {% if company_name.currency_dir == 'left' %}
+                                                                        <span class="float-right pr-4">{{ company_name.currency_sym }} {{ value }}</span>
+                                                                    {% else %}
+                                                                        <span class="float-right pr-4">{{ value }} {{ company_name.currency_sym }}</span>
+                                                                    {% endif %}
+                                                                </li>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </ul>
+                                                    <strong class="pl-4">Total Taxes</strong>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right pr-4">{{ company_name.currency_sym }} {{ taxes_amount }}</span>
+                                                    {% else %}
+                                                        <span class="float-right pr-4">{{ taxes_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if all_claims_amount %}
+                                            <div class="card">
+                                            <div class="card-header" id="headingFive">
+                                                <h5 class="mb-0">
+                                                    <button class="btn btn-link collapsed" data-toggle="collapse"
+                                                            data-target="#collapseFive" aria-expanded="false"
+                                                            aria-controls="collapseFive">
+                                                        Claims
+                                                    </button>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="btn collapsed float-right pr-4">{{ company_name.currency_sym }} {{ all_claims_amount }}</span>
+                                                    {% else %}
+                                                        <span class="btn collapsed float-right pr-4">{{ all_claims_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </h5>
+                                            </div>
+                                            <div id="collapseFive" class="collapse" aria-labelledby="headingFive"
+                                                 data-parent="#accordion">
+                                                <div class="card-body">
+                                                    <ul class="list-unstyled">
+                                                        {% for c in all_claims.all %}
+                                                            <li><strong class="pl-4">{{ c.claim_type.name }}</strong>
+                                                                {% if company_name.currency_dir == 'left' %}
+                                                                    <span class="float-right pr-4">{{ company_name.currency_sym }} {{ c.amount }}</span>
+                                                                {% else %}
+                                                                    <span class="float-right pr-4"> {{ c.amount }} {{ company_name.currency_sym }}</span>
+                                                                {% endif %}
+                                                            </li>
+
+                                                        {% endfor %}
+                                                    </ul>
+                                                    <strong class="pl-4">Total Claims</strong>
+                                                    {% if company_name.currency_dir == 'left' %}
+                                                        <span class="float-right pr-4">{{ company_name.currency_sym }} {{ all_claims_amount }}</span>
+                                                    {% else %}
+                                                        <span class="float-right pr-4">{{ all_claims_amount }} {{ company_name.currency_sym }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                        <tr>
+                                            <td><span class="ml-3">401K Plan</span>
+                                                {% if company_name.currency_dir == 'left' %}
+                                                    <span class="float-right mr-4">{{ company_name.currency_sym }} {{ amount_401K }}</span>
+                                                {% else %}
+                                                    <span class="float-right mr-4">{{ amount_401K }} {{ company_name.currency_sym }}</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr></tbody></table>
+
+
+                                    {#                                    <div class="panel-group" id="accordion">#}
+                                    {#                                        <div class="panel panel-default">#}
+                                    {#                                            <div class="panel-heading">#}
+                                    {#                                                <h4 class="panel-title">#}
+                                    {#                                                    <a style="color: black" data-toggle="collapse"#}
+                                    {#                                                       data-parent="#accordion" href="#collapse1">#}
+                                    {#                                                        <i class="fa fa-angle-double-down"></i> Gross Salary<span#}
+                                    {#                                                            class="float-right">${{ pendingPayroll.working_hours_salary | add:pendingPayroll.benefit_amount }}</span></a>#}
+                                    {#                                                </h4>#}
+                                    {#                                            </div>#}
+                                    {#                                            <div id="collapse1" class="panel-collapse collapse in">#}
+                                    {#                                                <div class="panel-body pl-4"><strong>Gross Salary </strong> <span#}
+                                    {#                                                        class="float-right pr-4">${{ pendingPayroll.working_hours_salary | add:pendingPayroll.benefit_amount }}</span>#}
+                                    {#                                                </div>#}
+                                    {#                                            </div>#}
+                                    {#                                        </div>#}
+                                    {#                                        <div class="panel panel-default">#}
+                                    {#                                            <div class="panel-heading">#}
+                                    {#                                                <h4 class="panel-title">#}
+                                    {#                                                    <a style="color: black" data-toggle="collapse"#}
+                                    {#                                                       data-parent="#accordion" href="#collapse2">#}
+                                    {#                                                        <i class="fa fa-angle-double-down"></i> Benefits<span#}
+                                    {#                                                            class="float-right">${{ pendingPayroll.benefit_amount }}</span></a>#}
+                                    {#                                                </h4>#}
+                                    {#                                            </div>#}
+                                    {#                                            <div id="collapse2" class="panel-collapse collapse">#}
+                                    {#                                                <div class="panel-body">#}
+                                    {#                                                    <ul class="list-unstyled">#}
+                                    {#                                                        {% for b in benefits %}#}
+                                    {#                                                            <li class="pl-4"><strong>{{ b.name }}</strong> <span#}
+                                    {#                                                                    class="float-right pr-4">${{ b.amount }}</span></li>#}
+                                    {#                                                        {% endfor %}#}
+                                    {#                                                    </ul>#}
+                                    {#                                                    <strong class="pl-4">Total Benefits</strong><span#}
+                                    {#                                                        class="float-right pr-4">${{ pendingPayroll.benefit_amount }}</span>#}
+                                    {#                                                </div>#}
+                                    {#                                            </div>#}
+                                    {#                                        </div>#}
+                                    {#                                        <div class="panel panel-default">#}
+                                    {#                                            <div class="panel-heading">#}
+                                    {#                                                <h4 class="panel-title">#}
+                                    {#                                                    <a style="color: black" data-toggle="collapse"#}
+                                    {#                                                       data-parent="#accordion" href="#collapse3">#}
+                                    {#                                                        <i class="fa fa-angle-double-down"></i> Deductions<span#}
+                                    {#                                                            class="float-right">{{ pendingPayroll.deduction_amount }}</span></a>#}
+                                    {#                                                </h4>#}
+                                    {#                                            </div>#}
+                                    {#                                            <div id="collapse3" class="panel-collapse collapse">#}
+                                    {#                                                <div style="color: black" class="panel-body">#}
+                                    {#                                                    <ul>#}
+                                    {#                                                        {% for d in deductions %}#}
+                                    {#                                                            <li><strong class="pl-4">{{ b.name }}</strong> <span#}
+                                    {#                                                                    class="float-right pr-4">$ {{ b.amount }}</span>#}
+                                    {#                                                            </li>#}
+                                    {##}
+                                    {#                                                        {% endfor %}#}
+                                    {#                                                    </ul>#}
+                                    {#                                                    <strong class="pl-4">Total Deductions</strong><span#}
+                                    {#                                                        class="float-right pr-4"> ${{ pendingPayroll.deduction_amount }}</span>#}
+                                    {#                                                </div>#}
+                                    {#                                            </div>#}
+                                    {#                                        </div>#}
+                                    {#                                        <div class="panel panel-default">#}
+                                    {#                                            <div class="panel-heading">#}
+                                    {#                                                <h4 class="panel-title">#}
+                                    {#                                                    <a style="color: black" data-toggle="collapse"#}
+                                    {#                                                       data-parent="#accordion" href="#collapse4">#}
+                                    {#                                                        <i class="fa fa-angle-double-down"></i> Taxes<span#}
+                                    {#                                                            class="float-right">${{ taxes_amount }}</span></a>#}
+                                    {#                                                </h4>#}
+                                    {#                                            </div>#}
+                                    {#                                            <div id="collapse4" class="panel-collapse collapse">#}
+                                    {#                                                <div style="color: black" class="panel-body">#}
+                                    {#                                                    <ul class="list-unstyled">#}
+                                    {#                                                        {% if all_taxes_amounts.items %}#}
+                                    {#                                                            {% for key, value in all_taxes_amounts.items %}#}
+                                    {#                                                                <li><strong class="pl-4">{{ key }}</strong><span#}
+                                    {#                                                                        class="float-right pr-4">{{ value }}</span></li>#}
+                                    {#                                                            {% endfor %}#}
+                                    {#                                                        {% endif %}#}
+                                    {#                                                    </ul>#}
+                                    {#                                                    <strong class="pl-4">Total Taxes</strong> <span#}
+                                    {#                                                        class="float-right pr-4">{{ taxes_amount }}</span>#}
+                                    {#                                                </div>#}
+                                    {#                                            </div>#}
+                                    {#                                        </div>#}
+                                    {#                                    </div>#}
+                                    {#                                            <div class="col-sm-6">#}
+                                    {#											<div>#}
+                                    <h4 class="m-b-10"><strong>Earning Details</strong></h4>
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                        <tr>
+                                            <td><strong>Net Salary </strong>
+                                                {% if company_name.currency_dir == 'left' %}
+                                                    <span class="float-right">{{ company_name.currency_sym }} {{ net_salary }}</span>
+                                                {% else %}
+                                                    <span class="float-right">{{ net_salary }} {{ company_name.currency_sym }}</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Net Salary in Words </strong>
+                                                <span class="float-right">{{ net_salary_words | title }}</span>
+                                            </td>
+                                        </tr>
+                                        {#                                        <tr>#}
+                                        {#                                            <td><strong>Over time </strong> <span#}
+                                        {#                                                    class="float-right">${{ pendingPayroll.overtime }}</span></td>#}
+                                        {#                                        </tr>#}
+{#                                        {% if salary_type == 'hourly' %}#}
+{#                                            <tr>#}
+{#                                                <td><strong>Production Time </strong> <span#}
+{#                                                        class="float-right">${{ pendingPayroll.working_hours }}</span>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                        {% endif %}#}
+                                        {#                                                    {% for benifit in benifits %}#}
+                                        {#														<tr>#}
+                                        {#															<td><strong>{{benifit.name}}</strong> <span class="float-right">${{benifit.amount}}</span></td>#}
+                                        {#														</tr>#}
+                                        {#                                                    {% endfor %}#}
+
+                                        {##}
+                                        {#                                                         <tr>#}
+                                        {#													    <td><strong>Overtime-{{overtime_amount.name}}</strong> <span class="float-right">${{overtimes}}</span></td>#}
+                                        {#                                                        </tr>#}
+                                        {##}
+                                        {#                                                        <tr>#}
+                                        {#															<td><strong>Total Earnings</strong> <span class="float-right"><strong>${{total_earnings}}</strong></span></td>#}
+                                        {#														</tr>#}
+
+                                        </tbody>
+                                    </table>
+                                    {#											</div>#}
+                                    {#                                            </div>#}
+
+
+                                </div>
+                                <div class="col-sm-6 m-b-20">
+                                    <form method="post"
+                                          action="{% url 'generate_salary_slip' pendingPayroll.id %}">{% csrf_token %}
+                                        {% if salary_type == 'hourly' %}
+                                            <label class="focus-label">Extra Hours</label>
+                                            <div class="form-group">
+                                                {% render_field hour_form.hours class="form-control" %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-scroll">
+                                            <table>
+                                                {{ formset.management_form }}
+                                                <tbody>
+                                                {% for form in formset %}
+                                                    <tr class="dynamic-formSalaryAdjustment">
+                                                        <td>
+                                                            <div class="card mb-4">
+                                                                <div class="card-body">
+                                                                    <h3 class="card-title">Salary Adjustments
+                                                                        <a onclick="deleteRowSalaryAdjustment();"
+                                                                           href="javascript:void(0)"
+                                                                           class="delete-row delete-icon"><i
+                                                                                class="fa fa-trash-o"></i></a>
+                                                                    </h3>
+                                                                    {% for hidden in form.hidden_fields %}
+                                                                        {{ hidden }}
+                                                                    {% endfor %}
+                                                                    <div class="row" style="height: 235px">
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group form-focus focused">
+                                                                                {% render_field form.name class="form-control floating" %}
+                                                                                <label class="focus-label">Name</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group form-focus focused">
+                                                                                {% render_field form.amount class="form-control floating" %}
+                                                                                <label class="focus-label">Amount</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12 mb-4">
+                                                                            <div class="form-group form-focus focused">
+                                                                                {% render_field form.adjustment_type class="form-control floating" %}
+                                                                                <label class="focus-label">Adjustment
+                                                                                    Type</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12 mb-4">
+                                                                            {% if form.instance.id %}
+                                                                                <span class="text-danger float-right ">Delete Record: {{ form.DELETE }}</span>
+                                                                            {% endif %}
+                                                                        </div>
+
+                                                                    </div>
+                                                                    {#                                {% if form.instance.id %}#}
+                                                                    {#                                    <span class="text-danger float-right">Delete Record: {{ form.DELETE }}</span>#}
+                                                                    {#                                {% endif %}#}
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            <a href="javascript:void(0);" onclick="addRowSalaryAdjustment();"
+                                               class="add-row"><i class="fa fa-plus-circle"></i>
+                                                Add More</a>
+                                        </div>
+                                        <div class="submit-section m-b-0">
+                                            <button type="submit" class="btn btn-primary submit-btn float-right">
+                                                Generate Slip
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+    <script>
+        function addRowSalaryAdjustment() {
+            return addForm(this, 'payroll_salary_adjustments', '.dynamic-formSalaryAdjustment');
+        }
+
+        function deleteRowSalaryAdjustment() {
+            return deleteForm(this, 'payroll_salary_adjustments', '.dynamic-formSalaryAdjustment');
+        }
+    </script>
+{% endblock %}

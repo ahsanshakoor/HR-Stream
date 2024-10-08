@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Claim {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Claim</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Claim</li>
+                        </ul>
+                    </div>
+                    <div class="col-auto float-right ml-auto">
+                        <a href="javascript:void(0)" class="btn add-btn" data-toggle="modal"
+                           data-target="#add_claim"><i class="fa fa-plus"></i> Add Claim</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+            {% include "messages.html" %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>Claim Type</th>
+                                <th>Claim Date</th>
+                                <th>Claim Amount</th>
+                                <th>Claim Status</th>
+                                <th>Claim Detail</th>
+                                <th>Files</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for claim in claims %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ claim.claim_type | title }}</td>
+                                    <td>{{ claim.date }}</td>
+                                    <td>{{ claim.amount }}</td>
+
+                                    <td>
+                                        <div class="action-label">
+                                            <a class="btn btn-white btn-sm btn-rounded"
+                                               data-toggle="dropdown" aria-expanded="false">
+                                                {% if claim.status == 'Declined' %}
+                                                    <i class="fa fa-dot-circle-o text-danger"></i>
+                                                {% elif claim.status == 'Approved' %}
+                                                    <i class="fa fa-dot-circle-o text-success"></i>
+                                                {% elif claim.status == 'Pending' %}
+                                                    <i class="fa fa-dot-circle-o text-info"></i>
+                                                {% endif %}
+                                                {{ claim.status }}
+                                            </a>
+                                        </div>
+                                    </td>
+
+                                    <td>{{ claim.detail }}</td>
+                                    <td class="text-center">
+                                        <div class="dash-card-avatars">
+                                            <a class="claimFile primary-color-used" margin-right: 10px;"
+                                               href="javascript:void(0);" data-toggle="modal"
+                                               data-claimFileURL="{% url 'claim_files' claim_id=claim.id %}"
+                                               data-target="#show_claim_files"><i
+                                                    class=" fa fa-eye"></i></a>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        {% if claim.status == 'Pending' %}
+                                            <span>
+                                                <span class="action-circle large claimEdit" data-toggle="modal"
+                                                      data-target="#edit_claim"
+                                                      data-claimEditURL="{% url 'editClaim' claim.id %}">
+                                                    <i class="material-icons">edit</i>
+                                                </span>
+                                                <span class="action-circle large delete-btn myDeleteClaim"
+                                                      data-toggle="modal"
+                                                      data-target="#delete_claim"
+                                                      data-ClaimDeleteURL="{% url 'deleteClaim' claim.id %}">
+                                                    <i class="material-icons">delete</i>
+                                                </span>
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Add Claim Modal -->
+        <div id="add_claim" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Claim</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add_claim_form" method="post" action="{% url 'createClaim' %}"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Claim Type <span class="text-danger">*</span></label>
+                                {% render_field form.claim_type class="form-control" required="required" %}
+                            </div>
+                            <div class="form-group">
+                                <label>Claim Date <span class="text-danger">*</span></label>
+                                {% render_field form.date class="form-control" required="required" %}
+                            </div>
+                            <div class="form-group">
+                                <label>Claim Amount <span class="text-danger">*</span></label>
+                                {% render_field form.amount class="form-control" required="required" %}
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Images</label>
+                                {% render_field formImage.file class="form-control uploaded_file" %}
+                                <span class="uLabel text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Claim Detail <span class="text-danger">*</span></label>
+                                {% render_field form.detail class="form-control" required="required" %}
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn float-right uButton">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Claim Modal -->
+
+        <!-- Edit Claim Modal -->
+        <div id="edit_claim" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Claim</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="claim-edit-form-div" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Edit Claim Modal -->
+
+        <!-- Delete Claim Modal -->
+        <div class="modal custom-modal fade" id="delete_claim" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Claim</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="DeleteClaim" href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Delete Claim Modal -->
+
+        <!-- Claim File Modal -->
+
+        <div class="modal custom-modal fade" id="show_claim_files" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div id="claim-file-dive" class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Claim File Modal -->
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}

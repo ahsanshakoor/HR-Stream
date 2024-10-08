@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="table-responsive">
+        <table class="table table-striped m-b-none" style="font-size:15px;font-weight:300!important;">
+            <thead>
+            <tr>
+                <th style="font-weight:500;">Name</th>
+                <th style="font-weight:500;">Leaves</th>
+                <th style="font-weight:500;">Holidays</th>
+                <th style="font-weight:500;">Working Hours</th>
+                <th style="font-weight:500;">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for leavepolicy in leavepolicies %}
+                <tr class="tr-{{ leavepolicy.id }}">
+                    <td>{{ leavepolicy.policy.name }}</td>
+                    <td>{{ leavepolicy.leave }}</td>
+                    <td>{% if  leavepolicy.holiday == 0 %}
+                        <a class="btn btn-primary" href="{% url 'holiday' pk=leavepolicy.policy.id %}">Add
+                            Holidays</a>{% else %}{{ leavepolicy.holiday }}{% endif %}</td>
+                    <td>{{ leavepolicy.policy.working_hour }}</td>
+                    <td class="text-right">
+                        <a href="{% url 'singleLeavePolicy' pk=leavepolicy.policy.id %}" style="float:left;">Show </a>
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

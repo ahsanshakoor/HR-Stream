@@ -1,0 +1,24 @@
+{% load widget_tweaks %}
+<form id="edit_claim_form" action="{% url 'editClaim' claim.id %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label>Claim Type <span class="text-danger">*</span></label>
+        {% render_field form.claim_type class="form-control" required="required"%}
+    </div>
+    <div class="form-group">
+        <label>Claim Date <span class="text-danger">*</span></label>
+        {% render_field form.date class="form-control" required="required"%}
+    </div>
+    <div class="form-group">
+        <label>Claim Amount <span class="text-danger">*</span></label>
+        {% render_field form.amount class="form-control" required="required"%}
+    </div>
+    <div class="form-group">
+        <label>Claim Detail <span class="text-danger">*</span></label>
+        {% render_field form.detail class="form-control" required="required"%}
+    </div>
+
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn float-right">Save</button>
+    </div>
+</form>

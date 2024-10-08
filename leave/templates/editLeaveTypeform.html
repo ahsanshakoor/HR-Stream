@@ -1,0 +1,49 @@
+{% load static %}
+{% load widget_tweaks %}
+<form method="post" action="{% url 'edit_leave_type' leave=leave_id %}">
+
+    {% csrf_token %}
+    {% for error in field.errors %}
+        <span class="help-block">{{ error }}</span>
+    {% endfor %}
+    {% render_field form.leave_policy %}
+    <div class="form-group">
+        <label>Leave Name <span class="text-danger">*</span></label>
+        {% render_field form.name class="form-control" %}
+        {% render_field form.name.errors class="form-control" %}
+    </div>
+    <div class="form-group">
+        <label>Number of days <span class="text-danger">*</span></label>
+        {% render_field form.days class="form-control" %}
+        {% render_field form.days.errors class="form-control" %}
+    </div>
+    <div class="form-group row">
+        <label class="col-form-label col-md-2">Carry Forward</label>
+        <div class="col-md-10">
+            <div class="onoffswitch">
+                {% render_field form.is_carry_forward type="checkbox" name="onoffswitch_carry_forward" class="onoffswitch-checkbox" id="switch_carry_forward" %}
+                {% render_field form.is_carry_forward.errors %}
+                <label class="onoffswitch-label" for="switch_carry_forward">
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-form-label col-md-2">Status</label>
+        <div class="col-md-10">
+            <div class="onoffswitch">
+                {% render_field form.is_active type="checkbox" name="onoffswitch_leave_status" class="onoffswitch-checkbox" id="switch_leave_status" %}
+                {% render_field form.is_active.errors %}
+                <label class="onoffswitch-label" for="switch_leave_status">
+                    <span class="onoffswitch-inner"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+    </div>
+</form>

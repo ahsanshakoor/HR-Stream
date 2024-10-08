@@ -1,0 +1,59 @@
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-20">Uploaded image files</h5>
+                        <div class="row">
+                            {% for Pfile in claim_files %}
+                                {% if  Pfile.type == 'image' %}
+                                    <div class="col-md-3 col-sm-4 col-lg-4 col-xl-3">
+                                        <div class="uploaded-box">
+                                            <div class="uploaded-img">
+                                                <a href="{{ Pfile.file.url }}">
+                                                    <img src="{{ Pfile.file.url }}" class="img-fluid" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="uploaded-img-name">
+                                                {{ Pfile.filename }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-20">Uploaded files</h5>
+                        <ul class="files-list">
+                            {% for Pfile in claim_files %}
+                                {% if  Pfile.type != 'image' %}
+                                    <li>
+                                        <div class="files-cont">
+                                            <div class="file-type">
+                                                <span class="files-icon"><i class="fa fa-file-pdf-o"></i></span>
+                                            </div>
+                                            <div class="files-info">
+                                                <span class="file-name text-ellipsis"><a
+                                                        href="{{ Pfile.file.url }}">{{ Pfile.file.name }}</a></span>
+                                                <div class="file-size">Size: {{ Pfile.file.size|filesizeformat }}</div>
+                                            </div>
+                                            <ul class="files-action">
+                                                <li class="dropdown dropdown-action">
+                                                    <a href="" class="dropdown-toggle btn btn-link"
+                                                       data-toggle="dropdown" aria-expanded="false"><i
+                                                            class="material-icons">more_horiz</i></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="{{ Pfile.file.url }}"
+                                                           download="{{ Pfile.file.name }}">Download</a>
+                                                        <a class="dropdown-item"
+                                                           href="{% url 'delete_file' pk=Pfile.id %}">Delete</a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>

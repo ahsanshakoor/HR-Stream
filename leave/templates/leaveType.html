@@ -1,0 +1,198 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Leave Type {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+                    {% include 'messages.html' %}
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h3 class="page-title">Leave Type</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+									<li class="breadcrumb-item active">Leave Type</li>
+								</ul>
+							</div>
+							<div class="col-auto float-right ml-auto">
+								<a href="" class="btn add-btn" data-toggle="modal" data-target="#add_leavetype"><i class="fa fa-plus"></i> Add Leave Type</a>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table class="table table-striped custom-table datatable mb-0">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Leave Type</th>
+											<th>Leave Days</th>
+											<th>Status</th>
+                                            <th>Carry Forward</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+                                    {% for leave in leavePolicy.leaves.all %}
+										<tr>
+											<td>
+												{{forloop.counter}}
+											</td>
+											<td>{{ leave.name }}</td>
+											<td>{{ leave.days }} Days</td>
+											<td>
+												<div class="dropdown action-label">
+
+													<a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="" data-toggle="dropdown" aria-expanded="false">
+													{% if leave.is_active %}	<i class="fa fa-dot-circle-o text-success"></i>  Active  {% else %} <i class="fa fa-dot-circle-o text-danger"></i> Inactive {% endif %}
+													</a>
+
+
+
+													<div class="dropdown-menu dropdown-menu-right">
+														<a href="{% url 'edit_leave_type_status' pk=leave.id status='True' %}" class="dropdown-item"><i class="fa fa-dot-circle-o text-success"></i> Active</a>
+														<a href="{% url 'edit_leave_type_status' pk=leave.id status='False' %}" class="dropdown-item"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+													</div>
+												</div>
+											</td>
+                                            <td>
+                                                <a class="btn btn-white btn-sm btn-rounded" >
+													{% if leave.is_carry_forward %}	<i class="fa fa-dot-circle-o text-success"></i>  Yes  {% else %} <i class="fa fa-dot-circle-o text-danger"></i> No {% endif %}
+													</a>
+                                            </td>
+											<td>
+												<a class="primary-color-used" href="javascript:void(0);" id="LeaveType" data-LeaveType="{% url 'edit_leave_type' leave=leave.id %}" ><i class="fa fa-pencil m-r-5"></i></a>
+                                                <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal" data-target="#delete_leavetype-{{ leave.id }}"><i class="fa fa-trash-o m-r-5"></i> </a>
+
+											</td>
+										</tr>
+                                    {% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+                </div>
+				<!-- /Page Content -->
+
+				<!-- Add Leavetype Modal -->
+				<div id="add_leavetype" class="modal custom-modal fade" role="dialog">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Add Leave Type</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<form method="post" action="{% url 'leave_type' %}">
+
+                                    {% csrf_token %}
+                                        {% for error in field.errors %}
+                                              <span class="help-block">{{ error }}</span>
+                                        {% endfor %}
+                                    {% render_field form.leave_policy %}
+									<div class="form-group">
+										<label>Leave Name <span class="text-danger">*</span></label>
+										{% render_field form.name class="form-control" %}
+                                        {% render_field form.name.errors class="form-control" %}
+									</div>
+									<div class="form-group">
+										<label>Number of days <span class="text-danger">*</span></label>
+										{% render_field form.days class="form-control" %}
+                                        {% render_field form.days.errors class="form-control" %}
+									</div>
+                                    <div class="form-group row">
+                                           <label class="col-form-label col-md-2">Carry Forward</label>
+                                              <div class="col-md-10">
+                                                <div class="onoffswitch">
+                                                    {% render_field form.is_carry_forward type="checkbox" name="onoffswitch_carry_forward" class="onoffswitch-checkbox" id="switch_carry_forward" %}
+                                                    {% render_field form.is_carry_forward.errors %}
+                                                    <label class="onoffswitch-label" for="switch_carry_forward">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                        </div>
+                                    <div class="form-group row">
+                                           <label class="col-form-label col-md-2">Status</label>
+                                              <div class="col-md-10">
+                                                <div class="onoffswitch">
+                                                    {% render_field form.is_active type="checkbox" name="onoffswitch_leave_status" class="onoffswitch-checkbox" id="switch_leave_status" %}
+                                                    {% render_field form.is_active.errors %}
+                                                    <label class="onoffswitch-label" for="switch_leave_status">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                        </div>
+									<div class="submit-section">
+										<button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Add Leavetype Modal -->
+
+				<!-- Edit Leavetype Modal -->
+				<div id="edit_leavetype_modal" class="modal custom-modal fade" role="dialog">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Edit Leave Type</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" id="edit_leavetype">
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Edit Leavetype Modal -->
+
+				<!-- Delete Leavetype Modal -->
+                {% for leave in leavePolicy.leaves.all %}
+				<div class="modal custom-modal fade" id="delete_leavetype-{{ leave.id }}" role="dialog">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-header">
+									<h3>Delete Leave Type</h3>
+									<p>Are you sure want to delete?</p>
+								</div>
+								<div class="modal-btn delete-action">
+									<div class="row">
+										<div class="col-6">
+											<a href="{% url 'delete_leave_type' pk=leave.id %}" class="btn btn-primary continue-btn">Delete</a>
+										</div>
+										<div class="col-6">
+											<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+                {% endfor %}
+				<!-- /Delete Leavetype Modal -->
+
+            </div>
+			<!-- /Page Wrapper -->
+{% endblock %}

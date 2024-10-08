@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load  static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% block title %}Pay Slip {{ block.super }} {% endblock %}
+{% block content %}
+    {% get_company_object user.id %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Employee Payrolls</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Employee Payrolls</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <div class="row" id="slip">
+                {% if payrolls %}
+                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-3">
+                    <div class="roles-menu">
+                        <ul id="payroll_list">
+                            {% for payroll in payrolls %}
+                                <li data-payrollID="{{ payroll.id }}">
+                                    <a href="javascript:void(0)"
+                                       data-payrollName="{{ payroll.id }}">{{ payroll.start_date }}
+                                        - {{ payroll.end_date }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div>
+                    </div>
+
+
+                </div>
+                {% else %}
+                <h1><strong>You Do Not Have Any Payroll</strong></h1>
+                {% endif %}
+                <div class="col-sm-8 col-md-8 col-lg-8 col-xl-9" id="main_payroll_div" style="display: none;">
+                    <div class="m-b-30 mt-3">
+                        <div class="card">
+                            <ul id="AllPayroll" class="list-group notification-list ml-5 mr-5 mt-5">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+           </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="highcarts_div" style="display: none;">
+                    <div class="m-b-30 mt-3">
+                        <div class="card">
+                            <figure class="highcharts-figure">
+                                <div id="container"></div>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}

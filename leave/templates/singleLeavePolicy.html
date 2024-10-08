@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block content %}
+<div class="col-sm-12">
+        <section class="panel panel-default bg-white">
+          <header class="panel-heading" style="background:#FFF;margin-left:10px;">
+{#              <div class="pull-right">#}
+{#                <a class="btn btn-info" href="/company/payrolls/61/edit"><i class="fa fa-pencil"></i> Edit</a>#}
+{#            </div>#}
+            <strong><h3>Leave Policy Detail - {{policy.company | title}}</h3></strong>
+          </header>
+          <div style="padding:25px">
+            <table class="table table-striped m-b-none" cellspacing="0" cellpadding="0" border="0">
+              <tbody>
+              <tr class="row">
+                <th>Leave Policy Name</th>
+                <td>{{policy.name}}</td>
+              </tr>
+              <tr class="row">
+                <th>Descreption</th>
+                <td>{{policy.description}}</td>
+              </tr>
+              <tr class="row">
+                <th>Cycle Type</th>
+                <td>{{ policy.cycle_type }}</td>
+              </tr>
+               <tr class="row">
+                <th>Cycle Start Date</th>
+                <td>{{ policy.cycle_start_date }}</td>
+              </tr>
+              <tr class="row">
+                <th>Created At</th>
+                <td>{{policy.created_at}}</td>
+              </tr>
+              <tr class="row employment"> <th> </th> <td> <h4>Holidays</h4> </td> </tr>
+              {% for holiday in holidays %}
+                  <tr class="row">
+                    <th> Holiday Name</th>
+                    <td>{{holiday.name}}</td>
+                  </tr>
+                 <tr class="row">
+                    <th>Date</th>
+                    <td>{{ holiday.date }}</td>
+                  </tr>
+              {% endfor %}
+               <tr class="row employment"> <th> </th> <td><h4> Leaves</h4></td> </tr>
+                {% for leave in leaves %}
+                  <tr class="row">
+                    <th> Leave Name</th>
+                    <td>{{leave.name}}</td>
+                  </tr>
+                 <tr class="row">
+                    <th>Paid Leaves</th>
+                    <td>{{ leave.paid }}</td>
+                  </tr>
+                  <tr class="row">
+                    <th>Unpaid Leaves</th>
+                    <td>{{ leave.unpaid }}</td>
+                  </tr>
+                 <tr class="row">
+                    <th>Pro Status</th>
+                    <td>{{ leave.is_pro }}</td>
+                  </tr>
+              {% endfor %}
+              <tr class="row employment"> <th> </th> <td><h4> Working Days </h4></td> </tr>
+
+
+                  <tr class="row">
+                    <th> Day Name</th>
+
+                    <td>{% for day in days %} {{day.day}} -{% endfor %}</td>
+
+                  </tr>
+
+
+              </tbody>
+            </table>
+          </div>
+    </section>
+    </div>
+{% endblock %}

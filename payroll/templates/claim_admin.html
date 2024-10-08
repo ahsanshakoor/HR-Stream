@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Claim Admin {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Claim</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Claim</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+            {% include "messages.html" %}
+            <!-- Search Filter -->
+            <form method="post" action="{% url 'claim_search' %}" class="row filter-row">
+                {% csrf_token %}
+                <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" name="user_id">
+                            <option value="">-----</option>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user }}</option>
+                            {% endfor %}
+                        </select>
+                        <label class="focus-label">Employee Name</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-focus select-focus">
+                        <select name="status" class="select floating">
+
+                            <option value=""> -------</option>
+                            <option value="Pending"> Pending</option>
+                            <option value="Approved"> Approved</option>
+                            <option value="Declined"> Declined</option>
+                        </select>
+                        <label class="focus-label">Status</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <div class="row">
+                        <div class="col-sm-8 col-md-8">
+                            <div class="form-group form-focus">
+                                <input name="claim_date" type="text" class="form-control floating datetimepicker">
+                                <label class="focus-label">Date</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-2">
+                    <button type="submit" class="btn btn-success btn-block"> Search</button>
+                </div>
+            </form>
+            <!-- /Search Filter -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        <table class="table table-striped custom-table mb-0 datatable">
+                            <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>Claimed By</th>
+                                <th>Claim Type</th>
+                                <th>Claim Date</th>
+                                <th>Claim Amount</th>
+                                <th>Claim Status</th>
+                                <th>Claim Detail</th>
+                                <th>Files</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for claim in claims %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a href="javascript:void(0);" class="avatar avatar-xs">
+                                                {% if claim.user.profile_pic %}
+                                                    <img src="{{ claim.user.profile_pic.url }}" alt=""/>
+                                                {% else %}
+                                                    <img src="{% static 'assets/img/user.jpg' %}" alt=""/>
+                                                {% endif %}
+                                            </a>
+                                        </h2>
+                                    </td>
+                                    <td>{{ claim.claim_type | title }}</td>
+                                    <td>{{ claim.date }}</td>
+                                    <td>{{ claim.amount }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown action-label">
+                                            <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                               href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false">
+                                                {% if claim.status == 'Declined' %}
+                                                    <i class="fa fa-dot-circle-o text-danger"></i>
+                                                {% elif claim.status == 'Approved' %}
+                                                    <i class="fa fa-dot-circle-o text-success"></i>
+                                                {% elif claim.status == 'Pending' %}
+                                                    <i class="fa fa-dot-circle-o text-info"></i>
+                                                {% endif %}
+                                                {{ claim.status }}
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item"
+                                                   href="{% url 'claim_status_update' request_id=claim.id name='Pending' %}"><i
+                                                        class="fa fa-dot-circle-o text-info"></i> Pending</a>
+                                                <a class="dropdown-item" href="" data-toggle="modal"
+                                                   data-target="#approve_claim-{{ claim.id }}"><i
+                                                        class="fa fa-dot-circle-o text-success"></i> Approved</a>
+                                                <a class="dropdown-item"
+                                                   href="{% url 'claim_status_update' request_id=claim.id name='Declined' %}"><i
+                                                        class="fa fa-dot-circle-o text-danger"></i> Declined</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ claim.detail }}</td>
+                                    <td>
+                                        <div class="dash-card-avatars">
+                                            <a class="claimFile primary-color-used" style="margin-right: 10px;"
+                                               href="javascript:void(0);" data-toggle="modal"
+                                               data-claimFileURL="{% url 'claim_files' claim_id=claim.id %}"
+                                               data-target="#show_claim_files"><i
+                                                    class=" fa fa-eye"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+    </div>
+    <!-- Approve Leave Modal -->
+    {% for claim in claims %}
+        <div class="modal custom-modal fade" id="approve_claim-{{ claim.id }}" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Claim Approve</h3>
+                            <p>Are you sure want to approve for this claim?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="{% url 'claim_status_update' request_id=claim.id name='Approved' %}"
+                                       class="btn btn-primary continue-btn">Approve</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <!-- /Approve Leave Modal -->
+
+
+    <!-- Claim File Modal -->
+
+    <div class="modal custom-modal fade" id="show_claim_files" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div id="claim-file-dive" class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Claim File Modal -->
+    <!-- /Page Wrapper -->
+{% endblock %}

@@ -1,0 +1,278 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Leave Policy {{ block.super }} {% endblock %}
+{% block content %}
+
+            <!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">Leave Policy</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+									<li class="breadcrumb-item active">Leave Policy</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-header">
+									<h4 class="card-title mb-0">New Leave Policy</h4>
+								</div>
+								<div class="card-body">
+									<form  method="post">
+                                        {% csrf_token %}
+                                        {% for error in field.errors %}
+                                              <span class="help-block">{{ error }}</span>
+                                        {% endfor %}
+										<div class="form-group row">
+											<label class="col-form-label col-md-2">Policy Name</label>
+											<div class="col-md-10">
+												{% render_field form.name %}
+                                                {% render_field form.name.errors %}
+											</div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Policy Description</label>
+											<div class="col-md-10">
+											    {% render_field form.description %}
+                                                {% render_field form.description.errors %}
+                                            </div>
+										</div>
+
+{#                                      	<div class="form-group row">#}
+{#											<label class="col-form-label col-md-2">Policy Cycle Type</label>#}
+{#											<div class="col-md-10">#}
+{#												{% render_field form.cycle_type class="form-control" %}#}
+{#                                                {% render_field form.cycle_type.errors %}#}
+{#											</div>#}
+{#										</div>#}
+
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Policy Start Date</label>
+											<div class="col-md-10">
+												{% render_field form.cycle_start_date %}
+                                                {% render_field form.cycle_start_date.errors %}
+											</div>
+										</div>
+
+                                         <div class="form-group row">
+											<label class="col-form-label col-md-2">Policy End Date</label>
+											<div class="col-md-10">
+												{% render_field form.cycle_end_date %}
+                                                {% render_field form.cycle_end_date.errors %}
+											</div>
+										</div>
+
+                                        <div class="form-group row">
+                                           <label class="col-form-label col-md-2">Policy Status</label>
+                                              <div class="col-md-10">
+                                                <div class="onoffswitch">
+                                                    {% render_field form.is_active type="checkbox" name="onoffswitch_policy_status" class="onoffswitch-checkbox" id="switch_policy_status" %}
+                                                    {% render_field form.is_active.errors %}
+                                                    <label class="onoffswitch-label" for="switch_policy_status">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-primary submit-btn float-right" type="submit">Submit</button>
+                                        </div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+                </div>
+				<!-- /Page Content -->
+
+
+            </div>
+			<!-- /Page Wrapper -->
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{#    <div class="portlet light ">#}
+{#        <div class="portlet-title tabbable-line">#}
+{#            <div class="caption">#}
+{#                <i class="icon-share font-dark"></i>#}
+{#                <span class="caption-subject font-dark bold uppercase">Portlet Tabs</span>#}
+{#            </div>#}
+{#            <ul class="nav nav-tabs">#}
+{#                <li class="">#}
+{#                    <a href="#portlet_tab4" data-toggle="tab" aria-expanded="false"> Enroll Employees ( 4 )</a>#}
+{#                </li>#}
+{#                <li class="">#}
+{#                    <a href="#portlet_tab3" data-toggle="tab" aria-expanded="false"> Holidays ( 3 )</a>#}
+{#                </li>#}
+{#                <li class="">#}
+{#                    <a href="#portlet_tab2" data-toggle="tab" aria-expanded="false"> Leave/Time-Off Types ( 2 )</a>#}
+{#                </li>#}
+{#                <li class="active">#}
+{#                    <a href="#portlet_tab1" data-toggle="tab" aria-expanded="true">Basic Leave Policy ( 1 )</a>#}
+{#                </li>#}
+{#            </ul>#}
+{#        </div>#}
+{#        <form class="portlet-body"  method="post" >#}
+{#            {% csrf_token %}#}
+{#            <div class="tab-content">#}
+{#                <div class="tab-pane active" id="portlet_tab1">#}
+{##}
+{#                    {{ leavepolicy | crispy }}#}
+{#                    {{ days_form | crispy}}#}
+{##}
+{#                </div>#}
+{#                <div class="tab-pane" id="portlet_tab2">#}
+{##}
+{#                <div id="form_set"  class='no_error'>#}
+{#                    {{ leave_form.management_form }}#}
+{#                        {% for adjustment_form in leave_form.forms %}#}
+{#                            {{ adjustment_form.non_field_errors }}#}
+{#                            {{ adjustment_form.errors }}#}
+{#                            {{ adjustment_form.management_form }}#}
+{#                                {{ adjustment_form.as_p }}#}
+{#                        {% endfor %}#}
+{#                        <div id="form_leave_set1">#}
+{#                        </div>#}
+{#                    <input class="btn-primary" type="button" value="Add More" id="add_leave">#}
+{#                    <div id="empty_leave_form" style="display:none">#}
+{#                        <table class='no_error'>#}
+{#                            {{ leave_form.empty_form }}#}
+{#                        </table>#}
+{#                    </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="tab-pane" id="portlet_tab3">#}
+{#                     <div id="holiday_set"  class='no_error'>#}
+{#                    {{ holiday_form.management_form }}#}
+{#                        {% for adjustment in holiday_form.forms %}#}
+{#                            {{ adjustment.non_field_errors }}#}
+{#                            {{ adjustment.errors }}#}
+{#                            {{ adjustment.management_form }}#}
+{#                                {{ adjustment.as_p }}#}
+{#                        {% endfor %}#}
+{#                        <div id="form_holiday_set1">#}
+{#                        </div>#}
+{#                    <input class="btn-primary" type="button" value="Add More" id="add_holiday">#}
+{#                    <div id="empty_holiday_form" style="display:none">#}
+{#                        <table class='no_error'>#}
+{#                            {{ holiday_form.empty_form }}#}
+{#                        </table>#}
+{#                    </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="tab-pane" id="portlet_tab4">#}
+{#                    <div class="table-responsive">#}
+{#                        <table class="table table-striped m-b-none" style="font-size:15px;font-weight:300!important;">#}
+{#                            <thead>#}
+{#                            <tr>#}
+{#                                <th></th>#}
+{#                                <th style="font-weight:500;">Name</th>#}
+{#                                <th style="font-weight:500;">Email</th>#}
+{#                                <th>Current Policy</th>#}
+{#                            </tr>#}
+{#                            </thead>#}
+{#                            <tbody>#}
+{#                            {% for user in users %}#}
+{#                                <tr class="tr-{{ user.id }}">#}
+{#                                    <td><input type="checkbox" name="leave_policyenrolled" id="leave_policyenrolled" value="{{user.id}}"></td>#}
+{#                                    <td>{{ user.first_name }}</td>#}
+{#                                    <td>{{ user.email }}</td>#}
+{#                                    <td>weekly</td>#}
+{#                                </tr>#}
+{#                            {% endfor %}#}
+{#                            </tbody>#}
+{#                            <tbody>#}
+{#                            </tbody>#}
+{#                        </table>#}
+{#                    </div>#}
+{#                    <button class="btn blue" type="submit">Submit</button>#}
+{#                </div>#}
+{##}
+{#            </div>#}
+{##}
+{#        </form>#}
+{##}
+{#    </div>#}
+{#    <script src="{% static 'apps/scripts/lib/jquery/jquery.min.js' %}"></script>#}
+{#    <script>#}
+{#    $('#add_leave').click(function () {#}
+{#            console.log("hello")#}
+{#            var form_idx = $('#id_form-TOTAL_FORMS').val();#}
+{#            $('#form_leave_set1').append($('#empty_leave_form').html().replace(/__prefix__/g, form_idx));#}
+{#            $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);#}
+{#            console.log("bye")#}
+{#        });#}
+{#        $('#add_holiday').click(function () {#}
+{#            console.log("hello")#}
+{#            var form_idx = $('#id_holiday-TOTAL_FORMS').val();#}
+{#            $('#form_holiday_set1').append($('#empty_holiday_form').html().replace(/__prefix__/g, form_idx));#}
+{#            $('#id_holiday-TOTAL_FORMS').val(parseInt(form_idx) + 1);#}
+{#            console.log("bye")#}
+{#        });#}
+{#    </script>#}
+
+{#{% endblock %}#}

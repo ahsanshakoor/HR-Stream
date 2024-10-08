@@ -1,0 +1,978 @@
+{% extends 'base_payroll_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Payroll Item {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            {% include 'messages.html' %}
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Payroll Items</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Payroll Items</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <!-- Page Tab -->
+            <div class="page-menu">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ul class="nav nav-tabs nav-tabs-bottom">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tab_additions">Additions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab_overtime">Overtime</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab_deductions">Deductions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab_taxes">Taxes</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Tab -->
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+
+                <!-- Additions Tab -->
+                <div class="tab-pane show active" id="tab_additions">
+
+                    <!-- Add Addition Button -->
+                    <div class="text-right mb-4 clearfix">
+                        <button class="btn btn-primary add-btn" type="button" data-toggle="modal"
+                                data-target="#add_addition"><i class="fa fa-plus"></i> Add Addition
+                        </button>
+                    </div>
+                    <!-- /Add Addition Button -->
+
+                    <!-- Payroll Additions Table -->
+                    <div class="payroll-table card">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-radius">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Created By</th>
+                                    <th>Default/Unit Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for benifit in benifits %}
+                                    <tr id="benefit-{{ benifit.id }}">
+                                        <th>{{ benifit.name }}</th>
+                                        <td>{{ benifit.created_by }}</td>
+                                        <td>${{ benifit.amount }}</td>
+                                        <td>
+                                            <div class="dropdown action-label">
+                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                   href="javascript:void(0);" data-toggle="dropdown"
+                                                   aria-expanded="false">
+                                                    {% if benifit.is_active %}
+                                                        <i class="fa fa-dot-circle-o text-success"></i> Active
+                                                    {% else %}
+                                                        <i class="fa fa-dot-circle-o text-danger"></i> Inactive
+                                                    {% endif %}
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_item_status' pk=benifit.id status='active' %}"><i
+                                                            class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_item_status' pk=benifit.id status='inactive' %}"><i
+                                                            class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                               data-target="#edit_addition-{{ benifit.id }}"><i
+                                                    class="fa fa-pencil m-r-5"></i></a>
+                                            <a href="javascript:void(0);"
+                                               class="myDeletePayrollItem primary-color-used"
+                                               data-PayrollItemDeleteURL="{% url 'delete_payroll_item' pk=benifit.id policy_id=benifit.payroll_policy.id %}"
+                                               data-toggle="modal" data-target="#delete_payroll_item"><i
+                                                    class="fa fa-trash-o m-r-5"></i></a>
+
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /Payroll Additions Table -->
+
+                </div>
+                <!-- Additions Tab -->
+
+                <!-- Overtime Tab -->
+                <div class="tab-pane" id="tab_overtime">
+
+                    <!-- Add Overtime Button -->
+                    <div class="text-right mb-4 clearfix">
+                        <button class="btn btn-primary add-btn" type="button" data-toggle="modal"
+                                data-target="#add_overtime"><i class="fa fa-plus"></i> Add Overtime
+                        </button>
+                    </div>
+                    <!-- /Add Overtime Button -->
+
+                    <!-- Payroll Overtime Table -->
+                    <div class="payroll-table card">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-radius">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Created By</th>
+                                    <th>Default/Unit Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for overtime in overtimes %}
+                                    <tr id="overtime-{{ overtime.id }}">
+                                        <th>{{ overtime.name }}</th>
+                                        <td>{{ overtime.created_by }}</td>
+                                        <td>${{ overtime.amount }}</td>
+                                        <td>
+                                            <div class="dropdown action-label">
+                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                   href="javascript:void(0);" data-toggle="dropdown"
+                                                   aria-expanded="false">
+                                                    {% if overtime.is_active %}
+                                                        <i class="fa fa-dot-circle-o text-success"></i> Active
+                                                    {% else %}
+                                                        <i class="fa fa-dot-circle-o text-danger"></i> Inactive
+                                                    {% endif %}
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_item_status' pk=overtime.id status='active' %}"><i
+                                                            class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_item_status' pk=overtime.id status='inactive' %}"><i
+                                                            class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                               data-target="#edit_overtime-{{ overtime.id }}"><i
+                                                    class="fa fa-pencil m-r-5"></i></a>
+                                            <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                               data-target="#delete_payroll_item" class="myDeletePayrollItem"
+                                               data-PayrollItemDeleteURL="{% url 'delete_payroll_item' pk=overtime.id policy_id=overtime.payroll_policy.id %}">
+                                                <i class="fa fa-trash-o m-r-5"></i></a>
+
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /Payroll Overtime Table -->
+
+                </div>
+                <!-- /Overtime Tab -->
+
+                <!-- Deductions Tab -->
+                <div class="tab-pane" id="tab_deductions">
+
+                    <!-- Add Deductions Button -->
+                    <div class="text-right mb-4 clearfix">
+                        <button class="btn btn-primary add-btn" type="button" data-toggle="modal"
+                                data-target="#add_deduction"><i class="fa fa-plus"></i> Add Deduction
+                        </button>
+                    </div>
+                    <!-- /Add Deductions Button -->
+
+                    <!-- Payroll Deduction Table -->
+                    <div class="payroll-table card">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-radius">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <td>Created By</td>
+                                    <th>Default/Unit Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for deduction in deductions %}
+                                    <tr id="deduction-{{ deduction.id }}">
+                                        <th>{{ deduction.name }}</th>
+                                        <td>{{ deduction.created_by }}</td>
+                                        <td>${{ deduction.amount }}</td>
+                                        <td>
+                                            <div class="dropdown action-label">
+                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                   href="javascript:void(0);" data-toggle="dropdown"
+                                                   aria-expanded="false">
+                                                    {% if deduction.is_active %}
+                                                        <i class="fa fa-dot-circle-o text-success"></i> Active
+                                                    {% else %}
+                                                        <i class="fa fa-dot-circle-o text-danger"></i> Inactive
+                                                    {% endif %}
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_item_status' pk=deduction.id status='active' %}"><i
+                                                            class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_item_status' pk=deduction.id status='inactive' %}"><i
+                                                            class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                               data-target="#edit_deduction-{{ deduction.id }}"><i
+                                                    class="fa fa-pencil m-r-5"></i></a>
+                                            <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                               data-target="#delete_payroll_item" class="myDeletePayrollItem" `
+                                               data-PayrollItemDeleteURL="{% url 'delete_payroll_item' pk=deduction.id policy_id=deduction.payroll_policy.id %}">
+                                                <i class="fa fa-trash-o m-r-5"></i></a>
+
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /Payroll Deduction Table -->
+
+                </div>
+                <!-- /Deductions Tab -->
+
+
+                <!-- Taxes Tab -->
+                <div class="tab-pane" id="tab_taxes">
+
+                    <!-- Add Deductions Button -->
+                    <div class="text-right mb-4 clearfix">
+                        <button class="btn btn-primary add-btn" type="button" data-toggle="modal"
+                                data-target="#add_tax"><i class="fa fa-plus"></i> Add Tax
+                        </button>
+                    </div>
+                    <!-- /Add Deductions Button -->
+
+                    <!-- Payroll Deduction Table -->
+                    <div class="payroll-table card">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-radius">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <td>Created By</td>
+                                    <th>%age</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for tax in taxes %}
+                                    <tr id="tax-{{ tax.id }}">
+                                        <th>{{ tax.name }}</th>
+                                        <td>{{ tax.created_by }}</td>
+                                        <td>{{ tax.percentage }}%</td>
+                                        <td>
+                                            <div class="dropdown action-label">
+                                                <a class="btn btn-white btn-sm btn-rounded dropdown-toggle"
+                                                   href="javascript:void(0);" data-toggle="dropdown"
+                                                   aria-expanded="false">
+                                                    {% if tax.is_active %}
+                                                        <i class="fa fa-dot-circle-o text-success"></i> Active
+                                                    {% else %}
+                                                        <i class="fa fa-dot-circle-o text-danger"></i> Inactive
+                                                    {% endif %}
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_tax_item_status' pk=tax.id status='active' %}"><i
+                                                            class="fa fa-dot-circle-o text-success"></i> Active</a>
+                                                    <a class="dropdown-item"
+                                                       href="{% url 'edit_payroll_tax_item_status' pk=tax.id status='inactive' %}"><i
+                                                            class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal"
+                                               data-target="#edit_tax-{{ tax.id }}"><i
+                                                    class="fa fa-pencil m-r-5"></i></a>
+                                            <a class="primary-color-used myDeletePayrollTax"
+                                               href="javascript:void(0);" data-toggle="modal"
+                                               data-PayrollTaxDeleteURL="{% url 'delete_payroll_tax_item' pk=tax.id policy_id=tax.payroll_policy.id %}"
+                                               data-target="#delete_tax_payroll">
+                                                <i class="fa fa-trash-o m-r-5"></i></a>
+
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /Payroll Deduction Table -->
+
+                </div>
+                <!-- /Taxes Tab -->
+
+            </div>
+            <!-- Tab Content -->
+
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Add Addition Modal -->
+        <div id="add_addition" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Addition</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'payroll_item' %}">
+                            {% csrf_token %}
+                            {% render_field befifit_form.payroll_policy hidden="hidden" %}
+                            {% render_field befifit_form.adjustment_type hidden="hidden" %}
+                            <div class="form-group">
+                                <label>Name <span class="text-danger">*</span></label>
+                                {% render_field befifit_form.name class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block">Active</label>
+                                <div class="status-toggle">
+                                    <input type="checkbox" id="unit_calculation" class="check">
+                                    {% render_field befifit_form.is_active class="check" id="is_active_benifit" %}
+                                    <label for="is_active_benifit" class="checktoggle">checkbox</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Unit Amount</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    {% render_field befifit_form.amount class="form-control" %}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Addition Modal -->
+
+        <!-- Edit Addition Modal -->
+        {% for benifit in benifits %}
+            <div id="edit_addition-{{ benifit.id }}" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Addition</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'edit_payroll_item' pk=benifit.id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" value="{{ benifit.name }}" name="name"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Adjustment Type <span class="text-danger">*</span></label>
+                                    <select class="select" name="adjustment_type" required>
+                                        <option selected>Benefit</option>
+                                        <option>Deduction</option>
+                                        <option>OverTime</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="d-block">Status</label>
+                                    <div class="status-toggle">
+                                        <input name="is_active" type="checkbox"
+                                               id="edit_unit_calculation-{{ benifit.id }}" class="check"
+                                               {% if benifit.is_active %}checked{% endif %}>
+                                        <label for="edit_unit_calculation-{{ benifit.id }}"
+                                               class="checktoggle">checkbox</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Unit Amount</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input name="amount" type="text" class="form-control"
+                                               value="{{ benifit.amount }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Edit Addition Modal -->
+
+        <!-- Delete Addition Modal -->
+        {% for benifit in benifits %}
+            <div class="modal custom-modal fade" id="delete_addition-{{ benifit.id }}" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="form-header">
+                                <h3>Delete Addition</h3>
+                                <p>Are you sure want to delete?</p>
+                            </div>
+                            <div class="modal-btn delete-action">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a data-PayrollItemDelete="{% url 'delete_payroll_item' pk=benifit.id policy_id=benifit.payroll_policy.id %}"
+                                           href="javascript:void(0);"
+                                           class="btn btn-primary continue-btn payrollItemDetete">Delete</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="javascript:void(0);" data-dismiss="modal"
+                                           class="btn btn-primary cancel-btn">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Delete Addition Modal -->
+
+        <!-- Add Overtime Modal -->
+        <div id="add_overtime" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Overtime</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'payroll_item' %}">
+                            {% csrf_token %}
+                            {% render_field overtime_form.payroll_policy hidden="hidden" %}
+                            {% render_field overtime_form.adjustment_type hidden="hidden" %}
+                            <div class="form-group">
+                                <label>Name <span class="text-danger">*</span></label>
+                                {% render_field overtime_form.name class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block">Active</label>
+                                <div class="status-toggle">
+                                    <input type="checkbox" id="unit_calculation" class="check">
+                                    {% render_field overtime_form.is_active class="check" id="is_active_overtime" %}
+                                    <label for="is_active_overtime" class="checktoggle">checkbox</label>
+                                </div>
+                            </div>
+                            {#									<div class="form-group">#}
+                            {#										<label>Rate <span class="text-danger">*</span></label>#}
+                            {#										{% render_field overtime_form.amount class="form-control" %}#}
+                            {#									</div>#}
+
+
+                            <div class="form-group">
+                                <label>Unit Amount</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    {% render_field overtime_form.amount class="form-control" %}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="submit-section">
+                                <button class="btn btn-primary submit-btn">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Overtime Modal -->
+
+        <!-- Edit Overtime Modal -->
+        {% for overtime in overtimes %}
+            <div id="edit_overtime-{{ overtime.id }}" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Overtime</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'edit_payroll_item' pk=overtime.id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" value="{{ overtime.name }}" name="name"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Adjustment Type <span class="text-danger">*</span></label>
+                                    <select class="select" name="adjustment_type" required>
+                                        <option>Benefit</option>
+                                        <option>Deduction</option>
+                                        <option selected>OverTime</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="d-block">Status</label>
+                                    <div class="status-toggle">
+                                        <input name="is_active" type="checkbox"
+                                               id="edit_unit_calculation-{{ overtime.id }}" class="check"
+                                               {% if overtime.is_active %}checked{% endif %}>
+                                        <label for="edit_unit_calculation-{{ overtime.id }}" class="checktoggle">checkbox</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Unit Amount</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input name="amount" type="text" class="form-control"
+                                               value="{{ overtime.amount }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Edit Overtime Modal -->
+
+        <!-- Delete Overtime Modal -->
+        {% for overtime in overtimes %}
+            <div class="modal custom-modal fade" id="delete_overtime-{{ overtime.id }}" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="form-header">
+                                <h3>Delete Overtime</h3>
+                                <p>Are you sure want to delete?</p>
+                            </div>
+                            <div class="modal-btn delete-action">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="{% url 'delete_payroll_item' pk=overtime.id policy_id=overtime.payroll_policy.id %}"
+                                           class="btn btn-primary continue-btn">Delete</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="javascript:void(0);" data-dismiss="modal"
+                                           class="btn btn-primary cancel-btn">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Delete Overtime Modal -->
+
+        <!-- Add Deduction Modal -->
+        <div id="add_deduction" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Deduction</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'payroll_item' %}">
+                            {% csrf_token %}
+                            {% render_field deduction_form.payroll_policy hidden="hidden" %}
+                            {% render_field deduction_form.adjustment_type hidden="hidden" %}
+                            <div class="form-group">
+                                <label>Name <span class="text-danger">*</span></label>
+                                {% render_field deduction_form.name class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block">Status</label>
+                                <div class="status-toggle">
+                                    {% render_field deduction_form.is_active class="check" id='is_active_deduction' %}
+                                    <label for="is_active_deduction" class="checktoggle">checkbox</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Unit Amount</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    {% render_field deduction_form.amount class="form-control" %}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Deduction Modal -->
+
+        <!-- Edit Deduction Modal -->
+        {% for deduction in deductions %}
+            <div id="edit_deduction-{{ deduction.id }}" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Deduction</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'edit_payroll_item' pk=deduction.id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" value="{{ deduction.name }}" name="name"
+                                           required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Adjustment Type <span class="text-danger">*</span></label>
+                                    <select class="select" name="adjustment_type" required>
+                                        <option>Benefit</option>
+                                        <option selected>Deduction</option>
+                                        <option>OverTime</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="d-block">Status</label>
+                                    <div class="status-toggle">
+                                        <input name="is_active" type="checkbox"
+                                               id="edit_unit_calculation-{{ deduction.id }}" class="check"
+                                               {% if deduction.is_active %}checked{% endif %}>
+                                        <label for="edit_unit_calculation-{{ deduction.id }}" class="checktoggle">checkbox</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Unit Amount</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input name="amount" type="text" class="form-control"
+                                               value="{{ deduction.amount }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Edit Addition Modal -->
+
+        <!-- Delete Deduction Modal -->
+        {% for deduction in deductions %}
+            <div class="modal custom-modal fade" id="delete_deduction-{{ deduction.id }}" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="form-header">
+                                <h3>Delete Deduction</h3>
+                                <p>Are you sure want to delete?</p>
+                            </div>
+                            <div class="modal-btn delete-action">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="{% url 'delete_payroll_item' pk=deduction.id policy_id=deduction.payroll_policy.id %}"
+                                           class="btn btn-primary continue-btn">Delete</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="javascript:void(0);" data-dismiss="modal"
+                                           class="btn btn-primary cancel-btn">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <!-- /Delete Deduction Modal -->
+
+
+        <!-- Add Tax Modal -->
+        <div id="add_tax" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Tax</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'payroll_tax_item' %}">
+                            {% csrf_token %}
+                            {% render_field tax_form.payroll_policy hidden="hidden" %}
+                            <div class="form-group">
+                                <label>Name <span class="text-danger">*</span></label>
+                                {% render_field tax_form.name class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <label>Percentage <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    {% render_field tax_form.percentage class="form-control" %}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="d-block">Status <span class="text-danger">*</span></label>
+                                <div class="status-toggle">
+                                    {% render_field tax_form.is_active class="check" id='is_active_tax' %}
+                                    <label for="is_active_tax" class="checktoggle">checkbox</label>
+                                </div>
+                            </div>
+
+
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Tax Modal -->
+        {% for tax in taxes %}
+            <!-- Edit Tax Modal -->
+            <div id="edit_tax-{{ tax.id }}" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Tax</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'edit_payroll_tax_item' pk=tax.id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>Name <span class="text-danger">*</span></label>
+                                    <input class="form-control" type="text" value="{{ tax.name }}" name="name" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="d-block">Status <span class="text-danger">*</span></label>
+                                    <div class="status-toggle">
+                                        <input name="is_active" type="checkbox" id="edit_tax_status-{{ tax.id }}"
+                                               class="check" {% if tax.is_active %}checked{% endif %}>
+                                        <label for="edit_tax_status-{{ tax.id }}" class="checktoggle">checkbox</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Percentage <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input name="amount" type="text" class="form-control"
+                                               value="{{ tax.percentage }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Edit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /AEdit Tax Modal -->
+        {% endfor %}
+
+
+        {#            <!-- Delete Deduction Modal -->#}
+        {#            {% for tax in taxes %}#}
+        {#				<div class="modal custom-modal fade" id="delete_tax-{{ tax.id }}" role="dialog">#}
+        {#					<div class="modal-dialog modal-dialog-centered">#}
+        {#						<div class="modal-content">#}
+        {#							<div class="modal-body">#}
+        {#								<div class="form-header">#}
+        {#									<h3>Delete Tax</h3>#}
+        {#									<p>Are you sure want to delete?</p>#}
+        {#								</div>#}
+        {#								<div class="modal-btn delete-action">#}
+        {#									<div class="row">#}
+        {#										<div class="col-6">#}
+        {#											<a href="{% url 'delete_payroll_tax_item' pk=tax.id policy_id=tax.payroll_policy.id %}" class="btn btn-primary continue-btn">Delete</a>#}
+        {#										</div>#}
+        {#										<div class="col-6">#}
+        {#											<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>#}
+        {#										</div>#}
+        {#									</div>#}
+        {#								</div>#}
+        {#							</div>#}
+        {#						</div>#}
+        {#					</div>#}
+        {#				</div>#}
+        {#            {% endfor %}#}
+        {#				<!-- /Delete Deduction Modal -->#}
+        {##}
+
+
+        <div class="modal custom-modal fade" id="delete_payroll_item" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="DeletePayrollItemClick" href=""
+                                       class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal custom-modal fade" id="delete_tax_payroll" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Tax</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="DeletePayrollTaxClick" href=""
+                                        class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /Page Wrapper -->
+    <script src="{% static 'assets/js/jquery-3.2.1.js' %}"></script>
+    <script>
+       $(document).ready(function() {
+           $('a[data-toggle="tab"]').click(function (e) {
+               e.preventDefault();
+               $(this).tab('show');
+           });
+
+           $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
+               var id = $(e.target).attr("href");
+               sessionStorage.setItem('selectedTab', id)
+           });
+
+           var selectedTab = sessionStorage.getItem('selectedTab');
+           if (selectedTab != null) {
+               $('a[data-toggle="tab"][href="' + selectedTab + '"]').tab('show');
+           }
+       });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+   <h3>Salary Adjustment</h3>
+    <input hidden value="{{ payroll }}">
+{#                    <div id="form_set">#}
+{##}
+{#                            <form action="{% url 'payrollWithAdjustment' pk=payroll  %}"  class='no_error' method="post">#}
+{#                            {{ salary_adjustment_form.management_form }}#}
+{#                            {% csrf_token %}#}
+{#                                {% for adjustment_form in salary_adjustment_form.forms %}#}
+{#                                {{ adjustment_form.non_field_errors }}#}
+{#                                {{ adjustment_form.errors }}#}
+{#                                {{ adjustment_form.form.management_form }}#}
+{#                                {{ adjustment_form.as_p }}#}
+{#                                {% endfor %}#}
+{#                            <input class="btn-primary" type="button" value="Add More" id="add_more">#}
+{##}
+{#                            <button type="submit" class="btn red">Ok</button>#}
+{##}
+{#                            </form>#}
+{#                     <div id="empty_form" style="display:none">#}
+{#                        <table class='no_error'>#}
+{#                            {{ salary_adjustment_form.empty_form }}#}
+{#                            {{ salary_adjustment_form.management_form }}#}
+{#                        </table>#}
+{#                    </div>#}
+{##}
+{#                    </div>#}
+
+
+
+                    <div >
+                    <form id="form_set" action="{% url 'payrollWithAdjustment' pk=payroll  %}"  class='no_error' method="post">
+                       {% csrf_token %}
+                    {{ salary_adjustment_form.management_form }}
+                        {% for adjustment_form in salary_adjustment_form.forms %}
+                            {{ adjustment_form.non_field_errors }}
+                            {{ adjustment_form.errors }}
+                            {{ adjustment_form.management_form }}
+                                {{ adjustment_form.as_p }}
+                        {% endfor %}
+                        <div id="form_set1">
+
+                        </div>
+                     <button type="submit" class="btn red">Ok</button>
+                     </form>
+                    </div>
+                    <input class="btn-primary" type="button" value="Add More" id="add_more">
+                    <div id="empty_form" style="display:none">
+                        <table class='no_error'>
+                            {{ salary_adjustment_form.empty_form }}
+                        </table>
+                    </div>
+ <script src="{% static 'apps/scripts/lib/jquery/jquery.min.js' %}"></script>
+    <script>
+
+        $('#add_more').click(function () {
+            var form_idx = $('#id_form-TOTAL_FORMS').val();
+            $('#form_set1').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+            $('#id_form-'+form_idx+'-payroll').val($('#id_form-0-payroll').val());
+            $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        });
+        $('#delete').click(function () {
+            var form_idx = $('#id_form-TOTAL_FORMS').val();
+            $('#form_set1').remove($('#id_form-'+form_idx+'-adjustment_type')).html();
+            $('#form_set1').remove($('#id_form-'+form_idx+'-amount')).html();
+            $('#form_set1').remove($('#id_form-'+form_idx+'-name')).html();
+            $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) - 1);
+        });
+        </script>
+{% endblock %}

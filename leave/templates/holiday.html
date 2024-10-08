@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+     <form action="{% url 'new_holiday' %}"  method="post">
+                {% csrf_token %}
+                   <div id="form_set"  class='no_error'>
+                    {{ holiday_form.management_form }}
+                        {% for adjustment in holiday_form.forms %}
+                            {{ adjustment.non_field_errors }}
+                            {{ adjustment.errors }}
+                            {{ adjustment.management_form }}
+                                {{ adjustment.as_p }}
+                        {% endfor %}
+                        <div id="form_set1">
+                        </div>
+                    <input class="btn-primary" type="button" value="Add More" id="add_holiday">
+                    <div id="empty_form" style="display:none">
+                        <table class='no_error'>
+                            {{ holiday_form.empty_form }}
+                        </table>
+                    </div>
+                   <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                     </form>
+
+    <script src="{% static 'apps/scripts/lib/jquery/jquery.min.js' %}"></script>
+
+<script>
+ $('#add_holiday').click(function () {
+            var form_idx = $('#id_form-TOTAL_FORMS').val();
+            $('#form_set1').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+            $('#id_form-'+form_idx+'-leave_policy').val($('#id_form-0-leave_policy').val());
+            $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        });
+</script>
+{% endblock %}

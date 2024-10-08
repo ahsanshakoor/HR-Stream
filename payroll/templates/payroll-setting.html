@@ -1,0 +1,338 @@
+{% extends 'base_payroll_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}New Payroll Policy {{ block.super }} {% endblock %}
+{% block content %}
+
+     <!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">Payroll Policy</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+									<li class="breadcrumb-item active">Payroll Policy</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-header">
+									<h4 class="card-title mb-0">New Payroll Policy</h4>
+								</div>
+								<div class="card-body">
+									<form  method="post">
+                                        {% csrf_token %}
+                                        {% for error in field.errors %}
+                                              <span class="help-block">{{ error }}</span>
+                                        {% endfor %}
+
+										<div class="form-group row">
+											<label class="col-form-label col-md-2">Payroll Policy Name</label>
+											<div class="col-md-10">
+												{% render_field form.name %}
+                                                {% render_field form.name.errors %}
+											</div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Policy Description</label>
+											<div class="col-md-10">
+											    {% render_field form.description %}
+                                                {% render_field form.description.errors %}
+                                            </div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Payroll Cycle</label>
+											<div class="col-md-10">
+												{% render_field form.payroll_cycle class="form-control" onChange="payPeriodOpts();"%}
+                                                {% render_field form.payroll_cycle.errors %}
+											</div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Pay Period Start</label>
+											<div class="col-md-4">
+												{% render_field form.pay_period_start class="form-control" onChange="calcPeriod();" %}
+                                                {% render_field form.pay_period_start.errors %}
+											</div>
+                                            <label class="col-form-label col-md-2">Pay Period End</label>
+											<div class="col-md-4">
+												{% render_field form.pay_period_end  class="form-control" disabled="disabled" %}
+                                                {% render_field form.pay_period_end.errors %}
+                                                <select hidden="hidden" name="pay_period_end1" class="form-control" id="id_pay_period_end1">
+{#                                                      <option value="1">Monday</option>#}
+{#                                                      <option value="2">Tuesday</option>#}
+{#                                                      <option value="3">Wednesday</option>#}
+{#                                                      <option value="4">Thursday</option>#}
+{#                                                      <option value="5">Friday</option>#}
+{#                                                      <option value="6">Saturday</option>#}
+{#                                                      <option value="0">Sunday</option>#}
+                                                </select>
+											</div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Pay Period Start Date</label>
+											<div class="col-md-4">
+												{% render_field form.pay_period_start_date class="form-control" onChange="calcPeriod1();" %}
+                                                {% render_field form.pay_period_start_date.errors %}
+											</div>
+                                            <label class="col-form-label col-md-2">Pay Period End Date</label>
+											<div class="col-md-4">
+												{% render_field form.pay_period_end_date  class="form-control" disabled="disabled" %}
+                                                {% render_field form.pay_period_end_date.errors %}
+                                                <input hidden="hidden" type="date" name="pay_period_end_date1" class="form-control"  id="id_pay_period_end_date1">
+											</div>
+										</div>
+
+{#                                        <div class="form-group row">#}
+{#                                           <label class="col-form-label col-md-2">Policy Status</label>#}
+{#                                              <div class="col-md-10">#}
+{#                                                <div class="onoffswitch">#}
+{#                                                    {% render_field form.policy_status type="checkbox" name="onoffswitch_policy_status" class="onoffswitch-checkbox" id="switch_policy_status" %}#}
+{#                                                    {% render_field form.policy_status.errors %}#}
+{#                                                    <label class="onoffswitch-label" for="switch_policy_status">#}
+{#                                                        <span class="onoffswitch-inner"></span>#}
+{#                                                        <span class="onoffswitch-switch"></span>#}
+{#                                                    </label>#}
+{#                                                </div>#}
+{#                                              </div>#}
+{#                                        </div>#}
+                                        <div class="form-group">
+                                            <button class="btn btn-primary submit-btn float-right" type="submit">Submit</button>
+                                        </div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="payroll_summarycard" class="card d-none">
+								<div class="card-header">
+									<h4 class="card-title mb-0">Payroll Summary</h4>
+								</div>
+								<div id="payroll_summarybody" class="card-body">
+								</div>
+							</div>
+                        </div>
+                    </div>
+
+                </div>
+				<!-- /Page Content -->
+            </div>
+			<!-- /Page Wrapper -->
+    <script>
+            function payPeriodOpts() {
+                let weeklyOpt = (
+                    "<option value=" + -1 + ">" + "---------" + "</option>" +
+                    "<option value=" + 0 + ">" + "Sunday" + "</option>" +
+                    "<option value=" + 1 + ">" + "Monday" + "</option>" +
+                    "<option value=" + 2 + ">" + "Tuesday" + "</option>" +
+                    "<option value=" + 3 + ">" + "Wednesday" + "</option>" +
+                    "<option value=" + 4 + ">" + "Thursday" + "</option>" +
+                    "<option value=" + 5 + ">" + "Friday" + "</option>" +
+                    "<option value=" + 6 + ">" + "Saturday" + "</option>"
+                );
+                let cycle = $('#id_payroll_cycle').val();
+                $('#id_pay_period_start').removeAttr("disabled");
+                if( cycle === 'weekly' || cycle === 'bi_weekly'){
+                    $('#id_pay_period_start').html(weeklyOpt);
+                    $('#id_pay_period_end').html(weeklyOpt);
+                    $('#id_pay_period_end').val(-1);
+                    $('#id_pay_period_end1').html(weeklyOpt);
+                    $('#id_pay_period_end1').val(-1);
+                }
+                else if( cycle === 'bi_monthly'){
+                    let bi_monthlyOpt = "<option value=" + 1 + ">" + "1st" + "</option>";
+                    bi_monthlyOpt += "<option value=" + 15 + ">" + "15th" + "</option>";
+                    bi_monthlyOpt += "<option value=" + 16 + ">" + "16th" + "</option>";
+                    bi_monthlyOpt += "<option value=" + 32 + ">" + "LastDay" + "</option>";
+                    $('#id_pay_period_start').html(bi_monthlyOpt);
+                    $('#id_pay_period_end').html(bi_monthlyOpt);
+                    $('#id_pay_period_end1').html(bi_monthlyOpt);
+
+                    $('#id_pay_period_start').val(1);
+                    $('#id_pay_period_end').val(15);
+
+                    $('#id_pay_period_start').attr("disabled", "disabled");
+                    calcPeriod();
+                }
+                else {
+                    let monthlyOpt = "", cnt = 29;
+                    monthlyOpt += '<option value="' + -1 + '">' + "-------"  + "</option>";
+                    monthlyOpt += '<option value="' + 1 + '">' + "1st"  + "</option>";
+                    monthlyOpt += '<option value="' + 2 + '">' + "2nd"  + "</option>";
+                    monthlyOpt += '<option value="' + 3 + '">' + "3rd"  + "</option>";
+                    for (let i = 4; i <= cnt; i++)
+                        monthlyOpt += '<option value="' + i + '">' + i + "th"  + "</option>";
+                    $('#id_pay_period_start').html(monthlyOpt);
+                    monthlyOpt += '<option value="' + 32 + '">' + "LastDay"  + "</option>";
+                    $('#id_pay_period_end').html(monthlyOpt);
+                    $('#id_pay_period_end').val(-1);
+                    $('#id_pay_period_end1').html(monthlyOpt);
+                    $('#id_pay_period_end1').val(-1);
+
+                }
+            }
+
+            function calcPeriod() {
+                let cycle = $('#id_payroll_cycle').val();
+                let currDate = moment();
+                let start_date, end_date, start, end;
+                if( cycle === 'weekly' || cycle === 'bi_weekly'){
+                    start = parseInt($('#id_pay_period_start').val(), 10);
+                    end = 6;
+                    if(start === -1)return;
+                    if(start !== 0) end = start - 1;
+                    $('#id_pay_period_end').val(end);
+
+
+                    if( cycle === 'weekly'){
+                        start_date = currDate.clone().day(start);
+                        end_date = start_date.clone().add(6, 'days');
+                        {#start_date = currDate.clone().startOf('week');#}
+                        {#end_date = currDate.clone().endOf('week');#}
+
+                    }
+                    else{
+                        start_date = currDate.clone().day(start);
+                        end_date = start_date.clone().add(13, 'days');
+                        {#start_date = currDate.clone().startOf('week');#}
+                        {#end_date = currDate.clone().add(1, 'week').endOf('week');#}
+                    }
+
+                }
+                else if( cycle === 'monthly'){
+                    start = parseInt($('#id_pay_period_start').val(), 10);
+                    end = 32;
+                    if(start === -1)return;
+                    if( start !== 1) end = start - 1;
+                    $('#id_pay_period_end').val(end);
+                    if( start === 1 && end === 32){
+                        start_date = currDate.clone().year(currDate.get('year')).month(currDate.get('month')).date(start);
+                        end_date = currDate.clone().endOf('month');
+                    }
+                    else{
+                        start_date = currDate.clone().year(currDate.get('year')).month(currDate.get('month')).date(start);
+                        end_date = currDate.clone().endOf('month').add(end, 'days');
+                    }
+
+                }
+                else if( cycle === 'bi_monthly'){
+                    start = parseInt($('#id_pay_period_start').val(), 10);
+                    end = parseInt($('#id_pay_period_end').val(), 10);
+                    start_date = currDate.clone().year(currDate.get('year')).month(currDate.get('month')).date(start);
+                    end_date = currDate.clone().year(currDate.get('year')).month(currDate.get('month')).date(end);
+                }
+                else{
+                    alert('Please Select Payroll Cycle');
+                    return;
+                }
+                let msg = '<p>Payroll Cycle:  ' + start_date.format('MMM-DD-YYYY') + '  to  ' + end_date.format('MMM-DD-YYYY') + '</p>' +
+                    '<p>Payroll Generation: After ' + end_date.format('MMM-DD-YYYY') + ', you can generate payroll';
+
+                $('#payroll_summarybody').html(msg);
+                $('#payroll_summarycard').removeClass('d-none');
+
+                $('#id_pay_period_start_date').val(start_date.format('YYYY-MM-DD'));
+                $('#id_pay_period_end_date').val(end_date.format('YYYY-MM-DD'));
+
+                $('#id_pay_period_end_date1').val(end_date.format('YYYY-MM-DD'));
+                $('#id_pay_period_end1').val(end)
+
+            }
+
+            function calcPeriod1() {
+                let cycle = $('#id_payroll_cycle').val();
+                let start_date, end_date, start, end;
+                start_date = moment($('#id_pay_period_start_date').val());
+                if( cycle === 'weekly' || cycle === 'bi_weekly'){
+                    start = start_date.day();
+                    $('#id_pay_period_start').val(start);
+                    end = 6;
+                    if(start === -1)return;
+                    if(start !== 0) end = start - 1;
+                    $('#id_pay_period_end').val(end);
+                    if( cycle === 'weekly')
+                        end_date = start_date.clone().add(6, 'days');
+                    else
+                        end_date = start_date.clone().add(13, 'days');
+                }
+                else if( cycle === 'monthly'){
+                    {#start = parseInt($('#id_pay_period_start').val(), 10);#}
+                    start = start_date.date();
+                    if( start === 30 || start ===31) {
+                        clear_payroll_periods();
+                        alert('Please Select an other start date');
+                        return;
+                    }
+                    $('#id_pay_period_start').val(start);
+                    end = 32;
+                    if(start === -1)return;
+                    if( start !== 1) end = start - 1;
+                    $('#id_pay_period_end').val(end);
+                    if( start === 1 && end === 32){
+                        end_date = start_date.clone().endOf('month');
+                    }
+                    else{
+                        end_date = start_date.clone().endOf('month').add(end, 'days');
+                    }
+
+                }
+                else if( cycle === 'bi_monthly'){
+                    start = start_date.date();
+                    if( start >= 1 && start <= 15){
+                        $('#id_pay_period_start').val(1);
+                        $('#id_pay_period_end').val(15);
+                        start_date = moment().year(start_date.get('year')).month(start_date.get('month')).date(1);
+                        end_date = start_date.clone().year(start_date.get('year')).month(start_date.get('month')).date(15);
+                    }
+                    else if ( start >= 16 && start <= 31)
+                    {
+                        $('#id_pay_period_start').val(16);
+                        $('#id_pay_period_end').val(32);
+                        start_date = moment().year(start_date.get('year')).month(start_date.get('month')).date(16);
+                        end_date = start_date.clone().endOf('month');
+                    }
+                    $('#id_pay_period_start_date').val(start_date.format('YYYY-MM-DD'));
+                }
+                else{
+                    alert('Please Select Payroll Cycle');
+                    $('#id_pay_period_start_date').val('');
+                    return;
+                }
+                let msg = '<p>Payroll Cycle:  ' + start_date.format('MMM-DD-YYYY') + '  to  ' + end_date.format('MMM-DD-YYYY') + '</p>' +
+                    '<p>Payroll Generation: After ' + end_date.format('MMM-DD-YYYY') + ', you can generate payroll';
+
+                $('#payroll_summarybody').html(msg);
+                $('#payroll_summarycard').removeClass('d-none');
+
+                {#$('#id_pay_period_start_date').val(start_date.format('YYYY-MM-DD'));#}
+                $('#id_pay_period_end_date').val(end_date.format('YYYY-MM-DD'));
+
+                $('#id_pay_period_end_date1').val(end_date.format('YYYY-MM-DD'));
+                $('#id_pay_period_end1').val(end)
+
+
+
+            }
+            function clear_payroll_periods() {
+                $('#id_pay_period_start_date').val('');
+                $('#id_pay_period_end_date').val('');
+                $('#id_pay_period_start').val(-1);
+                $('#id_pay_period_end').val(-1);
+                $('#payroll_summarycard').addClass('d-none');
+            }
+
+
+    </script>
+{% endblock %}

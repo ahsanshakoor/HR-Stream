@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-sm-12">
+        <section class="panel panel-default bg-white">
+          <header class="panel-heading" style="background:#FFF;margin-left:10px;">
+{#              <div class="pull-right">#}
+{#                <a class="btn btn-info" href="/company/payrolls/61/edit"><i class="fa fa-pencil"></i> Edit</a>#}
+{#            </div>#}
+            <strong><h3>Payroll Detail - {{payroll.user  | title}}</h3></strong>
+          </header>
+          <div style="padding:25px">
+            <table class="table table-striped m-b-none" cellspacing="0" cellpadding="0" border="0">
+              <tbody>
+              <tr class="row">
+                <th>Employee name</th>
+                <td>{{payroll.user}}</td>
+              </tr>
+              <tr class="row">
+                <th>From Date</th>
+                <td>{{payroll.start_date}}</td>
+              </tr>
+              <tr class="row">
+                <th>To Date</th>
+                <td>{{ payroll.end_date }}</td>
+              </tr>
+              <tr class="row">
+                <th>Created At</th>
+                <td>{{payroll.created_at}}</td>
+              </tr>
+              <tr class="row employment"> <th> </th> <td> Benefits </td> </tr>
+              {% for benifit in benifits %}
+                  <tr class="row">
+                    <th> Benefit Name</th>
+                    <td>{{benifit.name}}</td>
+                  </tr>
+                 <tr class="row">
+                    <th>Benefit Amount</th>
+                    <td>{{ benifit.amount }}</td>
+                  </tr>
+              {% endfor %}
+               <tr class="row employment"> <th> </th> <td> Deductions </td> </tr>
+                {% for deduction in deductions %}
+                  <tr class="row">
+                    <th> Deduction Name</th>
+                    <td>{{deduction.name}}</td>
+                  </tr>
+                 <tr class="row">
+                    <th>Deduction Amount</th>
+                    <td>{{ deduction.amount }}</td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+    </section>
+    </div>
+{% endblock %}

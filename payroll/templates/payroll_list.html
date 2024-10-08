@@ -1,0 +1,1081 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <section id="content">
+        <section class="vbox">
+            <section class="scrollable padder">
+
+
+                <ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+                    <!--<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>-->
+                    <!--<li class="active">Jobs</li>-->
+                    PAYROLL AUTO PILOT
+                </ul>
+
+
+                <section class="panel panel-default col-lg-12" id="main-div">
+                    <header class="panel-heading" style="overflow:auto;background:#FFF;">
+                        <h4 style="margin-bottom:0px;">Payroll System</h4>
+
+                        <div id="date-auto-pilot" style="display: none;">
+{#                            <div class="form-group">#}
+{#                                <label class="col-lg-1 control-label">Date From</label>#}
+{#                                <div class="col-lg-11">#}
+{#                                    <input type="text" name="date_from" id="date_from_o" value="01-02-2020"#}
+{#                                           class="form-control datepicker-input">#}
+{#                                    <span class="help-block m-b-none" style="margin-bottom:5px;">Payroll - Process Auto Pilot From Date</span>#}
+{#                                </div>#}
+{#                            </div>#}
+{##}
+{#                            <div class="form-group">#}
+{#                                <label class="col-lg-1 control-label">Date To</label>#}
+{#                                <div class="col-lg-11">#}
+{#                                    <input type="text" name="date_to" id="date_to_o" value="29-02-2020"#}
+{#                                           class="form-control datepicker-input">#}
+{#                                    <span class="help-block m-b-none">Payroll - Process Auto Pilot Uptill Date</span>#}
+{#                                </div>#}
+{#                            </div>#}
+                               <form method="post" action="">
+                                    <input id="autopilot" name="autopilot" hidden value="yes" >
+                                      {% csrf_token %}
+                                        {{ payroll_form |crispy }}
+
+                                    <div class="pull-right">
+                                            <button name="button" type="submit" class="btn btn-danger" onclick="confirm();">
+                                                Confirm
+                                            </button>
+                                            <button name="button" type="reset" class="btn " onclick="cancelAutoPilot();">Cancel
+                                            </button>
+                                    </div>
+                                </form>
+                        </div>
+                        <div class="pull-right">
+                            <a class="btn btn-info" onclick="showAutoPilot();" id="auto-button" href="#">Auto Pilot</a>
+
+                        </div>
+                        <i data-title="ajax to load the data." data-placement="bottom" data-toggle="tooltip"
+                           class="fa fa-info-sign text-muted" data-original-title="" title=""></i>
+                    </header>
+
+                    <div class="table-responsive">
+                        <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper" role="grid">
+                            <div class="dataTables_filter" id="DataTables_Table_0_filter"></div>
+                            <table class="table table-striped m-b-none dataTable" data-ride="datatables"
+                                   style="font-size:15px;font-weight:300!important;" id="DataTables_Table_0"
+                                   aria-describedby="DataTables_Table_0_info">
+                                <thead>
+                                <tr role="row">
+                                    <th style="font-weight: 500; width: 246px;" class="sorting" role="columnheader"
+                                        tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                        aria-label="Employee: activate to sort column ascending">Employee
+                                    </th>
+                                    <th style="font-weight: 500; width: 180px;" class="sorting" role="columnheader"
+                                        tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                        aria-label="Salary Type: activate to sort column ascending">Salary Type
+                                    </th>
+                                    <th style="font-weight: 500; width: 128px;" class="sorting" role="columnheader"
+                                        tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                        aria-label="Type: activate to sort column ascending">Type
+                                    </th>
+                                    <th style="font-weight: 500; width: 150px;" class="sorting" role="columnheader"
+                                        tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                        aria-label="Salary: activate to sort column ascending">Salary
+                                    </th>
+                                    <th style="font-weight: 500; width: 223px;" class="sorting" role="columnheader"
+                                        tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                        aria-label="Manual Payroll: activate to sort column ascending">Manual Payroll
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                {% for user in users %}
+                                    <tr class="odd">
+                                        <td class=" ">{{ user.username }}</td>
+                                        <td class=" ">{{ user.salaries.first.salary_type }}</td>
+                                        <td class=" ">{{ user.salaries.first.employment_type }}</td>
+                                        <td class=" ">
+                                            {{ user.salaries.first.salary }}
+                                        </td>
+                                        <td class="text-right ">
+                                            <a data-target="#stack1" data-toggle="modal" class="text-info"
+                                               style="float:left;" onclick="payrollUser({{ user.id }},{{ user.salaries.first.salary }})">Create</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-1">
+                </section>
+                <section class="panel panel-default col-lg-5" id="payroll-form-div" style="display:none;">
+                </section>
+            </section>
+        </section>
+        <a data-target="#nav" data-toggle="class:nav-off-screen" class="hide nav-off-screen-block" href="#"></a>
+    </section>
+
+
+    <div id="stack1" class="modal fade" tabindex="-1" data-width="400">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">Payroll</h4>
+                </div>
+                <div class="modal-body">
+
+
+                    <form method="post" action="">
+                        <input id="payroll_user" name="payroll_user_id" hidden >
+                        <input id="user_salary" name="salary" hidden>
+                          {% csrf_token %}
+                        {{ payroll_form |crispy }}
+                            <label>Do You want to add adjustment</label>
+                            <select class="form-control"  name="adjustment">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+
+
+                            <div class="modal-footer">
+                                 <button type="submit" class="btn red">Ok</button>
+                            </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn dark btn-outline">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'apps/scripts/lib/jquery/jquery.min.js' %}"></script>
+    <script>
+    function payrollUser(id,salary){
+        $('#payroll_user').val(id)
+        $('#user_salary').val(salary)
+    }
+        $('#add_more').click(function () {
+            var form_idx = $('#id_form-TOTAL_FORMS').val();
+            $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+            $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+        });
+        function cancelAutoPilot(){
+    $('#date-auto-pilot').css('display','none');
+    $('#auto-button').css('display','block');
+  }
+  function showAutoPilot(){
+    $('#date-auto-pilot').css('display','block');
+    $('#auto-button').css('display','none');
+  }
+  function confirm(){
+    if($('#date_from_o').val() != '' && $('#date_from_o').val() != ''){
+      $('#date_from').val($('#date_from_o').val());
+      $('#date_to').val($('#date_to_o').val());
+      $('#dates-for-auto').html($('#date_from').val() + "<span style='color:grey;'> to </span>" + $('#date_to').val())
+      $('#popup-confirm').trigger("click");
+    }
+  }
+  function autopilot(){
+    $('#auto-pilot-form').submit();
+  }</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+{##}
+{##}
+{##}
+{#<section class="vbox" id="main-div-box">#}
+{#  <input type="hidden" id="current_employee_id" value="288">#}
+{#  <section>#}
+{#    <section class="hbox stretch bg-main">#}
+{#      <section id="content">#}
+{#  <section class="vbox">#}
+{#    <section class="scrollable padder">#}
+{##}
+{##}
+{#<ul class="breadcrumb no-border no-radius b-b b-light pull-in">#}
+{#  <!--<li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>-->#}
+{#  <!--<li class="active">Jobs</li>-->#}
+{#  PAYROLL AUTO PILOT#}
+{#</ul>#}
+{##}
+{##}
+{#      <section class="panel panel-default col-lg-7" id="main-div">#}
+{#        <header class="panel-heading" style="overflow:auto;background:#FFF;">#}
+{#          <h4 style="margin-bottom:0px;">Payroll System</h4>#}
+{##}
+{#          <div id="date-auto-pilot" style="display: none;">#}
+{#            <div class="form-group">#}
+{#              <label class="col-lg-1 control-label">Date From</label>#}
+{#              <div class="col-lg-11">#}
+{#                <input type="text" name="date_from" id="date_from_o" value="01-02-2020" class="form-control datepicker-input">#}
+{#                <span class="help-block m-b-none" style="margin-bottom:5px;">Payroll - Process Auto Pilot From Date</span>#}
+{#              </div>#}
+{#            </div>#}
+{##}
+{#            <div class="form-group">#}
+{#              <label class="col-lg-1 control-label">Date To</label>#}
+{#              <div class="col-lg-11">#}
+{#                <input type="text" name="date_to" id="date_to_o" value="29-02-2020" class="form-control datepicker-input">#}
+{#                <span class="help-block m-b-none">Payroll - Process Auto Pilot Uptill Date</span>#}
+{#              </div>#}
+{#            </div>#}
+{#            <div class="pull-right">#}
+{#              <button name="button" type="submit" class="btn btn-danger" onclick="confirm();">Confirm</button>#}
+{#              <button name="button" type="reset" class="btn " onclick="cancelAutoPilot();">Cancel</button>#}
+{#            </div>#}
+{##}
+{#          </div>#}
+{#          <div class="pull-right">#}
+{#            <a class="btn btn-info" onclick="showAutoPilot();" id="auto-button" href="#">Auto Pilot</a>#}
+{##}
+{#          </div>#}
+{#          <i data-title="ajax to load the data." data-placement="bottom" data-toggle="tooltip" class="fa fa-info-sign text-muted" data-original-title="" title=""></i>#}
+{#        </header>#}
+{##}
+{#<div class="table-responsive">#}
+{#          <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper" role="grid"><div id="DataTables_Table_0_length" class="dataTables_length"><label>Show <select size="1" name="DataTables_Table_0_length" aria-controls="DataTables_Table_0"><option value="10">10</option><option value="25">25</option><option value="50" selected="selected">50</option><option value="100">100</option></select> entries</label></div><div class="dataTables_filter" id="DataTables_Table_0_filter"><label>Search: <input type="text" aria-controls="DataTables_Table_0"></label></div><table class="table table-striped m-b-none dataTable" data-ride="datatables" style="font-size:15px;font-weight:300!important;" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info">#}
+{#            <thead>#}
+{#            <tr role="row"><th style="font-weight: 500; width: 246px;" class="sorting" role="columnheader" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Employee: activate to sort column ascending">Employee</th><th style="font-weight: 500; width: 180px;" class="sorting" role="columnheader" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Salary Type: activate to sort column ascending">Salary Type</th><th style="font-weight: 500; width: 128px;" class="sorting" role="columnheader" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Type: activate to sort column ascending">Type</th><th style="font-weight: 500; width: 150px;" class="sorting" role="columnheader" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Salary: activate to sort column ascending">Salary</th><th style="font-weight: 500; width: 223px;" class="sorting" role="columnheader" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Manual Payroll: activate to sort column ascending">Manual Payroll</th></tr>#}
+{#            </thead>#}
+{##}
+{#            <tbody>#}
+{#            </tbody>#}
+{#          <tbody role="alert" aria-live="polite" aria-relevant="all">#}
+{#         {% for user in users %}#}
+{#          <tr class="odd">#}
+{#                  <td class=" ">{{ user.username }}</td>#}
+{#                  <td class=" ">{{ user.type }}</td>#}
+{#                  <td class=" ">{{ user.employment_type }}</td>#}
+{#                  <td class=" ">#}
+{#                      {{ user.salary }}#}
+{#                  </td>#}
+{#                  <td class="text-right ">#}
+{#                    <a href="#" class="text-info" onclick="loadForm({{ user.id }});" style="float:left;">Create</a>#}
+{#                  </td>#}
+{#                </tr>#}
+{#         {% endfor %}#}
+{##}
+{#          </tbody></table><div class="dataTables_info" id="DataTables_Table_0_info">Showing 1 to 3 of 3 entries</div><div class="dataTables_paginate paging_full_numbers" id="DataTables_Table_0_paginate"><a tabindex="0" class="first paginate_button paginate_button_disabled" id="DataTables_Table_0_first">First</a><a tabindex="0" class="previous paginate_button paginate_button_disabled" id="DataTables_Table_0_previous">Previous</a><span><a tabindex="0" class="paginate_active">1</a></span><a tabindex="0" class="next paginate_button paginate_button_disabled" id="DataTables_Table_0_next">Next</a><a tabindex="0" class="last paginate_button paginate_button_disabled" id="DataTables_Table_0_last">Last</a></div></div>#}
+{#        </div>#}
+{##}
+{#      </section>#}
+{#      <section class="col-lg-1">#}
+{#      </section>#}
+{#      <section class="panel panel-default col-lg-5" id="payroll-form-div" style="display: none;"><header class="panel-heading" style="overflow:auto;background:#FFF;">#}
+{#  <h4 style="margin-bottom:0px;">UBAIDULLAH SHOAIB's Payroll </h4>#}
+{#  <!--<p style="color:#fb6b5b;">  Please add the employees Basic salary before continuing </p>-->#}
+{#  <i data-title="ajax to load the data." data-placement="bottom" data-toggle="tooltip" class="fa fa-info-sign text-muted" data-original-title="" title=""></i>#}
+{#</header>#}
+{#<div class="panel-body">#}
+{#  <div id="response-main" style="display:none;">#}
+{#    <div class="alert alert-info">#}
+{#      <button data-dismiss="alert" class="close" type="button">×</button>#}
+{#      <i class="fa fa-info-sign"></i><strong>Info!</strong><p id="response"></p>#}
+{#    </div>#}
+{#  </div>#}
+{##}
+{#  <form class="bs-example form-horizontal" id="ajax_form" action="" accept-charset="UTF-8" method="post">#}
+{#      {% csrf_token %}#}
+{#      {{ payroll_form | crispy }}#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Basic Salary</label>#}
+{#        <div class="col-lg-10">#}
+{#          <input type="text" readonly="readonly" value="" class="form-control">#}
+{#          <span class="help-block m-b-none">Total will be calculated by Subtracting And Adding Deductions and Benefits accordingly</span>#}
+{#        </div>#}
+{#      </div>#}
+{#      <input value="288" type="hidden" name="payroll[employee_id]" id="payroll_employee_id">#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Transaction ID</label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="form-control" type="text" name="payroll[transaction_id]" id="payroll_transaction_id">#}
+{#          <span class="help-block m-b-none">Bank Transaction Ref #</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Date From</label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="form-control datepicker-input" type="text" value="01-02-2020" name="payroll[date_from]" id="payroll_date_from">#}
+{#          <span class="help-block m-b-none">Payroll - From</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Date To</label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="form-control datepicker-input" type="text" value="29-02-2020" name="payroll[date_to]" id="payroll_date_to">#}
+{#          <span class="help-block m-b-none">Payroll - Uptill</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#            <a class="btn btn-primary btn-sm" data-id="100065380" data-fields="<fieldset>  <legend style=&quot;font-size:15px;&quot;>Deduction Details (Optional)</legend>  <div class=&quot;form-group&quot;>    <label class=&quot;col-lg-2 control-label&quot;>Name</label>    <div class=&quot;col-lg-10&quot;>      <input class=&quot;form-control&quot; type=&quot;text&quot; name=&quot;payroll[deductions_attributes][100065380][name]&quot; id=&quot;payroll_deductions_attributes_100065380_name&quot; />      <span class=&quot;help-block m-b-none&quot;>Deduction Ref </span>    </div>  </div>  <div class=&quot;form-group&quot;>    <label class=&quot;col-lg-2 control-label&quot;>Amount</label>    <div class=&quot;col-lg-10&quot;>      <input class=&quot;form-control&quot; type=&quot;text&quot; name=&quot;payroll[deductions_attributes][100065380][amount]&quot; id=&quot;payroll_deductions_attributes_100065380_amount&quot; />      <span class=&quot;help-block m-b-none&quot;>Actual Deduction Amount</span>    </div>  </div>  <!--<div class=&quot;form-group&quot;>-->    <a class=&quot;btn btn-danger btn-xs pull-right&quot; href=&quot;#&quot;>Remove</a>  <!--</div>--></fieldset>" href="#">+ Deductions</a>#}
+{#      <div class="line line-dashed line-lg pull-in"></div>#}
+{##}
+{#            <a class="btn btn-primary btn-sm" data-id="89328120" data-fields="<fieldset>  <legend style=&quot;font-size:15px;&quot;>Benefit Details (Optional)</legend>  <div class=&quot;form-group&quot;>    <label class=&quot;col-lg-2 control-label&quot;>Name</label>    <div class=&quot;col-lg-10&quot;>      <input class=&quot;form-control&quot; type=&quot;text&quot; name=&quot;payroll[benefits_attributes][89328120][name]&quot; id=&quot;payroll_benefits_attributes_89328120_name&quot; />      <span class=&quot;help-block m-b-none&quot;>Benefit Ref </span>    </div>  </div>  <div class=&quot;form-group&quot;>    <label class=&quot;col-lg-2 control-label&quot;>Amount</label>    <div class=&quot;col-lg-10&quot;>      <input class=&quot;form-control&quot; type=&quot;text&quot; name=&quot;payroll[benefits_attributes][89328120][amount]&quot; id=&quot;payroll_benefits_attributes_89328120_amount&quot; />      <span class=&quot;help-block m-b-none&quot;>Actual Benefit Amount</span>    </div>  </div>  <!--<div class=&quot;form-group&quot;>-->    <a class=&quot;btn btn-danger btn-xs pull-right&quot; href=&quot;#&quot;>Remove</a>  <!--</div>--></fieldset>" href="#">+ Benefit</a>#}
+{#      <div class="line line-dashed line-lg pull-in"></div>#}
+{#      <!---->#}
+{#      <!--<fieldset>-->#}
+{#      <!--<legend style="font-size:15px;">Deduction Details (Optional)</legend>-->#}
+{#      <!--<div class="form-group">-->#}
+{#      <!--<label class="col-lg-2 control-label">Name</label>-->#}
+{#      <!--<div class="col-lg-10">-->#}
+{#      <!---->#}
+{#      <!--<span class="help-block m-b-none">Deduction Ref </span>-->#}
+{#      <!--</div>-->#}
+{#      <!--</div>-->#}
+{##}
+{#      <!--<div class="form-group">-->#}
+{#      <!--<label class="col-lg-2 control-label">Amount</label>-->#}
+{#      <!--<div class="col-lg-10">-->#}
+{#      <!---->#}
+{#      <!--<span class="help-block m-b-none">Actual Deduction Amount</span>-->#}
+{#      <!--</div>-->#}
+{#      <!--</div>-->#}
+{#      <!--<fieldset>-->#}
+{#      <!---->#}
+{##}
+{##}
+{#      <!---->#}
+{#      <!--<fieldset>-->#}
+{#      <!--<legend style="font-size:15px;">Benefit Details (Optional)</legend>-->#}
+{#      <!--<div class="form-group">-->#}
+{#      <!--<label class="col-lg-2 control-label">Name</label>-->#}
+{#      <!--<div class="col-lg-10">-->#}
+{#      <!---->#}
+{#      <!--<span class="help-block m-b-none">Benefit Ref </span>-->#}
+{#      <!--</div>-->#}
+{#      <!--</div>-->#}
+{##}
+{#      <!--<div class="form-group">-->#}
+{#      <!--<label class="col-lg-2 control-label">Amount</label>-->#}
+{#      <!--<div class="col-lg-10">-->#}
+{#      <!---->#}
+{#      <!--<span class="help-block m-b-none">Actual Benefit Amount</span>-->#}
+{#      <!--</div>-->#}
+{#      <!--</div>-->#}
+{#      <!--</fieldset>-->#}
+{#      <!---->#}
+{#      <!--<div class="form-group">-->#}
+{#      <!--<label class="col-lg-2 control-label">Comment</label>-->#}
+{#      <!--<div class="col-lg-10">-->#}
+{#      <!--</div>-->#}
+{#      <!--</div>-->#}
+{##}
+{#      <footer class="panel-footer bg-light lter pull-right">#}
+{#        <input type="submit" name="commit" value="Create Payroll" class="btn btn-danger">#}
+{#        <button name="button" type="reset" class="btn" onclick="cancelForm();">Cancel</button>#}
+{#      </footer>#}
+{#</form></div>#}
+{##}
+{#<script>#}
+{#    $('#ajax_form').submit(function() {#}
+{#        $('#response').html('');#}
+{#        var valuesToSubmit = $(this).serialize();#}
+{#        $.ajax({#}
+{#            type: "POST",#}
+{#            url: $(this).attr('action'), //sumbits it to the given url of the form#}
+{#            data: valuesToSubmit#}
+{#        }).success(function(json){#}
+{#            $('#response-main').css('display','block');#}
+{#            $('#response').append(json);#}
+{#            $("head").scrollTop( 300 );#}
+{#        });#}
+{#        return false; // prevents normal behaviour#}
+{#    });#}
+{##}
+{#    var ready;#}
+{#    ready = function() {#}
+{#        $('#ajax_form').on('click', '.btn-danger', function(payroll) {#}
+{#//            $(this).prev('input[type=hidden]').val('1');#}
+{#            $(this).closest('fieldset').remove();#}
+{#//            return event.preventDefault();#}
+{#        });#}
+{#        return $('#ajax_form').on('click', '.btn-primary', function(payroll) {#}
+{#            var regexp, time;#}
+{#            time = new Date().getTime();#}
+{#            regexp = new RegExp($(this).data('id'), 'g');#}
+{#            $(this).before($(this).data('fields').replace(regexp, time));#}
+{#//            return event.preventDefault();#}
+{#        });#}
+{#    }#}
+{##}
+{#    $(document).ready(ready);#}
+{#    $(document).on('page:load', ready);#}
+{##}
+{##}
+{#</script>#}
+{#</section>#}
+{#    </section>#}
+{#  </section>#}
+{#  <a data-target="#nav" data-toggle="class:nav-off-screen" class="hide nav-off-screen-block" href="#"></a>#}
+{#</section>#}
+{##}
+{#<script>#}
+{#  function cancelAutoPilot(){#}
+{#    $('#date-auto-pilot').css('display','none');#}
+{#    $('#auto-button').css('display','block');#}
+{#  }#}
+{#  function showAutoPilot(){#}
+{#    $('#date-auto-pilot').css('display','block');#}
+{#    $('#auto-button').css('display','none');#}
+{#  }#}
+{#  function confirm(){#}
+{#    if($('#date_from_o').val() != '' && $('#date_from_o').val() != ''){#}
+{#      $('#date_from').val($('#date_from_o').val());#}
+{#      $('#date_to').val($('#date_to_o').val());#}
+{#      $('#dates-for-auto').html($('#date_from').val() + "<span style='color:grey;'> to </span>" + $('#date_to').val())#}
+{#      $('#popup-confirm').trigger("click");#}
+{#    }#}
+{#  }#}
+{#  function autopilot(){#}
+{#    $('#auto-pilot-form').submit();#}
+{#  }#}
+{#  function loadForm(id){#}
+{#    $('#main-div').removeClass('col-lg-12');#}
+{#    $('#main-div').removeClass('col-lg-7');#}
+{#    $('#main-div').addClass('col-lg-7');#}
+{#    $("#payroll-form-div").css("display",'block');#}
+{#    $("#payroll-form-div").load("/company/payrolls/new?"+ $.param({ employee_id: id}), function() {#}
+{#      $(".datepicker-input").datepicker({format : 'dd-mm-yyyy'});#}
+{#    });#}
+{##}
+{##}
+{##}
+{#  }#}
+{##}
+{#  function cancelForm(){#}
+{#    $('#main-div').removeClass('col-lg-7');#}
+{#    $('#main-div').removeClass('col-lg-12');#}
+{#    $('#main-div').addClass('col-lg-12');#}
+{#    $("#payroll-form-div").html('');#}
+{##}
+{#  }#}
+{#</script>#}
+{##}
+{##}
+{#<a class="btn btn-danger" data-toggle="modal" style="display:none;" id="popup-confirm" href="#modal">Auto Pilot</a>#}
+{##}
+{#<div class="modal fade" id="modal">#}
+{#  <div class="modal-dialog">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>#}
+{#        <h4 class="modal-title"><b>Processing Auto Pilot</b> FOR <span id="dates-for-auto" style="color:#fb6b5b;"></span> </h4>#}
+{#      </div>#}
+{#      <div class="modal-body">#}
+{#        <section class="panel-default m-l-n-md  m-r-n-md m-b-none">#}
+{#          <div class="col-sm-12">#}
+{#            <form role="form">#}
+{##}
+{#              <div class="form-group">#}
+{#                <label>With Auto Pilot all your current employees will be sent payroll confirmation. Total pay will be the current salary they hold#}
+{#                  . No deductions or benefits if any will be added in auto Pilot. In order to add Benefits and Deductions use Payroll manually.<br></label>#}
+{#              </div>#}
+{#            </form>#}
+{#          </div>#}
+{#        </section>#}
+{#        <section class="panel-default m-l-n-md  m-r-n-md m-b-none" id="auto-pilot">#}
+{#        </section>#}
+{#      </div>#}
+{#      <div class="modal-footer" style="border-top:0px;">#}
+{#        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
+{#        <button type="button" onclick="autopilot();" class="btn btn-danger" data-loading-text="Updating...">Confirm Auto Pilot</button>#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{#<div style="display:none">#}
+{#  <form method="POST" action="/company/payrolls/auto_pilot" id="auto-pilot-form">#}
+{#    <input type="hidden" name="date_to" id="date_to">#}
+{#    <input type="hidden" name="date_from" id="date_from">#}
+{#    <input type="hidden" name="authenticity_token" id="authenticity_token" value="xZ4BSW6Vhk2Tko+t8dIbOO5DXUZT8Ls1rTGj61bPU+UKoWbemOt1zTPm3brcYQzwfPUJCJy38jnk6owKYqOiOQ==">#}
+{#  </form>#}
+{#</div>#}
+{#    </section>#}
+{#  </section>#}
+{#</section>#}
+{#<script src="/javascripts/bootstrap-filestyle.min.js"></script>#}
+{##}
+{#<script>#}
+{#    function booleanToggler(id){#}
+{#        if($('#'+id).val() == 'true'){#}
+{#            $('#'+id).val('false');#}
+{#        }#}
+{#        else#}
+{#            $('#'+id).val('true');#}
+{#    }#}
+{##}
+{#</script>#}
+{##}
+{##}
+{##}
+{##}
+{#<script src="//js.pusher.com/2.2/pusher.min.js" type="text/javascript"></script>#}
+{#<script type="text/javascript">#}
+{#    function addMsg($msg){#}
+{#        count = parseInt($('#hidden-count').html());#}
+{#        $('#hidden-count').html(count+1);#}
+{#        var $el = $('.nav-user'), $n = $('.count:first', $el), $v = count;#}
+{#        $('.count', $el).fadeOut().fadeIn().text($v+1);#}
+{#        $($msg).hide().prependTo($el.find('.list-group')).slideDown().css('display','block');#}
+{#    }#}
+{#    var pusher = new Pusher('f123384e64994429bd6d');#}
+{#    var channel = pusher.subscribe('test123');#}
+{#    channel.bind('new_notification', function(data) {#}
+{#        var $msg = '<a href="#" class="media list-group-item">'+#}
+{#                '<span class="pull-left thumb-sm text-center">'+#}
+{#                '<i class="fa fa-envelope-o fa-2x text-success"></i>'+#}
+{#                '</span>'+#}
+{#                '<span class="media-body block m-b-none">'+#}
+{#                data.message+ '<br>'+#}
+{#                '<small class="text-muted">Just a sec ago</small>'+#}
+{#                '</span>'+#}
+{#                '</a>';#}
+{#        addMsg($msg);#}
+{##}
+{#    });#}
+{#    channel.bind('applicant-message', function(data) {#}
+{#        var url = '/company/chat_rooms/'+data.chat_room_id+'/messages/get_message';#}
+{#        $.post(url, {id: data.message_id},function( result ) {#}
+{#            console.log(result);#}
+{#        });#}
+{#        success_alert('New message from ' + data.from + '<br/>' + '<b> ' + data.message_body + ' </b>');#}
+{#    });#}
+{#</script>#}
+{##}
+{##}
+{##}
+{##}
+{#<div class="modal fade" id="new-todo" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">#}
+{#  <div class="modal-dialog">#}
+{#    <div class="modal-content">#}
+{#      <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="padding:10px;">&times;</button>-->#}
+{#      <div class="modal-body modal-bottom-padding" style="margin-bottom: 50px;">#}
+{#        <div class="wrapper">#}
+{#  <section class="panel panel-default">#}
+{#    <form class="bs-example form-horizontal jquery-validate" id="new_todo" action="/company/todos" accept-charset="UTF-8" method="post" novalidate="novalidate"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="xZ4BSW6Vhk2Tko+t8dIbOO5DXUZT8Ls1rTGj61bPU+UKoWbemOt1zTPm3brcYQzwfPUJCJy38jnk6owKYqOiOQ==">#}
+{#        <section class="paper">#}
+{#          <textarea class="form-control scrollable" placeholder="Type your todo here" rows="8" required="required" name="todo[note]" id="todo_note" aria-required="true"></textarea>#}
+{#        </section>#}
+{#        <div class="form-group" style="display:none" id="remind-div">#}
+{#          <label class="col-lg-2 control-label" style="padding-right: 5px;margin-left:20px;">Remind At: </label>#}
+{#          <div class="col-lg-6">#}
+{#            <input class="form-control datetimepicker" style="border:0px!important;color:#53B567" type="text" name="todo[remind_at]" id="todo_remind_at">#}
+{#          </div>#}
+{#        </div>#}
+{##}
+{##}
+{##}
+{#        <div class="pull-right" style="margin-top: 10px;">#}
+{#          <input type="submit" name="commit" value="Create" class="btn btn-primary">#}
+{##}
+{#          <a class="btn btn-default pull-left " data-placement="right" data-toggle="tooltip" data-original-title="Set Todo Reminder" id="btn-div" style="margin-right: 10px;" onclick="$('#remind-div').css('display','block');$('#todo_remind_at').trigger('select')" href="#">#}
+{#            <i class="fa fa-bell-o" style="color:#53B567;"></i>#}
+{#          </a>#}
+{##}
+{#        </div>#}
+{#</form>  </section>#}
+{#</div>#}
+{##}
+{##}
+{##}
+{#<script type="text/javascript">#}
+{#    $(function () {#}
+{#        $('.datetimepicker').datetimepicker({#}
+{#            format: "YYYY-MM-DD hh:mm a",#}
+{#            stepping: 10,#}
+{#            toolbarPlacement: "top",#}
+{#            minDate: '2020-02-28',#}
+{#            maxDate: '2020-03-29',#}
+{#//            sideBySide: true,#}
+{#            showClear: true,#}
+{#            icons: {clear: 'glyphicon glyphicon-trash alert-red',#}
+{#                time: 'glyphicon glyphicon-time alert-green'},#}
+{#            widgetPositioning: {horizontal: "right"}#}
+{#//            widgetParent: $('#btn-div')#}
+{#        });#}
+{#    });#}
+{#</script>#}
+{##}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{##}
+{#<div class="modal fade" id="new-notification" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">#}
+{#  <div class="modal-dialog">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>#}
+{#        <h4 class="modal-title">Broadcast Notification</h4>#}
+{#      </div>#}
+{#      <div class="modal-body modal-bottom-padding">#}
+{##}
+{#<div class="panel-body">#}
+{#  <form class="bs-example form-horizontal notification-jquery-validate" id="new_notification" action="/company/notifications" accept-charset="UTF-8" method="post" novalidate="novalidate"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="xZ4BSW6Vhk2Tko+t8dIbOO5DXUZT8Ls1rTGj61bPU+UKoWbemOt1zTPm3brcYQzwfPUJCJy38jnk6owKYqOiOQ==">#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label pl0">Message <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="form-control" style="min-height:80px;" required="required" type="text" name="notification[message]" id="notification_message" aria-required="true">#}
+{#        </div>#}
+{#      </div>#}
+{#      <div class="form-group">#}
+{#      <label class=" col-lg-2 control-label">Tag Employees</label>#}
+{#      <div class="col-lg-10">#}
+{#      <div id="MyPillbox" class="pillbox clearfix">#}
+{#      <ul>#}
+{#      <input type="text" id="tags" class="form-control" placeHolder="Tag Notification to specific employee only" />#}
+{#      </ul>#}
+{#      </div>#}
+{#      <span class="help-block m-b-none">Will only be visible to tagged employees.</span>#}
+{#      </div>#}
+{#      </div>#}
+{#      <div class="form-group pull-right">#}
+{#        <div class="col-lg-12">#}
+{#          <button name="button" type="submit" class="btn btn-primary ladda-button" value="Create" data-style="expand-left"><span class="ladda-label">Create</span><span class="ladda-spinner"></span></button>#}
+{#        </div>#}
+{#      </div>#}
+{#</form></div>#}
+{##}
+{#<script>#}
+{#    $(document).ready(function(){#}
+{#        if ($('.notification-jquery-validate').length > 0){#}
+{#            $('.notification-jquery-validate').validate();#}
+{#        }#}
+{##}
+{#    });#}
+{#</script>#}
+{##}
+{#<script>#}
+{#    $(function () {#}
+{#              var availableTags = ;#}
+{#              $("#tags").autocomplete({#}
+{#                  source: availableTags,#}
+{#                  select: function (event, ui) {#}
+{#                  setCustomPill()#}
+{#              }#}
+{#          });#}
+{#          })#}
+{#          ;#}
+{##}
+{#          function setCustomPill() {#}
+{#          }</script>#}
+{#<style>.ui-menu-item {background: #8ec165;list-style: none;pointer: cursor;color: #fff;padding: 3px;width: 15%;}.ui-helper-hidden-accessible {display: none;}#}
+{#</style>#}
+{#<!--<script>-->#}
+{#<!--$(function() {-->#}
+{#<!--var availableTags = ;-->#}
+{#<!--$( "#tags" ).autocomplete({-->#}
+{#<!--source: availableTags,-->#}
+{#<!--select: function( event, ui ) {setCustomPill()}-->#}
+{#<!--});-->#}
+{#<!--});-->#}
+{#<!--function setCustomPill(){-->#}
+{##}
+{#<!--}-->#}
+{#<!--</script>-->#}
+{#<!--<style>-->#}
+{#<!--/*.ui-menu-item {*/-->#}
+{#<!--/*background: #8ec165;*/-->#}
+{#<!--/*list-style: none;*/-->#}
+{#<!--/*pointer: cursor;*/-->#}
+{#<!--/*color: #fff;*/-->#}
+{#<!--/*padding: 3px;*/-->#}
+{#<!--/*width: 15%;*/-->#}
+{#<!--/*}*/-->#}
+{#<!--/*.ui-helper-hidden-accessible {*/-->#}
+{#<!--/*display: none;*/-->#}
+{#<!--/*}*/-->#}
+{#<!--</style>-->#}
+{#<!--<script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>-->#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{##}
+{#<div class="modal fade" id="new-task" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">#}
+{#  <div class="modal-dialog">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>#}
+{#        <h4 class="modal-title">New Task</h4>#}
+{#      </div>#}
+{#      <div class="modal-body modal-bottom-padding" style="margin-bottom: 50px;">#}
+{#        <div class="panel-body">#}
+{#  <form class="bs-example form-horizontal task-jquery-validate" id="new_task" enctype="multipart/form-data" action="/company/tasks" accept-charset="UTF-8" method="post" novalidate="novalidate"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="xZ4BSW6Vhk2Tko+t8dIbOO5DXUZT8Ls1rTGj61bPU+UKoWbemOt1zTPm3brcYQzwfPUJCJy38jnk6owKYqOiOQ==">#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Title <span style="color:red;">*</span> </label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="form-control" required="required" type="text" name="task[title]" id="task_title" aria-required="true">#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Description</label>#}
+{#        <div class="col-lg-10">#}
+{#          <div class="jqte"><div class="jqte_toolbar unselectable" role="toolbar" unselectable="on" style="user-select: none;"><div class="jqte_tool jqte_tool_1 unselectable" role="button" data-tool="0" unselectable="on" style="user-select: none;"><a class="jqte_tool_label unselectable" unselectable="on" style="user-select: none;"><span class="jqte_tool_text unselectable" unselectable="on" style="user-select: none;">Normal</span><span class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></span></a><div class="jqte_formats unselectable" unselectable="on" style="user-select: none;"><a jqte-formatval="p" class="jqte_format jqte_format_0 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Normal</a><a jqte-formatval="h1" class="jqte_format jqte_format_1 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Header 1</a><a jqte-formatval="h2" class="jqte_format jqte_format_2 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Header 2</a><a jqte-formatval="h3" class="jqte_format jqte_format_3 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Header 3</a><a jqte-formatval="h4" class="jqte_format jqte_format_4 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Header 4</a><a jqte-formatval="h5" class="jqte_format jqte_format_5 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Header 5</a><a jqte-formatval="h6" class="jqte_format jqte_format_6 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Header 6</a><a jqte-formatval="pre" class="jqte_format jqte_format_7 unselectable" role="menuitem" unselectable="on" style="user-select: none;">Preformatted</a></div></div><div class="jqte_tool jqte_tool_2 unselectable" role="button" data-tool="1" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a><div class="jqte_fontsizes unselectable" unselectable="on" style="user-select: none;"><a jqte-styleval="10" class="jqte_fontsize unselectable" style="font-size: 10px; user-select: none;" role="menuitem" unselectable="on">Abcdefgh...</a><a jqte-styleval="12" class="jqte_fontsize unselectable" style="font-size: 12px; user-select: none;" role="menuitem" unselectable="on">Abcdefgh...</a><a jqte-styleval="16" class="jqte_fontsize unselectable" style="font-size: 16px; user-select: none;" role="menuitem" unselectable="on">Abcdefgh...</a><a jqte-styleval="18" class="jqte_fontsize unselectable" style="font-size: 18px; user-select: none;" role="menuitem" unselectable="on">Abcdefgh...</a><a jqte-styleval="20" class="jqte_fontsize unselectable" style="font-size: 20px; user-select: none;" role="menuitem" unselectable="on">Abcdefgh...</a><a jqte-styleval="24" class="jqte_fontsize unselectable" style="font-size: 24px; user-select: none;" role="menuitem" unselectable="on">Abcdefgh...</a><a jqte-styleval="28" class="jqte_fontsize unselectable" style="font-size: 28px; user-select: none;" role="menuitem" unselectable="on">Abcdefgh...</a></div></div><div class="jqte_tool jqte_tool_3 unselectable" role="button" data-tool="2" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a><div class="jqte_cpalette unselectable" unselectable="on" style="user-select: none;"><a jqte-styleval="0,0,0" class="jqte_color unselectable" style="background-color: rgb(0, 0, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="68,68,68" class="jqte_color unselectable" style="background-color: rgb(68, 68, 68); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="102,102,102" class="jqte_color unselectable" style="background-color: rgb(102, 102, 102); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="153,153,153" class="jqte_color unselectable" style="background-color: rgb(153, 153, 153); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="204,204,204" class="jqte_color unselectable" style="background-color: rgb(204, 204, 204); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="238,238,238" class="jqte_color unselectable" style="background-color: rgb(238, 238, 238); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="243,243,243" class="jqte_color unselectable" style="background-color: rgb(243, 243, 243); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="255,255,255" class="jqte_color unselectable" style="background-color: rgb(255, 255, 255); user-select: none;" role="gridcell" unselectable="on"></a><div class="jqte_colorSeperator"></div><a jqte-styleval="255,0,0" class="jqte_color unselectable" style="background-color: rgb(255, 0, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="255,153,0" class="jqte_color unselectable" style="background-color: rgb(255, 153, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="255,255,0" class="jqte_color unselectable" style="background-color: rgb(255, 255, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="0,255,0" class="jqte_color unselectable" style="background-color: rgb(0, 255, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="0,255,255" class="jqte_color unselectable" style="background-color: rgb(0, 255, 255); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="0,0,255" class="jqte_color unselectable" style="background-color: rgb(0, 0, 255); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="153,0,255" class="jqte_color unselectable" style="background-color: rgb(153, 0, 255); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="255,0,255" class="jqte_color unselectable" style="background-color: rgb(255, 0, 255); user-select: none;" role="gridcell" unselectable="on"></a><div class="jqte_colorSeperator"></div><a jqte-styleval="244,204,204" class="jqte_color unselectable" style="background-color: rgb(244, 204, 204); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="252,229,205" class="jqte_color unselectable" style="background-color: rgb(252, 229, 205); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="255,242,204" class="jqte_color unselectable" style="background-color: rgb(255, 242, 204); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="217,234,211" class="jqte_color unselectable" style="background-color: rgb(217, 234, 211); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="208,224,227" class="jqte_color unselectable" style="background-color: rgb(208, 224, 227); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="207,226,243" class="jqte_color unselectable" style="background-color: rgb(207, 226, 243); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="217,210,233" class="jqte_color unselectable" style="background-color: rgb(217, 210, 233); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="234,209,220" class="jqte_color unselectable" style="background-color: rgb(234, 209, 220); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="234,153,153" class="jqte_color unselectable" style="background-color: rgb(234, 153, 153); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="249,203,156" class="jqte_color unselectable" style="background-color: rgb(249, 203, 156); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="255,229,153" class="jqte_color unselectable" style="background-color: rgb(255, 229, 153); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="182,215,168" class="jqte_color unselectable" style="background-color: rgb(182, 215, 168); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="162,196,201" class="jqte_color unselectable" style="background-color: rgb(162, 196, 201); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="159,197,232" class="jqte_color unselectable" style="background-color: rgb(159, 197, 232); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="180,167,214" class="jqte_color unselectable" style="background-color: rgb(180, 167, 214); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="213,166,189" class="jqte_color unselectable" style="background-color: rgb(213, 166, 189); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="224,102,102" class="jqte_color unselectable" style="background-color: rgb(224, 102, 102); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="246,178,107" class="jqte_color unselectable" style="background-color: rgb(246, 178, 107); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="255,217,102" class="jqte_color unselectable" style="background-color: rgb(255, 217, 102); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="147,196,125" class="jqte_color unselectable" style="background-color: rgb(147, 196, 125); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="118,165,175" class="jqte_color unselectable" style="background-color: rgb(118, 165, 175); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="111,168,220" class="jqte_color unselectable" style="background-color: rgb(111, 168, 220); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="142,124,195" class="jqte_color unselectable" style="background-color: rgb(142, 124, 195); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="194,123,160" class="jqte_color unselectable" style="background-color: rgb(194, 123, 160); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="204,0,0" class="jqte_color unselectable" style="background-color: rgb(204, 0, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="230,145,56" class="jqte_color unselectable" style="background-color: rgb(230, 145, 56); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="241,194,50" class="jqte_color unselectable" style="background-color: rgb(241, 194, 50); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="106,168,79" class="jqte_color unselectable" style="background-color: rgb(106, 168, 79); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="69,129,142" class="jqte_color unselectable" style="background-color: rgb(69, 129, 142); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="61,133,198" class="jqte_color unselectable" style="background-color: rgb(61, 133, 198); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="103,78,167" class="jqte_color unselectable" style="background-color: rgb(103, 78, 167); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="166,77,121" class="jqte_color unselectable" style="background-color: rgb(166, 77, 121); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="153,0,0" class="jqte_color unselectable" style="background-color: rgb(153, 0, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="180,95,6" class="jqte_color unselectable" style="background-color: rgb(180, 95, 6); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="191,144,0" class="jqte_color unselectable" style="background-color: rgb(191, 144, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="56,118,29" class="jqte_color unselectable" style="background-color: rgb(56, 118, 29); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="19,79,92" class="jqte_color unselectable" style="background-color: rgb(19, 79, 92); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="11,83,148" class="jqte_color unselectable" style="background-color: rgb(11, 83, 148); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="53,28,117" class="jqte_color unselectable" style="background-color: rgb(53, 28, 117); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="116,27,71" class="jqte_color unselectable" style="background-color: rgb(116, 27, 71); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="102,0,0" class="jqte_color unselectable" style="background-color: rgb(102, 0, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="120,63,4" class="jqte_color unselectable" style="background-color: rgb(120, 63, 4); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="127,96,0" class="jqte_color unselectable" style="background-color: rgb(127, 96, 0); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="39,78,19" class="jqte_color unselectable" style="background-color: rgb(39, 78, 19); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="12,52,61" class="jqte_color unselectable" style="background-color: rgb(12, 52, 61); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="7,55,99" class="jqte_color unselectable" style="background-color: rgb(7, 55, 99); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="32,18,77" class="jqte_color unselectable" style="background-color: rgb(32, 18, 77); user-select: none;" role="gridcell" unselectable="on"></a><a jqte-styleval="76,17,48" class="jqte_color unselectable" style="background-color: rgb(76, 17, 48); user-select: none;" role="gridcell" unselectable="on"></a></div></div><div class="jqte_tool jqte_tool_4 unselectable" role="button" data-tool="3" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_5 unselectable" role="button" data-tool="4" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_6 unselectable" role="button" data-tool="5" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_7 unselectable" role="button" data-tool="6" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_8 unselectable" role="button" data-tool="7" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_9 unselectable" role="button" data-tool="8" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_10 unselectable" role="button" data-tool="9" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_11 unselectable" role="button" data-tool="10" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_12 unselectable" role="button" data-tool="11" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_13 unselectable" role="button" data-tool="12" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_14 unselectable" role="button" data-tool="13" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_15 unselectable" role="button" data-tool="14" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_16 unselectable" role="button" data-tool="15" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_17 unselectable" role="button" data-tool="16" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_18 unselectable" role="button" data-tool="17" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_19 unselectable" role="button" data-tool="18" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_20 unselectable" role="button" data-tool="19" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div><div class="jqte_tool jqte_tool_21 unselectable" role="button" data-tool="20" unselectable="on" style="user-select: none;"><a class="jqte_tool_icon unselectable" unselectable="on" style="user-select: none;"></a></div></div><div class="jqte_linkform" style="display:none" role="dialog"><div class="jqte_linktypeselect unselectable" unselectable="on" style="user-select: none;"><div class="jqte_linktypeview unselectable" unselectable="on" style="user-select: none;"><div class="jqte_linktypearrow unselectable" unselectable="on" style="user-select: none;"></div><div class="jqte_linktypetext">Web Address</div></div><div class="jqte_linktypes unselectable" role="menu" unselectable="on" style="user-select: none;"><a jqte-linktype="0" unselectable="on" style="user-select: none;" class="unselectable">Web Address</a><a jqte-linktype="1" unselectable="on" style="user-select: none;" class="unselectable">E-mail Address</a><a jqte-linktype="2" unselectable="on" style="user-select: none;" class="unselectable">Picture URL</a></div></div><input class="jqte_linkinput" type="text/css" value=""><div class="jqte_linkbutton unselectable" unselectable="on" style="user-select: none;">OK</div> <div style="height:1px;float:none;clear:both"></div></div><div class="jqte_editor" contenteditable="true"></div><div class="jqte_source jqte_hiddenField"><textarea class="jqte-test form-control" rows="8" name="task[description]" id="task_description" data-origin="textarea"></textarea></div></div>#}
+{#          <span class="help-block m-b-none ">Give some description</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Priority <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#          <div data-max="10" data-min="0" class="spinner input-group" id="MySpinner">#}
+{#            <input class="form-control spinner-input" required="required" type="text" value="0" name="task[priority]" id="task_priority" aria-required="true">#}
+{#            <!--<input type="text" maxlength="2" name="spinner" value="1" class="form-control ">-->#}
+{#            <div class="btn-group btn-group-vertical input-group-btn">#}
+{#              <button class="btn btn-default spinner-up" type="button">#}
+{#                <i class="fa fa-chevron-up text-muted"></i>#}
+{#              </button>#}
+{#              <button class="btn btn-default spinner-down" type="button">#}
+{#                <i class="fa fa-chevron-down text-muted"></i>#}
+{#              </button>#}
+{#            </div>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#          <div class="form-group">#}
+{#            <label class="col-lg-2 control-label">Assign To</label>#}
+{#            <div class="col-lg-10">#}
+{#              <select class="form-control multi-select-custom select2-hidden-accessible" name="task[employee_id]" id="task_employee_id" tabindex="-1" aria-hidden="true"><option value="288">Ubaidullah Shoaib</option>#}
+{#<option value="291">Muhammad Abbas</option>#}
+{#<option value="338">Junaid Tariq</option></select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 100px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-task_employee_id-container"><span class="select2-selection__rendered" id="select2-task_employee_id-container" title="Ubaidullah Shoaib">Ubaidullah Shoaib</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>#}
+{#            </div>#}
+{#          </div>#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Due Date</label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="datetimepicker form-control" data-format="YYYY-MM-DD hh:mm a" data-template="D  MMM  YYYY  -  hh : mm a" type="text" name="task[due_date]" id="task_due_date">#}
+{#          <!--<span class="help-block m-b-none">Last Date to complete task.</span>-->#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group hidden">#}
+{#        <label class="col-lg-2 control-label">Bind To  <i class="fa fa-question-circle text-muted fa-small" data-placement="left" data-toggle="tooltip" title="" data-original-title="Bind To: Use this to bind this task to a channel. Once channel is selected; all progress of this task will be published as an update there for quick reference. You can create new channels from the left navigation."></i></label>#}
+{#        <div class="col-lg-10">#}
+{#          <select class="form-control" name="task[channel_id]" id="task_channel_id"><option value=""></option>#}
+{#</select>#}
+{#          <span class="help-block m-b-none">All updates of this task will be published onto this channel.</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{##}
+{#      <legend class="h4 text-muted" style="margin-bottom: 10px;">Attachments</legend>#}
+{#      <div id="attachments" class="p40">#}
+{#        <div class="form-group col-sm-12">#}
+{#                  </div>#}
+{#        <div class="form-group">#}
+{#          <div class="links col-sm-12">#}
+{#            <a class="text-info pull-right add_fields" data-association="attachment" data-associations="attachments" data-association-insertion-template="<div class=&quot;nested-fields&quot; style=&quot;margin-bottom: 20px;&quot;>#}
+{##}
+{#  <div class=&quot;form-group&quot;>#}
+{#    <div class=&quot;col-md-6 pl0&quot;>#}
+{#      <div>#}
+{#        <label class=&quot;pl0 control-label&quot;>Title <span style=&quot;color:red;&quot;>*</span></label>#}
+{#      </div>#}
+{#      <input class=&quot;form-control&quot; required=&quot;required&quot; placeholder=&quot;Name, Title Or Description&quot; type=&quot;text&quot; name=&quot;task[attachments_attributes][new_attachments][title]&quot; id=&quot;task_attachments_attributes_new_attachments_title&quot; />#}
+{#      <!--<span class=&quot;help-block m-b-none &quot;>Name or Description of File</span>-->#}
+{#    </div>#}
+{#    <div class=&quot;col-lg-5 pl0&quot;>#}
+{#      <div>#}
+{#        <label class=&quot;pl0 control-label&quot;>File <span style=&quot;color:red;&quot;>*</span></label>#}
+{#      </div>#}
+{#      <input class=&quot;filestyle&quot; style=&quot;display:none&quot; data-icon=&quot;false&quot; data-classButton=&quot;btn btn-default&quot; data-classInput=&quot;form-control inline input-s&quot; type=&quot;file&quot; name=&quot;task[attachments_attributes][new_attachments][file]&quot; id=&quot;task_attachments_attributes_new_attachments_file&quot; />#}
+{#    </div>#}
+{##}
+{#    <div class=&quot;col-md-1&quot;>#}
+{#      <input type=&quot;hidden&quot; name=&quot;task[attachments_attributes][new_attachments][_destroy]&quot; id=&quot;task_attachments_attributes_new_attachments__destroy&quot; value=&quot;false&quot; /><a class=&quot;text-danger mt30 pull-right remove_fields dynamic&quot; href=&quot;#&quot;>Remove</a>#}
+{#    </div>#}
+{##}
+{#  </div>#}
+{##}
+{#</div>#}
+{#<script src=&quot;/javascripts/bootstrap-filestyle.min.js&quot;></script>" href="#">Add Attachment</a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{##}
+{#      <div class="form-group">#}
+{#        <div class="col-sm-12">#}
+{#          <hr>#}
+{#          <div class="pull-right">#}
+{#            <button name="button" type="submit" class="btn btn-primary ladda-button" data-style="expand-left"><span class="ladda-label">Create</span><span class="ladda-spinner"></span></button>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{##}
+{#</form></div>#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#<script>#}
+{#  var ready;#}
+{#  ready = function() {#}
+{#        $('form').on('click', '.btn-danger', function(task) {#}
+{#            $(this).closest('fieldset').remove();#}
+{#            return event.preventDefault();#}
+{#        });#}
+{#        return $('form').on('click', '.btn-primary', function(task) {#}
+{#            var regexp, time;#}
+{#            time = new Date().getTime();#}
+{#            regexp = new RegExp($(this).data('id'), 'g');#}
+{#            $(this).before($(this).data('fields').replace(regexp, time));#}
+{#            return event.preventDefault();#}
+{#        });#}
+{##}
+{#    $('.task-jquery-validate').validate();#}
+{#    $(".multi-select-custom").select2({placeholder: "Select an employee to assign the task"});#}
+{#  }#}
+{##}
+{#  $(document).ready(ready);#}
+{#  $(document).on('page:load', ready);#}
+{##}
+{##}
+{#  //    $('.jqte-test').jqte();#}
+{#  //    var jqteStatus = true;#}
+{#  //    $(".status").click(function()#}
+{#  //    {#}
+{#  //        jqteStatus = jqteStatus ? false : true;#}
+{#  //        $('.jqte-test').jqte({"status" : jqteStatus})#}
+{#  //    });#}
+{##}
+{#</script>#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{##}
+{##}
+{#<div class="modal fade" id="new-time-log" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">#}
+{#  <div class="modal-dialog">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>#}
+{#        <h4 class="modal-title">New Time Log</h4>#}
+{#      </div>#}
+{#      <div class="modal-body modal-bottom-padding" style="margin-bottom: 50px;">#}
+{#        <div class="panel-body">#}
+{#  <form class="bs-example form-horizontal jquery-validate-time-log" id="new_time_log" action="/company/time_logs" accept-charset="UTF-8" method="post" novalidate="novalidate"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="xZ4BSW6Vhk2Tko+t8dIbOO5DXUZT8Ls1rTGj61bPU+UKoWbemOt1zTPm3brcYQzwfPUJCJy38jnk6owKYqOiOQ==">#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label pl0">Date <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="form-control timelog-datepicker-input" required="required" type="text" name="time_log[date]" id="time_log_date" aria-required="true">#}
+{#          <!--<span class="help-block m-b-none">Start Date and Time</span>-->#}
+{#        </div>#}
+{#      </div>#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label pl0">Start Time <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-4">#}
+{#          <input class="timepicker form-control" required="required" type="text" name="time_log[start_at]" id="time_log_start_at" aria-required="true">#}
+{#          <!--<span class="help-block m-b-none">Start Date and Time</span>-->#}
+{#        </div>#}
+{##}
+{#        <label class="col-lg-2 control-label pl0">End Time <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-4">#}
+{#          <input class="timepicker form-control" required="required" type="text" name="time_log[end_at]" id="time_log_end_at" aria-required="true">#}
+{#          <!--<span class="help-block m-b-none">End Date and Time</span>-->#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label pl0">Comments <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#          <textarea class="form-control" rows="5" required="required" name="time_log[comment]" id="time_log_comment" aria-required="true"></textarea>#}
+{#          <span class="help-block m-b-none text-muted">Memo for the time log entry <a href="#" class="text-info pull-right" onclick="$('.task-field').toggleClass('hidden');">Want to attach a task with this entry?</a></span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <div class="form-group hidden task-field">#}
+{#        <label class="col-lg-2 control-label pl0">Task <span style="color:red;">*</span></label>#}
+{#        <div class="col-lg-10">#}
+{#          <select class="form-control multi-select-custom select2-hidden-accessible" required="required" name="time_log[task_id]" id="time_log_task_id" tabindex="-1" aria-hidden="true" aria-required="true"><option value=""></option>#}
+{#<option value="131">Time log</option></select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 100px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-time_log_task_id-container"><span class="select2-selection__rendered" id="select2-time_log_task_id-container"><span class="select2-selection__placeholder">Select a Task</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>#}
+{#          <span class="help-block m-b-none text-muted">Only started tasks are visible here</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <!--<div class="form-group">-->#}
+{#      <!--<label class="col-sm-2 control-label">Post on Channel</label>-->#}
+{#      <!--<div class="col-sm-10">-->#}
+{#      <!--<label class="switch">-->#}
+{#      <!---->#}
+{#      <!--<input type="checkbox"/>-->#}
+{#      <!--<span onclick="booleanToggler('time_log_post_to_channel')" id="check-input-1"></span>-->#}
+{#      <!--<p class="help-block m-b-none">If checked comments will be posted to Task Channel</p>-->#}
+{#      <!--</label>-->#}
+{#      <!--</div>-->#}
+{#      <!--</div>-->#}
+{##}
+{#      <div class="form-group">#}
+{#        <div class="col-lg-offset-2 col-lg-10">#}
+{#          <input type="submit" name="commit" value="Create" class="btn btn-primary pull-right">#}
+{#        </div>#}
+{#      </div>#}
+{#</form></div>#}
+{##}
+{#<script>#}
+{#  $(document).ready(function() {#}
+{#    $('.jquery-validate-time-log').validate();#}
+{#    $(".multi-select-custom").select2({placeholder: "Select a Task"});#}
+{#  });#}
+{#</script>#}
+{##}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{##}
+{##}
+{#<div class="modal fade" id="new-hr-request" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">#}
+{#  <div class="modal-dialog" style="width: 700px;">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>#}
+{#        <h4 class="modal-title">New HR Professional Help Request</h4>#}
+{#      </div>#}
+{#      <div class="modal-body modal-bottom-padding" style="margin-bottom: 50px;">#}
+{#        <div class="panel-body">#}
+{#  <form class="bs-example form-horizontal hr-request-jquery-validate" id="new_hr_request" enctype="multipart/form-data" action="/company/hr_requests" accept-charset="UTF-8" method="post" novalidate="novalidate"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="xZ4BSW6Vhk2Tko+t8dIbOO5DXUZT8Ls1rTGj61bPU+UKoWbemOt1zTPm3brcYQzwfPUJCJy38jnk6owKYqOiOQ==">#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Question <span style="color:red;">*</span> </label>#}
+{#        <div class="col-lg-10">#}
+{#          <textarea class="form-control" required="required" rows="8" name="hr_request[question]" id="hr_request_question" aria-required="true"></textarea>#}
+{#          <span class="help-block m-b-none">Please tell us as much description you can about your query or question, If necessary attach the required documents at the bottom.</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <br>#}
+{##}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Response Required By</label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="datepicker-input form-control" type="text" name="hr_request[response_required_by]" id="hr_request_response_required_by">#}
+{#          <span class="help-block m-b-none">If selected we would try our best to give you a formal response before this date.</span>#}
+{#        </div>#}
+{#      </div>#}
+{#      <br>#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">How should we reply back ? </label>#}
+{#        <div class="col-lg-10">#}
+{#          <select class="form-control" name="hr_request[response_preference]" id="hr_request_response_preference"><option value=""></option>#}
+{#<option selected="selected" value="in_app">In App</option>#}
+{#<option value="call_me">Call Me</option>#}
+{#<option value="email_me">Email Me</option></select>#}
+{#          <span class="help-block m-b-none">Any preference on how we should get back to you if we have a reply or require more details ?</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <br>#}
+{#      <div class="form-group">#}
+{#        <label class="col-lg-2 control-label">Contact Phone </label>#}
+{#        <div class="col-lg-10">#}
+{#          <input class="form-control" type="text" name="hr_request[phone]" id="hr_request_phone">#}
+{#          <span class="help-block m-b-none">Please tell us a phone number on which we can call for more details or a formal reply.</span>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{#      <br>#}
+{#      <br>#}
+{##}
+{#      <legend class="h5 text-muted" style="margin-bottom: 10px;">Attachments (Any documents that is required or may help us give you a better solution ? )</legend>#}
+{#      <div id="attachments" class="p40">#}
+{#        <div class="form-group col-sm-12">#}
+{#                  </div>#}
+{#        <div class="form-group">#}
+{#          <div class="links col-sm-12">#}
+{#            <a class="text-info pull-right add_fields" data-association="attachment" data-associations="attachments" data-association-insertion-template="<div class=&quot;nested-fields&quot; style=&quot;margin-bottom: 20px;&quot;>#}
+{##}
+{#  <div class=&quot;form-group&quot;>#}
+{#    <div class=&quot;col-md-6 pl0&quot;>#}
+{#      <div>#}
+{#        <label class=&quot;pl0 control-label&quot;>Title <span style=&quot;color:red;&quot;>*</span></label>#}
+{#      </div>#}
+{#      <input class=&quot;form-control&quot; required=&quot;required&quot; placeholder=&quot;Name, Title Or Description&quot; type=&quot;text&quot; name=&quot;hr_request[attachments_attributes][new_attachments][title]&quot; id=&quot;hr_request_attachments_attributes_new_attachments_title&quot; />#}
+{#      <!--<span class=&quot;help-block m-b-none &quot;>Name or Description of File</span>-->#}
+{#    </div>#}
+{#    <div class=&quot;col-lg-5 pl0&quot;>#}
+{#      <div>#}
+{#        <label class=&quot;pl0 control-label&quot;>File <span style=&quot;color:red;&quot;>*</span></label>#}
+{#      </div>#}
+{#      <input class=&quot;filestyle&quot; style=&quot;display:none&quot; data-icon=&quot;false&quot; data-classButton=&quot;btn btn-default&quot; data-classInput=&quot;form-control inline input-s&quot; type=&quot;file&quot; name=&quot;hr_request[attachments_attributes][new_attachments][file]&quot; id=&quot;hr_request_attachments_attributes_new_attachments_file&quot; />#}
+{#    </div>#}
+{##}
+{#    <div class=&quot;col-md-1&quot;>#}
+{#      <input type=&quot;hidden&quot; name=&quot;hr_request[attachments_attributes][new_attachments][_destroy]&quot; id=&quot;hr_request_attachments_attributes_new_attachments__destroy&quot; value=&quot;false&quot; /><a class=&quot;text-danger mt30 pull-right remove_fields dynamic&quot; href=&quot;#&quot;>Remove</a>#}
+{#    </div>#}
+{##}
+{#  </div>#}
+{##}
+{#</div>#}
+{#<script src=&quot;/javascripts/bootstrap-filestyle.min.js&quot;></script>" href="#">Add Attachment</a>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{##}
+{#      <div class="form-group">#}
+{#        <div class="col-sm-12">#}
+{#          <hr>#}
+{#          <div class="pull-right">#}
+{#            <button name="button" type="submit" class="btn btn-primary pull-right ladda-button" data-style="expand-left"><span class="ladda-label">Create</span><span class="ladda-spinner"></span></button>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{##}
+{##}
+{#</form></div>#}
+{##}
+{##}
+{#<script>#}
+{#  var ready;#}
+{#  ready = function() {#}
+{#    $('.hr-request-jquery-validate').validate();#}
+{#  }#}
+{##}
+{#  $(document).ready(ready);#}
+{#  $(document).on('page:load', ready);#}
+{##}
+{#</script>#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{##}
+{#<script>#}
+{#    $(document).ready(function(){#}
+{#        if ($('.jquery-validate').length > 0){#}
+{#            $('.jquery-validate').validate();#}
+{#        }#}
+{##}
+{#    });#}
+{#</script>#}
+{#<iframe name="filepicker_comm_iframe" id="filepicker_comm_iframe" src="https://dialog.filepicker.io/dialog/comm_iframe/" style="display: none;"></iframe><iframe name="fpapi_comm_iframe" id="fpapi_comm_iframe" src="https://www.filepicker.io/dialog/comm_iframe/" style="display: none;"></iframe><div class="datepicker dropdown-menu"><div class="datepicker-days" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">February 2020</th><th class="next">›</th></tr><tr><th class="dow">Su</th><th class="dow">Mo</th><th class="dow">Tu</th><th class="dow">We</th><th class="dow">Th</th><th class="dow">Fr</th><th class="dow">Sa</th></tr></thead><tbody><tr><td class="day  old">26</td><td class="day  old">27</td><td class="day  old">28</td><td class="day  old">29</td><td class="day  old">30</td><td class="day  old">31</td><td class="day ">1</td></tr><tr><td class="day ">2</td><td class="day ">3</td><td class="day ">4</td><td class="day ">5</td><td class="day ">6</td><td class="day ">7</td><td class="day ">8</td></tr><tr><td class="day ">9</td><td class="day ">10</td><td class="day ">11</td><td class="day ">12</td><td class="day ">13</td><td class="day ">14</td><td class="day ">15</td></tr><tr><td class="day ">16</td><td class="day ">17</td><td class="day ">18</td><td class="day ">19</td><td class="day ">20</td><td class="day ">21</td><td class="day ">22</td></tr><tr><td class="day ">23</td><td class="day ">24</td><td class="day ">25</td><td class="day ">26</td><td class="day ">27</td><td class="day  active">28</td><td class="day ">29</td></tr><tr><td class="day  new">1</td><td class="day  new">2</td><td class="day  new">3</td><td class="day  new">4</td><td class="day  new">5</td><td class="day  new">6</td><td class="day  new">7</td></tr></tbody></table></div><div class="datepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="month">Jan</span><span class="month active">Feb</span><span class="month">Mar</span><span class="month">Apr</span><span class="month">May</span><span class="month">Jun</span><span class="month">Jul</span><span class="month">Aug</span><span class="month">Sep</span><span class="month">Oct</span><span class="month">Nov</span><span class="month">Dec</span></td></tr></tbody></table></div><div class="datepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020-2029</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="year old">2019</span><span class="year active">2020</span><span class="year">2021</span><span class="year">2022</span><span class="year">2023</span><span class="year">2024</span><span class="year">2025</span><span class="year">2026</span><span class="year">2027</span><span class="year">2028</span><span class="year">2029</span><span class="year old">2030</span></td></tr></tbody></table></div></div><div class="datepicker dropdown-menu"><div class="datepicker-days" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">February 2020</th><th class="next">›</th></tr><tr><th class="dow">Su</th><th class="dow">Mo</th><th class="dow">Tu</th><th class="dow">We</th><th class="dow">Th</th><th class="dow">Fr</th><th class="dow">Sa</th></tr></thead><tbody><tr><td class="day  old">26</td><td class="day  old">27</td><td class="day  old">28</td><td class="day  old">29</td><td class="day  old">30</td><td class="day  old">31</td><td class="day ">1</td></tr><tr><td class="day ">2</td><td class="day ">3</td><td class="day ">4</td><td class="day ">5</td><td class="day ">6</td><td class="day ">7</td><td class="day ">8</td></tr><tr><td class="day ">9</td><td class="day ">10</td><td class="day ">11</td><td class="day ">12</td><td class="day ">13</td><td class="day ">14</td><td class="day ">15</td></tr><tr><td class="day ">16</td><td class="day ">17</td><td class="day ">18</td><td class="day ">19</td><td class="day ">20</td><td class="day ">21</td><td class="day ">22</td></tr><tr><td class="day ">23</td><td class="day ">24</td><td class="day ">25</td><td class="day ">26</td><td class="day ">27</td><td class="day  active">28</td><td class="day ">29</td></tr><tr><td class="day  new">1</td><td class="day  new">2</td><td class="day  new">3</td><td class="day  new">4</td><td class="day  new">5</td><td class="day  new">6</td><td class="day  new">7</td></tr></tbody></table></div><div class="datepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="month">Jan</span><span class="month active">Feb</span><span class="month">Mar</span><span class="month">Apr</span><span class="month">May</span><span class="month">Jun</span><span class="month">Jul</span><span class="month">Aug</span><span class="month">Sep</span><span class="month">Oct</span><span class="month">Nov</span><span class="month">Dec</span></td></tr></tbody></table></div><div class="datepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020-2029</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="year old">2019</span><span class="year active">2020</span><span class="year">2021</span><span class="year">2022</span><span class="year">2023</span><span class="year">2024</span><span class="year">2025</span><span class="year">2026</span><span class="year">2027</span><span class="year">2028</span><span class="year">2029</span><span class="year old">2030</span></td></tr></tbody></table></div></div><div class="datepicker dropdown-menu"><div class="datepicker-days" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">February 2020</th><th class="next">›</th></tr><tr><th class="dow">Su</th><th class="dow">Mo</th><th class="dow">Tu</th><th class="dow">We</th><th class="dow">Th</th><th class="dow">Fr</th><th class="dow">Sa</th></tr></thead><tbody><tr><td class="day  old">26</td><td class="day  old">27</td><td class="day  old">28</td><td class="day  old">29</td><td class="day  old">30</td><td class="day  old">31</td><td class="day  active">1</td></tr><tr><td class="day ">2</td><td class="day ">3</td><td class="day ">4</td><td class="day ">5</td><td class="day ">6</td><td class="day ">7</td><td class="day ">8</td></tr><tr><td class="day ">9</td><td class="day ">10</td><td class="day ">11</td><td class="day ">12</td><td class="day ">13</td><td class="day ">14</td><td class="day ">15</td></tr><tr><td class="day ">16</td><td class="day ">17</td><td class="day ">18</td><td class="day ">19</td><td class="day ">20</td><td class="day ">21</td><td class="day ">22</td></tr><tr><td class="day ">23</td><td class="day ">24</td><td class="day ">25</td><td class="day ">26</td><td class="day ">27</td><td class="day ">28</td><td class="day ">29</td></tr><tr><td class="day  new">1</td><td class="day  new">2</td><td class="day  new">3</td><td class="day  new">4</td><td class="day  new">5</td><td class="day  new">6</td><td class="day  new">7</td></tr></tbody></table></div><div class="datepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="month">Jan</span><span class="month active">Feb</span><span class="month">Mar</span><span class="month">Apr</span><span class="month">May</span><span class="month">Jun</span><span class="month">Jul</span><span class="month">Aug</span><span class="month">Sep</span><span class="month">Oct</span><span class="month">Nov</span><span class="month">Dec</span></td></tr></tbody></table></div><div class="datepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020-2029</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="year old">2019</span><span class="year active">2020</span><span class="year">2021</span><span class="year">2022</span><span class="year">2023</span><span class="year">2024</span><span class="year">2025</span><span class="year">2026</span><span class="year">2027</span><span class="year">2028</span><span class="year">2029</span><span class="year old">2030</span></td></tr></tbody></table></div></div><div class="datepicker dropdown-menu"><div class="datepicker-days" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">February 2020</th><th class="next">›</th></tr><tr><th class="dow">Su</th><th class="dow">Mo</th><th class="dow">Tu</th><th class="dow">We</th><th class="dow">Th</th><th class="dow">Fr</th><th class="dow">Sa</th></tr></thead><tbody><tr><td class="day  old">26</td><td class="day  old">27</td><td class="day  old">28</td><td class="day  old">29</td><td class="day  old">30</td><td class="day  old">31</td><td class="day ">1</td></tr><tr><td class="day ">2</td><td class="day ">3</td><td class="day ">4</td><td class="day ">5</td><td class="day ">6</td><td class="day ">7</td><td class="day ">8</td></tr><tr><td class="day ">9</td><td class="day ">10</td><td class="day ">11</td><td class="day ">12</td><td class="day ">13</td><td class="day ">14</td><td class="day ">15</td></tr><tr><td class="day ">16</td><td class="day ">17</td><td class="day ">18</td><td class="day ">19</td><td class="day ">20</td><td class="day ">21</td><td class="day ">22</td></tr><tr><td class="day ">23</td><td class="day ">24</td><td class="day ">25</td><td class="day ">26</td><td class="day ">27</td><td class="day ">28</td><td class="day  active">29</td></tr><tr><td class="day  new">1</td><td class="day  new">2</td><td class="day  new">3</td><td class="day  new">4</td><td class="day  new">5</td><td class="day  new">6</td><td class="day  new">7</td></tr></tbody></table></div><div class="datepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="month">Jan</span><span class="month active">Feb</span><span class="month">Mar</span><span class="month">Apr</span><span class="month">May</span><span class="month">Jun</span><span class="month">Jul</span><span class="month">Aug</span><span class="month">Sep</span><span class="month">Oct</span><span class="month">Nov</span><span class="month">Dec</span></td></tr></tbody></table></div><div class="datepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020-2029</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="year old">2019</span><span class="year active">2020</span><span class="year">2021</span><span class="year">2022</span><span class="year">2023</span><span class="year">2024</span><span class="year">2025</span><span class="year">2026</span><span class="year">2027</span><span class="year">2028</span><span class="year">2029</span><span class="year old">2030</span></td></tr></tbody></table></div></div><div class="datepicker dropdown-menu"><div class="datepicker-days" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">February 2020</th><th class="next">›</th></tr><tr><th class="dow">Su</th><th class="dow">Mo</th><th class="dow">Tu</th><th class="dow">We</th><th class="dow">Th</th><th class="dow">Fr</th><th class="dow">Sa</th></tr></thead><tbody><tr><td class="day  old">26</td><td class="day  old">27</td><td class="day  old">28</td><td class="day  old">29</td><td class="day  old">30</td><td class="day  old">31</td><td class="day ">1</td></tr><tr><td class="day ">2</td><td class="day ">3</td><td class="day ">4</td><td class="day ">5</td><td class="day ">6</td><td class="day ">7</td><td class="day ">8</td></tr><tr><td class="day ">9</td><td class="day ">10</td><td class="day ">11</td><td class="day ">12</td><td class="day ">13</td><td class="day ">14</td><td class="day ">15</td></tr><tr><td class="day ">16</td><td class="day ">17</td><td class="day ">18</td><td class="day ">19</td><td class="day ">20</td><td class="day ">21</td><td class="day ">22</td></tr><tr><td class="day ">23</td><td class="day ">24</td><td class="day ">25</td><td class="day ">26</td><td class="day ">27</td><td class="day  active">28</td><td class="day ">29</td></tr><tr><td class="day  new">1</td><td class="day  new">2</td><td class="day  new">3</td><td class="day  new">4</td><td class="day  new">5</td><td class="day  new">6</td><td class="day  new">7</td></tr></tbody></table></div><div class="datepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="month">Jan</span><span class="month active">Feb</span><span class="month">Mar</span><span class="month">Apr</span><span class="month">May</span><span class="month">Jun</span><span class="month">Jul</span><span class="month">Aug</span><span class="month">Sep</span><span class="month">Oct</span><span class="month">Nov</span><span class="month">Dec</span></td></tr></tbody></table></div><div class="datepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev">‹</th><th colspan="5" class="switch">2020-2029</th><th class="next">›</th></tr></thead><tbody><tr><td colspan="7"><span class="year old">2019</span><span class="year active">2020</span><span class="year">2021</span><span class="year">2022</span><span class="year">2023</span><span class="year">2024</span><span class="year">2025</span><span class="year">2026</span><span class="year">2027</span><span class="year">2028</span><span class="year">2029</span><span class="year old">2030</span></td></tr></tbody></table></div></div>#}
+{##}
+
+
+
+
+

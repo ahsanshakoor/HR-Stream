@@ -1,0 +1,98 @@
+{% extends 'base_payroll_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}New Health Insurance {{ block.super }} {% endblock %}
+{% block content %}
+
+     <!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">Health Insurance</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+									<li class="breadcrumb-item active">Health Insurance</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-header">
+									<h4 class="card-title mb-0">New Health Insurance</h4>
+								</div>
+								<div class="card-body">
+                                    {% if health_insurance_id %}
+                                        <form action="{% url 'health_insurance_edit' health_insurance_id%}" method="post">
+                                    {% else %}
+									    <form  method="post">
+                                    {% endif %}
+                                        {% csrf_token %}
+                                        {% for error in field.errors %}
+                                              <span class="help-block">{{ error }}</span>
+                                        {% endfor %}
+
+										<div class="form-group row">
+											<label class="col-form-label col-md-2">Health Insurance Name</label>
+											<div class="col-md-10">
+												{% render_field form.name %}
+                                                {% render_field form.name.errors %}
+											</div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Health Insurance Description</label>
+											<div class="col-md-10">
+											    {% render_field form.description %}
+                                                {% render_field form.description.errors %}
+                                            </div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Company Amount</label>
+											<div class="col-md-10">
+											    {% render_field form.company_amount class="form-control" %}
+                                                {% render_field form.company_amount.errors %}
+                                            </div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Employee Amount</label>
+											<div class="col-md-10">
+											    {% render_field form.employee_amount class="form-control" %}
+                                                {% render_field form.employee_amount.errors %}
+                                            </div>
+										</div>
+                                        <div class="form-group row">
+                                           <label class="col-form-label col-md-2">Status</label>
+                                              <div class="col-md-10">
+                                                <div class="onoffswitch">
+                                                    {% render_field form.active type="checkbox" name="onoffswitch_policy_status" class="onoffswitch-checkbox" id="switch_policy_status" %}
+                                                    {% render_field form.active.errors %}
+                                                    <label class="onoffswitch-label" for="switch_policy_status">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-primary submit-btn float-right" type="submit">Submit</button>
+                                        </div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+                </div>
+				<!-- /Page Content -->
+            </div>
+			<!-- /Page Wrapper -->
+{% endblock %}
