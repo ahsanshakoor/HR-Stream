@@ -1,0 +1,158 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} Edit Attendance Policy {{ block.super }} {% endblock %}
+{% block content %}
+<!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">Attendance Settings</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+									<li class="breadcrumb-item active">Attendance Settings</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card">
+								<div class="card-header">
+									<h4 class="card-title mb-0">Edit Attendance Policy</h4>
+								</div>
+								<div class="card-body">
+									<form  method="post">
+                                        {% csrf_token %}
+                                        {% for error in field.errors %}
+                                              <span class="help-block">{{ error }}</span>
+                                        {% endfor %}
+										<div class="form-group row">
+											<label class="col-form-label col-md-2">Attendance Policy Name</label>
+											<div class="col-md-10">
+												{% render_field form.name %}
+                                                {% render_field form.name.errors %}
+											</div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Policy Description</label>
+											<div class="col-md-10">
+											    {% render_field form.description %}
+                                                {% render_field form.discription.errors %}
+                                            </div>
+										</div>
+
+
+                                      	<div class="form-group row">
+											<label class="col-form-label col-md-2">Working Hour Policy</label>
+											<div class="col-md-10">
+												{% render_field form.working_hour_policy class="form-control" %}
+                                                {% render_field form.working_hour_policy.errors %}
+											</div>
+										</div>
+                                         <div class="form-group row">
+											<label class="col-form-label col-md-2">Grace Time </label>
+                                            <div class="col-md-10">
+											{% render_field form.grace_time id="gt" class="form-control"%}
+                                                {% render_field form.grace_time.errors %}
+											<span class="form-text text-muted">e.g "99.00 Minutes"</span>
+                                            </div>
+										</div>
+{#                                        <div class="form-group row">#}
+{##}
+{#                                           <label class="col-form-label col-md-2">Working Hour Policy</label>#}
+{#                                              <div class="col-md-10">#}
+{#                                                <div class="onoffswitch">#}
+{#                                                    {% render_field form.round_off type="checkbox" name="onoffswitch_round_off" class="onoffswitch-checkbox" id="switch_round_off" %}#}
+{#                                                    {% render_field form.round_off.errors %}#}
+{#                                                    <label class="onoffswitch-label" for="switch_round_off">#}
+{#                                                        <span class="onoffswitch-inner"></span>#}
+{#                                                        <span class="onoffswitch-switch"></span>#}
+{#                                                    </label>#}
+{#                                                </div>#}
+{#                                              </div>#}
+{#                                        </div>#}
+{#                                      <div id="hidden_portion" style="display:none">#}
+{##}
+{#                                        <div class="form-group row">#}
+{#											<label class="col-form-label col-md-2">PunchIn Time </label>#}
+{#                                            <div class="col-md-10">#}
+{#											{% render_field form.punch_in id="pit" class="form-control" %}#}
+{#                                             {% render_field form.punch_in.errors %}#}
+{#											<span class="form-text text-muted">e.g "99.00"</span>#}
+{#                                            </div>#}
+{#										</div>#}
+{#                                        <div class="form-group row">#}
+{#											<label class="col-form-label col-md-2">PunchOut Time </label>#}
+{#                                            <div class="col-md-10">#}
+{#											{% render_field form.punch_out id="pot" class="form-control" %}#}
+{#                                                {% render_field form.punch_out.errors %}#}
+{#											<span class="form-text text-muted">e.g "99.00"</span>#}
+{#                                            </div>#}
+{#										</div>#}
+{#                                        #}
+{#                                      </div>#}
+                                          <div class="form-group row">
+											<label class="col-form-label col-md-2">Working Hour </label>
+                                            <div class="col-md-10">
+											{% render_field form.working_hour id="wht" class="form-control "%}
+                                                {% render_field form.working_hour.errors %}
+											<span class="form-text text-muted">e.g "99.00 Hours"</span>
+                                            </div>
+										</div>
+                                        <div class="form-group row">
+											<label class="col-form-label col-md-2">Over Time </label>
+                                            <div class="col-md-10">
+											{% render_field form.overtime id="ot" class="form-control"%}
+                                            {% render_field form.overtime.errors %}
+											<span class="form-text text-muted">e.g "99.00 Hours"</span>
+                                            </div>
+										</div>
+                                        <div class="form-group row">
+                                           <label class="col-form-label col-md-2">Policy Status</label>
+                                              <div class="col-md-10">
+                                                <div class="onoffswitch">
+                                                    {% render_field form.policy_status type="checkbox" name="onoffswitch_policy_status" class="onoffswitch-checkbox" id="switch_policy_status" %}
+                                                    {% render_field form.policy_status.errors %}
+                                                    <label class="onoffswitch-label" for="switch_policy_status">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                        </div>
+
+
+                                      	<div class="form-group row">
+											<label class="col-form-label col-md-2">Shift</label>
+											<div class="col-md-10">
+												{% render_field form.shift class="form-control" %}
+                                                {% render_field form.shift.errors %}
+											</div>
+										</div>
+                                        <div class="form-group">
+                                            <button class="btn btn-primary submit-btn float-right" type="submit">Submit</button>
+                                        </div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+                </div>
+				<!-- /Page Content -->
+
+
+            </div>
+			<!-- /Page Wrapper -->
+
+<!-- jQuery -->
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% block title %}Attendance Policies {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+                    {% include 'messages.html' %}
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h3 class="page-title">Attendance Policies</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+									<li class="breadcrumb-item active">Attendance Policies</li>
+								</ul>
+							</div>
+							<div class="col-auto float-right ml-auto">
+								<a href="{% url 'attendancePolicy' %}" class="btn add-btn" ><i class="fa fa-plus"></i> Add Attendance Policy</a>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table class="table table-striped custom-table datatable mb-0">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Name</th>
+											<th>Description</th>
+                                            <th>Shift Name</th>
+											<th>Created By</th>
+											<th>Status</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+                                    {% for policy in attendance_policies %}
+										<tr>
+											<td>
+												{{forloop.counter}}
+											</td>
+                                            <td>{{ policy.name }}</td>
+											<td>{{ policy.description | truncatechars:"30" }}</td>
+                                            <td>{{ policy.shift }}</td>
+											<td>{{ policy.created_by }}</td>
+                                            <td>
+												<div class="dropdown action-label">
+													<a class="btn btn-white btn-sm btn-rounded dropdown-toggle" href="javascript:void(0);" data-toggle="dropdown" aria-expanded="false">
+														 {% if policy.policy_status %}
+														<i class="fa fa-dot-circle-o text-success"></i> Active
+                                                        {% else %}
+                                                            <i class="fa fa-dot-circle-o text-danger"></i> Inactive
+                                                        {% endif %}
+													</a>
+													<div class="dropdown-menu dropdown-menu-right">
+														<a class="dropdown-item" href="{% url 'edit_attendance_policy_status' pk=policy.id status='True' %}"><i class="fa fa-dot-circle-o text-success"></i> Active</a>
+														<a class="dropdown-item" href="{% url 'edit_attendance_policy_status' pk=policy.id status='False' %}"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+											<td >
+												<a class="primary-color-used" href="{% url 'edit_attendance_policy' pk=policy.id %}" ><i class="fa fa-pencil m-r-5"></i> </a>
+                                                <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal" data-target="#delete_leavetype-{{ policy.id }}"><i class="fa fa-trash-o m-r-5"></i></a>
+
+											</td>
+									{% endfor %}	</tr>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+                </div>
+				<!-- /Page Content -->
+
+				<!-- Delete Leavetype Modal -->
+            {% for policy in attendance_policies %}
+				<div class="modal custom-modal fade" id="delete_leavetype-{{ policy.id }}" role="dialog">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-header">
+									<h3>Delete Attendance Policy</h3>
+									<p>Are you sure want to delete?</p>
+								</div>
+								<div class="modal-btn delete-action">
+									<div class="row">
+										<div class="col-6">
+											<a href="{% url 'delete_attendance_policy' pk=policy.id %}" class="btn btn-primary continue-btn">Delete</a>
+										</div>
+										<div class="col-6">
+											<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+            {% endfor %}
+				<!-- /Delete Leavetype Modal -->
+
+            </div>
+			<!-- /Page Wrapper -->
+{% endblock %}

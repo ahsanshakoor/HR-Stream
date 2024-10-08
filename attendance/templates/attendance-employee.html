@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Attendance {{ block.super }} {% endblock %}
+{% load tz %}
+{% load attendance_tags %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Attendance</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Attendance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% include "messages.html" %}
+            <!-- /Page Header -->
+{#{% localtime on %}#}
+            <div class="row">
+                {% if user.attendance_policy %}
+                    <div class="col-md-4">
+                        <div class="card punch-status">
+                            <div class="card-body">
+                                <h5 class="card-title">Timesheet <small class="text-muted">{% now "jS F Y" %}</small>
+                                </h5>
+                                {% if today_attendance != None %}
+                                    {% if attendance_punch_last.out_time == Null %}
+                                        <div class="punch-det">
+                                            <h6>Punch In at</h6>
+                                            <p>{{ attendance_punch_last.in_time | toLocalTime }}</p>
+                                        </div>
+                                        <div class="punch-info">
+                                            <div class="punch-hours">
+                                                <span>{{ today_attendance.total_duration }} hrs</span>
+                                            </div>
+                                        </div>
+                                        <div class="punch-btn-section">
+                                            <a href="{% url 'punchOut' %}" class="btn btn-primary punch-btn">Punch
+                                                Out</a>
+                                        </div>
+                                    {% endif %}
+                                    {% if attendance_punch_last.out_time != Null %}
+                                        <div class="punch-det">
+                                            <h6>Punch Out at</h6>
+                                            <p>{{ attendance_punch_last.out_time | toLocalTime}}</p>
+                                        </div>
+                                        <div class="punch-info">
+                                            <div class="punch-hours">
+                                                <span>{{ today_attendance.total_duration }} hrs</span>
+                                            </div>
+                                        </div>
+                                        <div class="punch-btn-section">
+                                            <a href="{% url 'punchIn' %}" class="btn btn-primary punch-btn">Punch In</a>
+                                        </div>
+                                    {% endif %}
+                                    <div class="statistics">
+                                        <div class="row">
+                                            <div class="col-md-12 col-12 text-center">
+                                                <div class="stats-box">
+                                                    <p>Break</p>
+                                                    <h6>{{ today_attendance.total_break }} hrs</h6>
+                                                </div>
+                                            </div>
+                                            {#                                            <div class="col-md-6 col-6 text-center">#}
+                                            {#                                                <div class="stats-box">#}
+                                            {#                                                    <p>Overtime</p>#}
+                                            {#                                                    <h6>3 hrs</h6>#}
+                                            {#                                                </div>#}
+                                            {#                                            </div>#}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if today_attendance == None %}
+                                    <div class="punch-det">
+                                        <h6>Have not Punched In Yet Today</h6>
+                                        <p>{% now "D jS F Y H:i" %}</p>
+                                    </div>
+                                    <div class="punch-info">
+                                        <div class="punch-hours">
+                                            <span>0.0 hrs</span>
+                                        </div>
+                                    </div>
+                                    <div class="punch-btn-section">
+                                        <a href="{% url 'punchIn' %}" class="btn btn-primary punch-btn">Punch In</a>
+                                    </div>
+                                    <div class="statistics">
+                                        <div class="row">
+                                            <div class="col-md-12 col-12 text-center">
+                                                <div class="stats-box">
+                                                    <p>Break</p>
+                                                    <h6>0.0 hrs</h6>
+                                                </div>
+                                            </div>
+                                            {#                                            <div class="col-md-6 col-6 text-center">#}
+                                            {#                                                <div class="stats-box">#}
+                                            {#                                                    <p>Overtime</p>#}
+                                            {#                                                    <h6>0.0 hrs</h6>#}
+                                            {#                                                </div>#}
+                                            {#                                            </div>#}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card att-statistics">
+                            <div class="card-body">
+                                <h5 class="card-title">Statistics</h5>
+                                <div class="stats-list">
+                                    <div class="stats-info">
+                                        <p>Today <strong> {% if today_attendance %} {{ today_attendance.total_duration }}
+                                            {% else %} 0.00 {% endif %}
+                                            <small>/ {{ daily_production_hour }}
+                                                hrs</small></strong></p>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-primary" role="progressbar"
+                                                 style="width: {{ t_percentage }}%"
+                                                 aria-valuenow="{{ t_percentage }}" aria-valuemin="0"
+                                                 aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stats-info">
+                                        <p>This Week <strong>{{ w_production|floatformat:"2" }}
+                                            <small>/ {{ weekly_production_hour }} hrs</small></strong>
+                                        </p>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-warning" role="progressbar"
+                                                 style="width: {{ w_perentage }}%"
+                                                 aria-valuenow="{{ w_perentage }}" aria-valuemin="0"
+                                                 aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stats-info">
+                                        <p>This Month <strong>{{ m_production |floatformat:"2" }}
+                                            <small>/ {{ month_production_hour }}
+                                                hrs</small></strong></p>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                 style="width: {{ m_percentage }}%"
+                                                 aria-valuenow="{{ m_percentage }}" aria-valuemin="0"
+                                                 aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stats-info">
+                                        <p>Remaining <strong>{{ r_production |floatformat:"2"}} <small>/ {{ month_production_hour }} hrs</small></strong>
+                                        </p>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-danger" role="progressbar"
+                                                 style="width: {{ r_percentage }}%" aria-valuenow="{{ r_percentage }}"
+                                                 aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    {#                                    <div class="stats-info">#}
+                                    {#                                        <p>Overtime <strong>4</strong></p>#}
+                                    {#                                        <div class="progress">#}
+                                    {#                                            <div class="progress-bar bg-info" role="progressbar" style="width: 22%"#}
+                                    {#                                                 aria-valuenow="22" aria-valuemin="0" aria-valuemax="100"></div>#}
+                                    {#                                        </div>#}
+                                    {#                                    </div>#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card recent-activity">
+                            <div class="card-body">
+                                <h5 class="card-title">Today Activity</h5>
+                                <ul class="res-activity-list">
+
+                                    {% for punch in attendance_punch %}
+                                        <li>
+                                            <p class="mb-0">Punch In at</p>
+                                            <p class="res-activity-time">
+                                                <i class="fa fa-clock-o"></i>
+                                                {{ punch.in_time | toLocalTime }}.
+                                            </p>
+                                        </li>
+                                        {% if punch.out_time != Null %}
+                                            <li>
+                                                <p class="mb-0">Punch Out at</p>
+                                                <p class="res-activity-time">
+                                                    <i class="fa fa-clock-o"></i>
+                                                    {{ punch.out_time | toLocalTime}}.
+                                                </p>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if attendance_punch == None %}
+                                        <li>
+                                            <p class="mb-0">Have Not Punched In Yet Today</p>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <h3 style="color:red;">There is no Attendance Policy assigned to you.</h3>
+                {% endif %}
+            </div>
+
+{#            <!-- Search Filter -->#}
+{#            <form method="post" action="{% url 'attendanceSearch' %}" class="row filter-row">#}
+{#                {% csrf_token %}#}
+{#                <div class="col-sm-3">#}
+{#                    <div class="form-group form-focus">#}
+{#                        <div class="cal-icon">#}
+{#                            <input type="text" class="form-control floating datetimepicker" name="attendance_date"#}
+{#                                   id="attendance_date">#}
+{#                        </div>#}
+{#                        <label class="focus-label">Date</label>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    <div class="form-group form-focus select-focus">#}
+{#                        <select class="select floating" name="attendance_month">#}
+{#                            <option></option>#}
+{#                            <option value="01">Jan</option>#}
+{#                            <option value="02">Feb</option>#}
+{#                            <option value="03">Mar</option>#}
+{#                            <option value="04">Apr</option>#}
+{#                            <option value="05">May</option>#}
+{#                            <option value="06">Jun</option>#}
+{#                            <option value="07">Jul</option>#}
+{#                            <option value="08">Aug</option>#}
+{#                            <option value="09">Sep</option>#}
+{#                            <option value="10">Oct</option>#}
+{#                            <option value="11">Nov</option>#}
+{#                            <option value="12">Dec</option>#}
+{#                        </select>#}
+{#                        <label class="focus-label">Select Month</label>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    <div class="form-group form-focus select-focus">#}
+{#                        <select class="select floating" name="attendance_year">#}
+{#                            <option></option>#}
+{#                            <option value="2020">2020</option>#}
+{#                            <option value="2019">2019</option>#}
+{#                            <option value="2018">2018</option>#}
+{#                            <option value="2017">2017</option>#}
+{#                            <option value="2016">2016</option>#}
+{#                            <option value="2015">2015</option>#}
+{#                        </select>#}
+{#                        <label class="focus-label">Select Year</label>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-sm-3">#}
+{#                    <button type="submit" class="btn btn-success btn-block"> Search</button>#}
+{#                </div>#}
+{#            </form>#}
+{##}
+{#            <!-- /Search Filter -->#}
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table datatable mb-0">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Punch In</th>
+                                <th>Punch Out</th>
+                                <th>Production</th>
+                                <th>Break</th>
+                                <th>Overtime</th>
+{#                                <th>Action</th>#}
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for month in month_attendance %}
+
+                                <tr>
+                                    <td>{{ month.id }}</td>
+                                    <td>{{ month.attendance.date }}</td>
+                                    <td>{{ month.in_time | toLocalTime }}</td>
+                                    <td>{{ month.out_time | toLocalTime }}</td>
+                                    <td>{{ month.attendance.total_duration }} hrs</td>
+                                    <td>{{ month.attendance.total_break }} hrs</td>
+                                    <td>{{ month.overtime }}</td>
+{#                                    <td><a class="primary-color-used" href="javascript:void(0)"#}
+{#                                           data-toggle="modal"#}
+{#                                           data-target="#edit_attendance_punch_modal-{{ month.attendance.id}}">#}
+{#                                        <i class="fa fa-pencil m-r-5"></i></a></td>#}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- Page Wrapper -->
+{#{% endlocaltime %}#}
+
+
+{#    {% load widget_tweaks %}#}
+{#    {% for month in month_attendance %}#}
+{#        <!-- Edit Task Modal -->#}
+{#        <div id="edit_attendance_punch_modal-{{ month.attendance.id }}" class="modal custom-modal fade" role="dialog">#}
+{#            <div class="modal-dialog">#}
+{#                <div class="modal-content">#}
+{#                    <div class="modal-header">#}
+{#                        <h4 class="modal-title">Edit Punch</h4>#}
+{#                        <button type="button" class="close" data-dismiss="modal">&times;</button>#}
+{#                    </div>#}
+{#                    <div id="edit_attendance_punch" class="modal-body">#}
+{#                        <form method="post" action="{% url 'edit_attendace_punch' pk=month.attendance.id %}">#}
+{#                            {% csrf_token %}#}
+{#                            <div class="form-group form-focus select-focus">#}
+{#                                <label class="focus-label">Select Punch Type<span class="text-danger">*</span></label>#}
+{#                                <select class="select floating" name="punch_type" required="required">#}
+{#                                    <option></option>#}
+{#                                    <option value="punch_in">Punch In</option>#}
+{#                                    <option value="punch_out" selected>Punch Out</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                            <div class="form-group">#}
+{#                                <label>Time <span class="text-danger">*</span></label>#}
+{#                                <div>#}
+{#                                    <input type="text" name="punch_time" class="form-control timepicker fa fa-clock-o" required="required" id="id_punch_time">#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="submit-section text-center">#}
+{#                                <button class="btn btn-primary submit-btn">Submit</button>#}
+{#                            </div>#}
+{#                        </form>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <!-- /Edit Task Modal -->#}
+{#    {% endfor %}#}
+{% endblock %}

@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load accounts_tags %}
+{% block title %}Attendance Admin {{ block.super }} {% endblock %}
+{% load attendance_tags %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Attendance</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Attendance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+
+            <!-- Search Filter -->
+            <form action="{% url 'employeeAttendanceSearch' %}" class="row filter-row">
+                <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" name="user" required>
+                            <option></option>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user }}</option>
+                            {% endfor %}
+                        </select>
+                        <label class="focus-label">Employee Name</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" name="month" required>
+                            <option></option>
+                            <option value="01">Jan</option>
+                            <option value="02">Feb</option>
+                            <option value="03">Mar</option>
+                            <option value="04">Apr</option>
+                            <option value="05">May</option>
+                            <option value="06">Jun</option>
+                            <option value="07">Jul</option>
+                            <option value="08">Aug</option>
+                            <option value="09">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                        <label class="focus-label">Select Month</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" name="year" required>
+                            <option></option>
+                            <option>2025</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                            <option>2021</option>
+                            <option>2020</option>
+                            <option>2019</option>
+                            <option>2018</option>
+                            <option>2017</option>
+                            <option>2016</option>
+                            <option>2015</option>
+                        </select>
+                        <label class="focus-label">Select Year</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <button type="submit" class="btn btn-success btn-block"> Search</button>
+                </div>
+            </form>
+            <!-- /Search Filter -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped custom-table table-nowrap mb-0">
+                            <thead>
+                            <tr>
+                                <th>Employee</th>
+                                {% with ''|center:end_of_month as range %}
+                                    {% for _ in range %}
+                                        <th>{{ forloop.counter }}</th>
+                                    {% endfor %}
+                                {% endwith %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for attendance in attendance_list %}
+                                <tr>
+                                    <td>
+
+                                        <h2 class="table-avatar">
+                                            <a  href="{% url 'myprofile_detail' user.id %}">
+                                                {% if attendance.user.profile_pic %}
+                                                    <img class="avatar avatar-xs" src="{{ attendance.user.profile_pic.url }}"
+                                                         alt="Profile Pic">{% else %}
+                                                    <img class="avatar avatar-xs" src="{% static 'assets/img/user.jpg' %}"
+                                                         alt="Profile Pic">{% endif %}</a>
+                                            <a href="{% url 'myprofile_detail' attendance.user.id %}">{{ attendance.user }}</a>
+                                        </h2>
+                                    </td>
+                                    {% for value in attendance.attendance %}
+
+                                        {% if value %}
+                                            <td>
+                                                <a href="javascript:void(0)" data-toggle="modal"
+                                                   data-target="#attendance_info-{{ value.id }}"><i
+                                                        class="fa fa-check text-success"></i></a>
+                                            </td>
+                                        {% else %}
+                                            <td><i class="fa fa-close text-danger"></i></td>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {#                                    <td>#}
+                                    {#                                        <div class="half-day">#}
+                                    {#                                            <span class="first-off"><a href="javascript:void(0);" data-toggle="modal"#}
+                                    {#                                                                       data-target="#attendance_info"><i#}
+                                    {#                                                    class="fa fa-check text-success"></i></a></span>#}
+                                    {#                                            <span class="first-off"><i class="fa fa-close text-danger"></i></span>#}
+                                    {#                                        </div>#}
+                                    {#                                    </td>#}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+        {% for attendance in attendance_list %}
+            <!-- Attendance Modal -->
+            {% for val in attendance.attendance %}
+                {% if val %}
+                    <div class="modal custom-modal fade" id="attendance_info-{{ val.id }}" role="dialog">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Attendance Info</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card punch-status">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Timesheet <small
+                                                            class="text-muted">{{ val.date }}</small></h5>
+                                                    <div class="punch-det">
+                                                        <h6>Punch In at</h6>
+                                                        <p>{{ val.date }} {{ val.attendancePunch.first.in_time | toLocalTime }}</p>
+                                                    </div>
+                                                    <div class="punch-info">
+                                                        <div class="punch-hours">
+                                                            {% if user.attendance_policy.working_hour_policy == 'Normal' %}
+                                                                {% if val.attendancePunch.last.out_time %}
+                                                                    <span>{{ val.attendancePunch.last.out_time |subtractTime:val.attendancePunch.first.in_time }} hrs</span>
+                                                                {% else %}
+                                                                    <span>0.00 hrs</span>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <span>{{ val.total_duration }} hrs</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="punch-det">
+                                                        <h6>Punch Out at</h6>
+                                                        {% if val.attendancePunch.last.out_time %}
+                                                            <p>{{ val.date }} {{ val.attendancePunch.last.out_time | toLocalTime }}</p>
+                                                        {% else %}
+                                                            <p>Punch Out Pending</p>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="statistics">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-6 text-center">
+                                                                <div class="stats-box">
+                                                                    <p>Break</p>
+                                                                    <h6>{{ val.total_break }} hrs</h6>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6 col-6 text-center">
+                                                                <div class="stats-box">
+                                                                    <p>Overtime</p>
+                                                                    {% if user.attendance_policy.working_hour_policy == 'Normal' %}
+                                                                        {% if  val.attendancePunch.last.out_time|subtractTime:val.attendancePunch.first.in_time > user.attendance_policy.working_hour %}
+                                                                            {#                                                                            {{ val.attendancePunch.last.out_time|subtractTime:val.attendancePunch.first.in_time|subtract:user.attendance_policy.working_hour }}#}
+                                                                            {% if val.attendancePunch.last.out_time|subtractTime:val.attendancePunch.first.in_time|subtract:user.attendance_policy.working_hour > 0 %}
+                                                                                {% if val.attendancePunch.last.out_time|subtractTime:val.attendancePunch.first.in_time|subtract:user.attendance_policy.working_hour > user.attendance_policy.overtime %}
+                                                                                    {#                                                                                    <h6>Policy: {{ user.attendance_policy.overtime }}hrs</h6>#}
+                                                                                    {#                                                                                {% else %}#}
+                                                                                    <h6>
+                                                                                        {{ val.attendancePunch.last.out_time|subtractTime:val.attendancePunch.first.in_time|subtract:user.attendance_policy.working_hour}}
+                                                                                        hrs</h6>
+                                                                                {% endif %}
+                                                                            {% endif %}
+                                                                        {% else %}
+                                                                            <h6>0.00 hrs</h6>
+                                                                        {% endif %}
+                                                                    {% elif user.attendance_policy.working_hour_policy == 'Strict' %}
+                                                                        {% if val.total_duration|subtract:user.attendance_policy.working_hour > 0 %}
+                                                                            {% if val.total_duration|subtract:user.attendance_policy.working_hour > user.attendance_policy.overtime %}
+                                                                                {#                                                                                <h6>Policy: {{ user.attendance_policy.overtime }}hrs</h6>#}
+                                                                                {#                                                                            {% else %}#}
+                                                                                <h6>
+                                                                                    {{ val.total_duration|subtract:user.attendance_policy.working_hour }}
+                                                                                    hrs</h6>
+                                                                            {% endif %}
+                                                                        {% else %}
+                                                                            <h6>0.00 hrs</h6>
+                                                                        {% endif %}
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card recent-activity">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Activity</h5>
+                                                    <ul class="res-activity-list">
+
+                                                        {% for punch in val.attendancePunch.all %}
+                                                            <li>
+                                                                <p class="mb-0">Punch In
+                                                                    at</p>
+                                                                <p class="res-activity-time">
+                                                                    <i class="fa fa-clock-o"></i>
+                                                                    {{ punch.in_time | toLocalTime}}.
+                                                                </p>
+                                                            </li>
+                                                            {% if punch.out_time != Null %}
+                                                                <li>
+                                                                    <p class="mb-0">Punch
+                                                                        Out at</p>
+                                                                    <p class="res-activity-time">
+                                                                        <i class="fa fa-clock-o"></i>
+                                                                        {{ punch.out_time | toLocalTime }}.
+                                                                    </p>
+                                                                </li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <!-- /Attendance Modal -->
+        {% endfor %}
+    </div>
+    <!-- Page Wrapper -->
+    <script>
+        function showModal(value) {
+            $('#attendance_info').modal('show');
+
+        }
+    </script>
+{% endblock %}

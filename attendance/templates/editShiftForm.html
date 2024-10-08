@@ -1,0 +1,45 @@
+{% load widget_tweaks %}
+<form method="post" action="{% url 'edit_shift' pk=shift_id %}">
+    {% csrf_token %}
+    {% for error in field.errors %}
+        <span class="help-block">{{ error }}</span>
+    {% endfor %}
+    <div class="form-group">
+        <label>Name <span class="text-danger">*</span></label>
+        <div>
+            {% render_field form.name class="form-control" %}
+            {% render_field form.name.error %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Start Time <span class="text-danger">*</span></label>
+        <div>
+            {% render_field form.start_time %}
+            {% render_field form.name.start_time.error %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label>End Time <span class="text-danger">*</span></label>
+        <div>
+            {% render_field form.end_time %}
+            {% render_field form.end_time.error %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Shift Allowence <span class="text-danger"></span></label>
+        <div>
+            {% render_field form.shift_Allowance class="form-control" %}
+            {% render_field form.shift_Allowance.error %}
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Working Days <span class="text-danger">*</span></label>
+        <div>
+            {% render_field form.weekdays %}
+            {% render_field form.weekdays.error %}
+        </div>
+    </div>
+    <div class="submit-section">
+        <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+    </div>
+</form>

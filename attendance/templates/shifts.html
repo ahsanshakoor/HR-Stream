@@ -1,0 +1,189 @@
+{% extends 'base_company_settings.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %} Shift Edit{{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+            <div class="page-wrapper">
+
+				<!-- Page Content -->
+                <div class="content container-fluid">
+                    {% include 'messages.html' %}
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h3 class="page-title">Shifts</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item active">Shifts</li>
+								</ul>
+							</div>
+							<div class="col-auto float-right ml-auto">
+								<a href="javascript" class="btn add-btn" data-toggle="modal" data-target="#add_shift"><i class="fa fa-plus"></i> Add Shift</a>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table class="table table-striped custom-table datatable mb-0">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Name</th>
+											<th>Start Date</th>
+											<th>End Date</th>
+											<th>Shift Allowence</th>
+											<th>Week Days</th>
+                                            <th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+                                    {% for shift in shifts %}
+										<tr>
+											<td>
+												{{forloop.counter}}
+											</td>
+                                            <td>{{ shift.name }}</td>
+											<td>{{ shift.start_time}}</td>
+
+											<td>{{ shift.end_time}}</td>
+                                            <td>
+												{{ shift.shift_Allowance }}
+											</td>
+                                            <td>{{ shift.weekdays }}</td>
+											<td>
+												<a class="primary-color-used" id="EditShift"  href="javascript:void(0);" data-EditShift="{% url 'edit_shift' pk=shift.id %}" ><i class="fa fa-pencil m-r-5"></i></a>
+                                                <a class="primary-color-used" href="javascript:void(0);" data-toggle="modal" data-target="#delete_shift-{{ shift.id }}"><i class="fa fa-trash-o m-r-5"></i></a>
+
+											</td>
+									{% endfor %}	</tr>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+                </div>
+				<!-- /Page Content -->
+
+				<!-- Delete Shift Modal -->
+            {% for shift in shifts %}
+				<div class="modal custom-modal fade" id="delete_shift-{{ shift.id }}" role="dialog">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-header">
+									<h3>Delete Shift</h3>
+									<p>Are you sure want to delete?</p>
+								</div>
+								<div class="modal-btn delete-action">
+									<div class="row">
+										<div class="col-6">
+											<a href="{% url 'delete_shift' pk=shift.id %}" class="btn btn-primary continue-btn">Delete</a>
+										</div>
+										<div class="col-6">
+											<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+            {% endfor %}
+				<!-- /Delete Shift Modal -->
+
+            <!-- Add Shift Modal -->
+        <div id="add_shift" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Shift</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for error in field.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
+                            <div class="form-group">
+                                <label>Name <span class="text-danger">*</span></label>
+                                <div>
+                                    {% render_field form.name class="form-control" %}
+                                    {% render_field form.name.error  %}
+                                </div>
+                            </div>
+                             <div class="form-group">
+                                <label>Start Time <span class="text-danger">*</span></label>
+                                <div>
+                                    {% render_field form.start_time %}
+                                    {% render_field form.name.start_time.error  %}
+                                </div>
+                            </div>
+                             <div class="form-group">
+                                <label>End Time <span class="text-danger">*</span></label>
+                                <div>
+                                    {% render_field form.end_time %}
+                                    {% render_field form.end_time.error  %}
+                                </div>
+                            </div>
+                             <div class="form-group">
+                                <label>Shift Allowence <span class="text-danger"></span></label>
+                                <div>
+                                    {% render_field form.shift_Allowance class="form-control"%}
+                                    {% render_field form.shift_Allowance.error  %}
+                                </div>
+                            </div>
+                             <div class="form-group">
+                                <label>Working Days <span class="text-danger">*</span></label>
+                                <div>
+                                    {% render_field form.weekdays %}
+                                    {% render_field form.weekdays.error  %}
+                                </div>
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Shift Modal -->
+
+
+
+
+
+
+
+
+             <!-- edit Shift Modal -->
+        <div id="edit_shift_modal" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Shift</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="edit_shift">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /edit Shift Modal -->
+
+            </div>
+			<!-- /Page Wrapper -->
+{% endblock %}
