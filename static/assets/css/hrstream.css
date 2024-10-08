@@ -1,0 +1,13 @@
+.theme-btn {
+	background: var(--dark-color);
+	background: -moz-linear-gradient(left, var(--dark-color) 0%, #fc6075 100%);
+	background: -webkit-linear-gradient(left, var(--dark-color) 0%, #fc6075 100%);
+	background: -ms-linear-gradient(left, var(--dark-color) 0%, #fc6075 100%);
+	background: linear-gradient(to right, var(--dark-color) 0%, #fc6075 100%);
+	border: 0;
+    border-radius: 4px;
+    display: block;
+    font-size: 22px;
+    padding: 10px 26px;
+    width: 100%;
+}

@@ -1,0 +1,50 @@
+{% extends "base_company_settings.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Localization Settings {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="page-title">Basic Settings</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+                    {% include "messages.html" %}
+                    <form method="post" action="{% url 'localization' %}">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Default Currency</label>
+                                    {% render_field form.currency_code class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="submit-section">
+                                    <button class="btn btn-primary submit-btn float-right">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}
+{% block js %}
+
+{% endblock %}
+

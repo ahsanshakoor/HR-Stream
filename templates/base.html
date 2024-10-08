@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+{% load static %}
+{% load accounts_tags %}
+<html lang="en">
+<head>
+    {% get_company_object user.pk %}
+    {% get_count_object user.pk %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="WorkDayStream - A Complete Solution of Employee Management">
+    <meta name="keywords"
+          content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
+    <meta name="author" content="WorkDayStream">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %} - {{ company_name.name | title }}{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'rnr/assets/img/fav.png' %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}">
+
+    <!-- Lineawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/line-awesome.min.css' %}">
+
+    <!-- Chart CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/morris/morris.css' %}">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/dataTables.bootstrap4.min.css' %}">
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/select2.min.css' %}">
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+    <!-- Calendar CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/fullcalendar.min.css' %}">
+
+    <!-- Tagsinput CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+			<script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
+			<script src="{% static 'assets/js/respond.min.js' %}"></script>
+		<![endif]-->
+</head>
+
+<body>
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+
+    <!-- Header -->
+    {% include 'base_header.html' %}
+    <!-- /Header -->
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+                    <li class="menu-title">
+                        <span>Main</span>
+                    </li>
+                    {% if_has_access user.id 'owner basic' %}
+                        <li>
+                            <a href="{% url 'index' %}"><i class="la la-dashboard"></i><span> Dashboard</span></a>
+                        </li>
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner admin_dashboard' %}
+                        <li><a href="{% url 'admin_dashboard' %}"><i
+                                class="la la-desktop"></i><span> Admin Dashboard</span></a>
+                        </li>
+                    {% endif_has_access %}
+
+                    {% if_has_access user.id 'owner basic' %}
+                        <li><a href="{% url 'announcements' %}"><i
+                                class="fa fa-bullhorn"></i><span> Announcements</span></a>
+                        </li>
+                    {% endif_has_access %}
+
+                    {% if_has_access user.id 'owner new_employees' %}
+                        <li><a href="{% url 'view_employees' %}"><i
+                                class="la la-user-plus"></i><span> Employees</span></a>
+                        </li>
+                    {% endif_has_access %}
+
+                    {% if_has_access user.id 'owner leave_policies' %}
+                        <li class="submenu">
+                            <a href="javascript:void(0)" {% if leave_count != 0 %} class="noti-dot"{% endif %}><i
+                                    class="la la-leaf"></i>
+                                <span> Leaves</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'leave' %}">My Leaves</a></li>
+
+                                <li><a href="{% url 'leave_admin' %}">Leave
+                                    {% if leave_count != 0 %}
+                                        <span class="badge badge-pill bg-primary float-right">{{ leave_count }}</span>{% endif %}
+                                </a></li>
+
+                            </ul>
+                        </li>
+                    {% else %}
+                        {% if_has_access user.id 'owner basic' %}
+                            <li>
+                                <a href="{% url 'leave' %}"><i class="la la-leaf"></i>
+                                    <span> My Leaves</span>
+                                    <span></span></a>
+                            </li>
+                        {% endif_has_access %}
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner claim' %}
+                        <li class="submenu">
+                            <a href="javascript:void(0)"><i class="fa fa-money"></i>
+                                <span> Claims</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+
+                                <li><a href="{% url 'showClaims' %}">My Claims</a></li>
+
+                                <li><a href="{% url 'showClaimsAdmin' %}"> Claims</a></li>
+
+                            </ul>
+                        </li>
+
+                    {% else %}
+                        {% if_has_access user.id 'owner basic' %}
+                            <li>
+                                <a href="{% url 'showClaims' %}"><i class="fa fa-money"></i>
+                                    <span> Claims</span>
+                                </a>
+                            </li>
+                        {% endif_has_access %}
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner timelog' %}
+                        <li class="submenu">
+                            <a href="javascript:void(0)"><i class="la la-calendar-times-o"></i>
+                                <span> Time Log</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'time_log_details' %}">Time Log</a></li>
+                                <li><a href="{% url 'time_log' %}"> My Time Log</a></li>
+                                <li><a href="{% url 'showManualTaskName' %}">Manual Task Type</a></li>
+
+                            </ul>
+                        </li>
+                    {% else %}
+                        {% if_has_access user.id 'owner basic' %}
+                            <li>
+                                <a href="{% url 'time_log' %}"><i class="la la-calendar-times-o"></i>
+                                    <span> Time Log</span>
+                                    <span></span></a>
+                            </li>
+                        {% endif_has_access %}
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner file_manager' %}
+                        <li class="submenu">
+                            <a href="javascript:void(0)"><i class="la la-files-o"></i>
+                                <span> File Manager</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+
+                                <li><a href="{% url 'file_manager' %}">Files</a></li>
+
+                                <li><a href="{% url 'showFileDirectoryType' %}">Directories</a></li>
+
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'file_manager' %}"><i
+                                class="la la-files-o"></i><span>File Manager</span></a></li>
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner equipment' %}
+                        <li>
+                            <a href="{% url 'equipments' %}"><i class="la la-laptop"></i>
+                                <span> Equipment</span>
+                                <span></span></a>
+                        </li>
+                    {% endif_has_access %}
+
+                    {% if_has_access user.id 'owner attendance_policies' %}
+                        <li class="submenu">
+                            <a href="javascript:void(0)"><i class="la la-clock-o"></i>
+                                <span> Attendance</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+
+                                <li><a href="{% url 'attendanceAdmin' %}">Attendance</a></li>
+
+                                <li><a href="{% url 'attendance' %}">My Attendance</a></li>
+
+                            </ul>
+                        </li>
+                    {% else %}
+                        {% if_has_access user.id 'owner basic' %}
+                            <li>
+                                <a href="{% url 'attendance' %}"><i class="la la-clock-o"></i>
+                                    <span> Attendance</span>
+                                    <span></span></a>
+                            </li>
+                        {% endif_has_access %}
+                    {% endif_has_access %}
+
+                    {% if_has_access user.id 'owner new_clients' %}
+                        <li>
+                            <a href="{% url 'view_clients' %}"><i class="la la-users"></i> <span>Stakeholders</span></a>
+                        </li>
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner basic' %}
+                        <li>
+                            <a href="{% url 'todo' %}"><i class="la la-crosshairs"></i><span>Goals</span>
+                            </a>
+                        </li>
+                    {% endif_has_access %}
+{#                    {% if_has_access user.id 'owner projects' %}#}
+                        <li>
+                            <a href="{% url 'projects' %}"><i class="la la-rocket"></i><span>Projects</span>
+                            </a>
+                        </li>
+{#                    {% endif_has_access %}#}
+                    {% if_has_access user.id 'owner performance' %}
+                        <li class="submenu">
+                            <a href="javascript:void(0)"><i
+                                    class="la la-line-chart"></i>
+                                <span> Performance</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="{% url 'performance' %}">Add Performance</a></li>
+                                <li><a href="{% url 'performance_detail_employee' %}">My Performance</a></li>
+                                <li><a href="{% url 'performance_list' %}">Performance List
+                                </a></li>
+
+                            </ul>
+                        </li>
+                    {% else %}
+                        {% if user.user_type == 'employee' %}
+                        <li><a href="{% url 'performance_detail_employee' %}"><i
+                                class="la la-line-chart"></i><span>My Performance</span></a></li>
+                        {% endif %}
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner basic' %}
+                        <li>
+                            <a href="{% url 'employee_payroll' %}"><i
+                                    class="la la-money"></i><span>Payroll</span>
+                            </a>
+                        </li>
+                    {% endif_has_access %}
+                    {% if_has_access user.id 'owner payrolls company' %}
+                        <li class="submenu">
+                            <a href="javascript:void(0)"><i class="la la-cog"></i>
+                                <span> Settings</span>
+                                <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                {% if_has_access user.id 'owner company' %}
+                                    <li>
+                                        <a href="{% url 'mycompany_edit' company_name.id %}">
+                                            <span>Company</span></a>
+                                    </li>
+                                {% endif_has_access %}
+
+                                {% if_has_access user.id 'owner payrolls' %}
+                                    <li>
+                                        <a href="{% url 'payroll_salary' %}"><span>Payroll</span>
+                                            {% if payroll_count != 0 %}
+                                                <span class="badge badge-pill bg-primary float-right">{{ payroll_count }}</span>{% endif %}
+                                        </a>
+                                    </li>
+                                {% endif_has_access %}
+                            </ul>
+                        </li>
+                    {% else %}
+                        {% if_has_access user.id 'owner basic' %}
+                            <li>
+                                <a href="{% url 'settings_password_change' %}"><i class="la la-cog"></i>
+                                    <span>Settings</span></a>
+                            </li>
+                        {% endif_has_access %}
+                    {% endif_has_access %}
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Sidebar -->
+
+    {% block content %}
+    {% endblock %}
+    <div class="notification-popup hide">
+        <p>
+            <span class="task"></span>
+            <span class="notification-text"></span>
+        </p>
+    </div>
+
+</div>
+<!-- /Main Wrapper -->
+
+<!-- jQuery -->
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+<script src="{% static 'assets/js/jquery.ui.touch-punch.js' %}"></script>
+
+
+<!-- Bootstrap Core JS -->
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+
+<!-- Slimscroll JS -->
+<script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+
+
+<!-- Mask JS -->
+<script src="{% static 'assets/js/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'assets/js/mask.js' %}"></script>
+
+<!-- Chart JS -->
+{#<script src="{% static 'assets/plugins/morris/morris.min.js' %}"></script>#}
+<script src="{% static 'assets/plugins/raphael/raphael.min.js' %}"></script>
+{#<script src="{% static 'assets/js/chart.js' %}"></script>#}
+
+{#<script src="{% static 'assets/js/jquery.formset.js' %}"></script>#}
+<script src="{% static 'assets/js/hrstream.js' %}"></script>
+<script src="{% static 'assets/js/hrstream1.js' %}"></script>
+
+<!-- Select2 JS -->
+<script src="{% static 'assets/js/select2.min.js' %}"></script>
+
+
+<!-- Datetimepicker JS -->
+<script src="{% static 'assets/js/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+<!-- Datatable JS -->
+<script src="{% static 'assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Calendar JS -->
+<script src="{% static 'assets/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'assets/js/fullcalendar.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.fullcalendar.js' %}"></script>
+
+<!-- Summernote JS -->
+{#<script src="{% static 'assets/plugins/summernote/dist/summernote-bs4.min.js' %}"></script>#}
+
+<!-- Task JS -->
+<script src="{% static 'assets/js/task.js' %}"></script>
+
+<!-- Custom JS -->
+<script src="{% static 'assets/js/app.js' %}"></script>
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+{% block base_js %}{% endblock %}
+
+</body>
+</html>

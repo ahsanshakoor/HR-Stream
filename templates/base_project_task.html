@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+{% load static %}
+{% load accounts_tags %}
+{% load widget_tweaks %}
+<html lang="en">
+<head>
+    {% get_company_object user.id %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="Smarthr - Bootstrap Admin Template">
+    <meta name="keywords"
+          content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %} - {{ company_name.name | title }}{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'rnr/assets/img/fav.png' %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}">
+
+    <!-- Lineawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/line-awesome.min.css' %}">
+
+    <!-- Chart CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/morris/morris.css' %}">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/dataTables.bootstrap4.min.css' %}">
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/select2.min.css' %}">
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+
+    <!-- Tagsinput CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}">
+
+    <!-- Summernote CSS -->
+{#    <link rel="stylesheet" href="{% static 'assets/plugins/summernote/dist/summernote-bs4.css' %}">#}
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+			<script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
+			<script src="{% static 'assets/js/respond.min.js' %}"></script>
+		<![endif]-->
+</head>
+
+<body>
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+
+    <!-- Header -->
+    <div class="header">
+
+        <!-- Logo -->
+        <div class="header-left">
+            <a href="{% url 'index' %}" class="logo">
+                {% if company_name.logo %}
+                    <img src="{{ company_name.logo.url }}" width="40" height="40" alt="Company Logo">
+                {% else %}
+                    <img src="{% static 'assets/img/logo.png' %}" width="40" height="40" alt="Company Logo">
+                {% endif %}
+            </a>
+        </div>
+        <!-- /Logo -->
+
+        <a id="toggle_btn" href="javascript:void(0);">
+					<span class="bar-icon">
+						<span></span>
+						<span></span>
+						<span></span>
+					</span>
+        </a>
+
+
+        <!-- Header Title -->
+        <div class="page-title-box">
+            <h3>{{ company_name.name | title }}</h3>
+        </div>
+        <!-- /Header Title -->
+
+        <a id="mobile_btn" class="mobile_btn" href="{% url 'index' %}#sidebar"><i class="fa fa-bars"></i></a>
+
+        <!-- Header Menu -->
+        <ul class="nav user-menu">
+
+            <!-- Search -->
+            <!-- /Search -->
+
+            <!-- Flag -->
+
+            <!-- /Flag -->
+
+            <!-- Notifications -->
+
+            <!-- /Notifications -->
+
+            <!-- Message Notifications -->
+
+            <!-- /Message Notifications -->
+
+            <li class="nav-item dropdown has-arrow main-drop">
+                <a href="javascript:void(0)" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                    <span class="user-img">
+                        {% if user.profile_pic %}
+                            <img src="{{ user.profile_pic.url }}"
+                                 alt="Profile Pic">
+                        {% else %}
+                            <img src="{% static 'assets/img/user.jpg' %}"
+                                 alt="Profile Pic">
+                        {% endif %}
+                        <span class="status online"></span>
+                    </span>
+                    <span>{{ user.username | title }}</span>
+                </a>
+                <div class="dropdown-menu">
+                    {% if user.user_type == 'client' %}
+                        <a class="dropdown-item" href="{% url 'clientprofile_detail' user.id %}">My Profile</a>
+                    {% else %}
+                        <a class="dropdown-item" href="{% url 'myprofile_detail' user.id %}">My Profile</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="{% url 'settings_password_change' %}">Settings</a>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                </div>
+            </li>
+        </ul>
+        <!-- /Header Menu -->
+
+        <!-- Mobile Menu -->
+        <div class="dropdown mobile-user-menu">
+            <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-toggle="dropdown"
+               aria-expanded="false"><i
+                    class="fa fa-ellipsis-v"></i></a>
+            <div class="dropdown-menu dropdown-menu-right">
+                {% if user.user_type == 'client' and client %}
+                    <a class="dropdown-item" href="{% url 'clientprofile_detail' client.id %}">My Profile</a>
+                {% else %}
+                    <a class="dropdown-item" href="{% url 'myprofile_detail' user.id %}">My Profile</a>
+                {% endif %}
+                <a class="dropdown-item" href="{% url 'settings_password_change' %}">Settings</a>
+                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+        <!-- /Mobile Menu -->
+
+    </div>
+    <!-- /Header -->
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="{% url 'index' %}"><i class="la la-home"></i> <span>Back to Home</span></a>
+                    </li>
+                    <li class="menu-title">Projects <a href="javascript:void(0)" data-toggle="modal"
+                                                       data-target="#create_project"><i class="fa fa-plus"></i></a></li>
+                    {% for project_ in projects %}
+                        <li {% if project_.id == project.id %} class="active" {% endif %}>
+                            <a href="{% url 'tasks_project' pk=project_.id %}">{{ project_.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Sidebar -->
+
+    {% block content %}
+    {% endblock %}
+    <!-- Create Project Modal -->
+    <div id="create_project" class="modal custom-modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% if clients %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Project Name</label>
+                                        {% render_field form.name class="form-control" %}
+                                        {% render_field form.name.error %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Client</label>
+                                        {% render_field form.client class="select" %}
+                                        {% render_field form.client.error %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <div class="cal-icon">
+                                            {% render_field form.start_date class="form-control" %}
+                                            {% render_field form.error %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        <div class="cal-icon">
+                                            {% render_field form.end_date class="form-control" %}
+                                            {% render_field form.error %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>Rate</label>
+                                        {% render_field form.rate placeholder="$50" class="form-control" %}
+                                        {% render_field form.error %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        {% render_field form.rate_type class="select" %}
+                                        {% render_field form.error %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Priority</label>
+                                        {% render_field form.priority class="select" %}
+                                        {% render_field form.error %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Add Project Leader</label>
+                                        {% render_field form.lead_by class="form-control select" %}
+                                        {% render_field form.error %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Project Code</label>
+                                        {% render_field form.code class="form-control" readonly="readonly" %}
+                                        {% render_field form.code.error %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Add Team</label>
+                                        {% render_field form.team class="form-control" %}
+                                        {% render_field form.error %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Project Estimated Time</label>
+                                        {% render_field form.estimated_time class="form-control" %}
+                                        {% render_field form.estimated_time.error %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                {% render_field form.description rows="4" class="form-control summernote" placeholder="Enter your message here" %}
+                                {% render_field form.error %}
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                {% render_field fileform.file %}
+                                {% render_field fileform.error %}
+                            </div>
+                            <div class="submit-section">
+                                <button class="btn btn-primary submit-btn">Submit</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <h2 class="avatar-title">Client is Necessary for Project Creation.Please Create Client
+                            First.</h2>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Create Project Modal -->
+</div>
+<!-- /Main Wrapper -->
+<!-- jQuery -->
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+
+
+<!-- Bootstrap Core JS -->
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+
+<!-- Slimscroll JS -->
+<script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+
+
+<!-- Mask JS -->
+<script src="{% static 'assets/js/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'assets/js/mask.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'assets/plugins/morris/morris.min.js' %}"></script>
+<script src="{% static 'assets/plugins/raphael/raphael.min.js' %}"></script>
+<script src="{% static 'assets/js/chart.js' %}"></script>
+
+
+<!-- Select2 JS -->
+<script src="{% static 'assets/js/select2.min.js' %}"></script>
+
+
+<!-- Datetimepicker JS -->
+<script src="{% static 'assets/js/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+<!-- Datatable JS -->
+<script src="{% static 'assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Summernote JS -->
+{#<script src="{% static 'assets/plugins/summernote/dist/summernote-bs4.min.js' %}"></script>#}
+
+<!-- Task JS -->
+<script src="{% static 'assets/js/task.js' %}"></script>
+
+<!-- Custom JS -->
+<script src="{% static 'assets/js/app.js' %}"></script>
+<script src="{% static 'assets/js/hrstream.js' %}"></script>
+<script src="{% static 'assets/js/hrstream1.js' %}"></script>
+</body>
+</html>

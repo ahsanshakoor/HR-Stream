@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Clients {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Stakeholders</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Stakeholders</li>
+                        </ul>
+                    </div>
+                    <div class="col-auto float-right ml-auto">
+                        <a href="{% url 'new_client' %}" class="btn add-btn"><i
+                                class="fa fa-plus"></i> Add Stakeholder</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+            {% include "messages.html" %}
+            <!-- Search Filter -->
+            {#            <div class="row filter-row">#}
+            {#                <div class="col-sm-6 col-md-3">#}
+            {#                    <div class="form-group form-focus">#}
+            {#                        <input type="text" class="form-control floating">#}
+            {#                        <label class="focus-label">Client ID</label>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-sm-6 col-md-3">#}
+            {#                    <div class="form-group form-focus">#}
+            {#                        <input type="text" class="form-control floating">#}
+            {#                        <label class="focus-label">Client Name</label>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-sm-6 col-md-3">#}
+            {#                    <div class="form-group form-focus select-focus">#}
+            {#                        <select class="select floating">#}
+            {#                            <option>Select Company</option>#}
+            {#                            <option>Global Technologies</option>#}
+            {#                            <option>Delta Infotech</option>#}
+            {#                        </select>#}
+            {#                        <label class="focus-label">Company</label>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#                <div class="col-sm-6 col-md-3">#}
+            {#                    <a href="clients.html#" class="btn btn-success btn-block"> Search </a>#}
+            {#                </div>#}
+            {#            </div>#}
+            <!-- Search Filter -->
+
+            <div class="row staff-grid-row">
+                {% for client in clients %}
+                    <div class="col-md-4 col-sm-6 col-12 col-lg-4 col-xl-3">
+                        <div class="profile-widget">
+                            <div class="profile-img">
+                                <a href="{% url 'clientprofile_detail' client.id %}">
+                                    {% if client.profile_pic %}
+                                        <img class="avatar" src="{{ client.profile_pic.url }}"
+                                             alt="Profile Pic">
+                                    {% else %}
+                                        <img class="avatar" src="{% static 'assets/img/user.jpg' %}"
+                                             alt="Profile Pic">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <h4 class="user-name m-t-10 mb-0 text-ellipsis">
+                                <a>{{ client.get_full_name | title }}</a></h4>
+                            <div class="small text-muted">{{ client.stakeholder_name | title }}</div>
+                            <a class="btn btn-white btn-sm m-t-10"
+                               title="View Client Profile" href="{% url 'clientprofile_detail' client.id %}">
+                                View Profile</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}

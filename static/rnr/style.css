@@ -1,0 +1,9 @@
+/* Google Font */
+@import url('https://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800%7COpen+Sans:300,400,600,700,800');
+
+/* All CSS FILE */
+@import "assets/css/themify-icons-min.css";
+@import "assets/css/bootstrap.min.css";
+@import "assets/css/reset.css";
+@import "assets/css/plugins.css";
+@import "assets/css/style.css";

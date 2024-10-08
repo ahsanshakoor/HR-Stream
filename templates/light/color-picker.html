@@ -1,0 +1,162 @@
+{% extends "base_settings.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Theme Color Settings {{ block.super }} {% endblock %}
+{% block content %}
+{#    <style>#}
+{#        #toggle-mode-cb {#}
+{#            display: none;#}
+{#        }#}
+{##}
+{#        #toggle-mode {#}
+{#            position: absolute;#}
+{#            top: 0;#}
+{#            right: 0;#}
+{#            padding: 20px;#}
+{#        }#}
+{##}
+{#        #toggle-mode .toggle-border {#}
+{#            border: 1px solid #1e1f26;#}
+{#            width: 50px;#}
+{#            height: 20px;#}
+{#            display: block;#}
+{#            border-radius: 20px;#}
+{#            position: relative;#}
+{#        }#}
+{##}
+{#        #toggle-mode .toggle-indicator {#}
+{#            width: 16px;#}
+{#            height: 16px;#}
+{#            border-radius: 50%;#}
+{#            position: absolute;#}
+{#            background-color: #1e1f26;#}
+{#            top: 2px;#}
+{#            left: 2px;#}
+{#            transition: all 0.3s ease-in-out;#}
+{#            overflow: hidden;#}
+{#            box-sizing: border-box;#}
+{#        }#}
+{##}
+{#        #toggle-mode .toggle-indicator::after {#}
+{#            content: "";#}
+{#            width: 14px;#}
+{#            height: 14px;#}
+{#            border-radius: 50%;#}
+{#            position: absolute;#}
+{#            bottom: -3px;#}
+{#            right: 5px;#}
+{#            background-color: #1e1f26;#}
+{#        }#}
+{##}
+{#        #mode-wrapper {#}
+{#            transition: all 0.3s ease-in-out;#}
+{#            height: 100vh;#}
+{#            position: relative;#}
+{#            font-family: sans-serif;#}
+{#            font-size: 2rem;#}
+{#        }#}
+{##}
+{#        #mode-wrapper .mode {#}
+{#            transition: all 0.3s ease-in-out;#}
+{#            position: absolute;#}
+{#            top: 50%;#}
+{#            left: 50%;#}
+{#            transform: translate(-50%, -50%);#}
+{#        }#}
+{##}
+{#        #mode-wrapper {#}
+{#            background-color: white;#}
+{#            color: #1e1f26;#}
+{#        }#}
+{##}
+{#        #mode-wrapper .mode__light {#}
+{#            opacity: 1;#}
+{#        }#}
+{##}
+{#        #mode-wrapper .mode__dark {#}
+{#            opacity: 0;#}
+{#        }#}
+{##}
+{#        #toggle-mode-cb:checked + #mode-wrapper {#}
+{#            background-color: #1e1f26;#}
+{#            color: gray;#}
+{#        }#}
+{##}
+{#        #toggle-mode-cb:checked + #mode-wrapper .mode__light {#}
+{#            opacity: 0;#}
+{#        }#}
+{##}
+{#        #toggle-mode-cb:checked + #mode-wrapper .mode__dark {#}
+{#            opacity: 1;#}
+{#        }#}
+{##}
+{#        #toggle-mode-cb:checked + #mode-wrapper .toggle-border {#}
+{#            border-color: white;#}
+{#        }#}
+{##}
+{#        #toggle-mode-cb:checked + #mode-wrapper .toggle-indicator {#}
+{#            background-color: white;#}
+{#            left: calc(50px - 18px);#}
+{#            transform: rotate(180deg);#}
+{#        }#}
+{##}
+{#    </style>#}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper" >
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="page-title">Theme Color</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+                    {% include "messages.html" %}
+
+                    <section class="wrapper">
+{#                        <input type="checkbox" id="toggle-mode-cb"/>#}
+{#                        <div id="mode-wrapper">#}
+{#                            <label id="toggle-mode" for="toggle-mode-cb">#}
+{#                                <span class="sr-only">Toggle</span>#}
+{#                                <span class="toggle-border">#}
+{#                                  <span class="toggle-indicator"></span>#}
+{#                                 </span>#}
+{#                            </label>#}
+{#                            <div class="mode mode__light">#}
+{#                                <p>Light Mode</p>#}
+{#                            </div>#}
+{#                            <div class="mode mode__dark">#}
+{#                                <p>Dark Mode</p>#}
+{#                            </div>#}
+{#                        </div>#}
+                        <ul class="ul_container">
+                            <li class="colors text-center" id="purple" data-color="#667eea" data-color-lighter="#764ba2"
+                                data-color-hover="#4b68e7" data-menu-list="rgba(102, 126, 234, 0.2)">Purple</li>
+                            <li class="colors text-center" id="maroon" data-color="#f43b48" data-color-lighter="#453a94"
+                                data-color-hover="#f10e1d" data-menu-list="rgba(244, 59, 72, 0.2)">Maroon</li>
+                            <li class="colors text-center" id="blue" data-color="#00c8fa" data-color-lighter="#0253cc"
+                                data-color-hover="#00b7ed" data-menu-list="rgba(0, 197, 251, 0.2)">Blue</li>
+                            <li class="colors text-center" id="orange" data-color="#ff9b44" data-color-lighter="#fc6075"
+                                data-color-hover="#ff851a" data-menu-list="#ffebda">Orange</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}
+
+
+
+
+

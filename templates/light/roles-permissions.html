@@ -1,0 +1,195 @@
+{% extends "base_company_settings.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Role & Permissions Settings {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Roles & Permissions</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+                 <span id="msgline" class="alert-success"></span>
+                    {% include "messages.html" %}
+            <div class="row">
+                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-3">
+{#                    <a href="javascript:void(0)" class="btn btn-primary btn-block submit-btn" data-toggle="modal"#}
+{#                       data-target="#add_role"><i class="fa fa-plus"></i> Add Roles</a>#}
+                    <div class="roles-menu">
+                        <ul id="role_list">
+                            {% for role in roles %}
+                                <li data-roleID="{{ role.id }}" {% if forloop.first %} class="active" {% endif %}>
+                                    <a href="javascript:void(0)" data-roleName="{{ role.name }}">{{ role.name }}
+                                        <span class="role-action">
+                                            <span class="action-circle large" data-toggle="modal"
+                                                  data-target="#edit_role"
+                                                  data-roleEditURL="{% url 'editrole' role.id %}">
+                                                <i class="material-icons">edit</i>
+                                            </span>
+                                            <span class="action-circle large delete-btn myDeleteRole"
+                                                  data-toggle="modal"
+                                                  data-target="#delete_role"
+                                                  data-roleDeleteURL="{% url 'deleterole' role.id %}">
+                                                <i class="material-icons">delete</i>
+                                            </span>
+                                        </span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div>
+                        <a href="javascript:void(0)" class="btn btn-primary submit-btn float-right" style="margin-top: 30px;" data-toggle="modal"
+                       data-target="#add_role"><i class="fa fa-plus"></i> Add Roles</a>
+                    </div>
+
+
+                </div>
+                <!-- Permissions -->
+                <div class="col-sm-8 col-md-8 col-lg-8 col-xl-9">
+{#                    <span id="msgline" class="alert-success"></span>#}
+{#                    {% include "messages.html" %}#}
+
+{#                    <a id="saveRoleID" href="javascript:void(0)"#}
+{#                       class="col-md-3 btn btn-primary btn-block submit-btn float-right">#}
+{#                        <i class="fa fa-save"></i> Save Role</a>#}
+
+                    <h6 class="card-title m-b-20">Module Access</h6>
+                    <div class="m-b-30 mt-3">
+                        <ul id="AllPermissions" class="list-group notification-list">
+                            {% for p in perms %}
+                                {% if p.name_value == 'basic' %}
+                                    <li class="list-group-item">
+                                        {{ p.name }}
+                                        <div class="status-toggle">
+                                            <input name="permissions" value="{{ p.id }}" type="checkbox"
+                                                   id="{{ p.name_value }}_module" class="check"
+                                                   checked="checked" disabled="disabled">
+                                            <label for="{{ p.name_value }}_module" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </li>
+                                {% else %}
+                                    <li class="list-group-item">
+                                        {{ p.name }}
+                                        {% if p in  roles.first.role_permissions.all %}
+                                            <div class="status-toggle">
+                                                <input name="permissions" value="{{ p.id }}" type="checkbox"
+                                                       id="{{ p.name_value }}_module" class="check" checked="checked">
+                                                <label for="{{ p.name_value }}_module"
+                                                       class="checktoggle">checkbox</label>
+                                            </div>
+                                        {% else %}
+                                            <div class="status-toggle">
+                                                <input name="permissions" value="{{ p.id }}" type="checkbox"
+                                                       id="{{ p.name_value }}_module" class="check">
+                                                <label for="{{ p.name_value }}_module"
+                                                       class="checktoggle">checkbox</label>
+                                            </div>
+                                        {% endif %}
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <a id="saveRoleID" href="javascript:void(0)"
+                       class="col-md-3 btn btn-primary btn-block submit-btn float-right">
+                        <i class="fa fa-save"></i> Save Role</a>
+                </div>
+                <!-- /Permissions -->
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+        <!-- Add Role Modal -->
+        <div id="add_role" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Role</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add_role_form" method="post" action="{% url 'createrole' %}">{% csrf_token %}
+                            <div class="form-group">
+                                <label>Role Name <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="role_name">
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn float-right">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Add Role Modal -->
+
+        <!-- Edit Role Modal -->
+        <div id="edit_role" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content modal-md">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Role</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="edit_role_form" action="" method="post">{% csrf_token %}
+                            <div class="form-group">
+                                <label>Role Name <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="role_name">
+                            </div>
+                            <div class="submit-section">
+                                <button type="submit" class="btn btn-primary submit-btn float-right">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Edit Role Modal -->
+
+        <!-- Delete Role Modal -->
+        <div id="delete_role" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-header">
+                            <h3>Delete Role</h3>
+                            <p>Are you sure want to delete?</p>
+                        </div>
+                        <div class="modal-btn delete-action">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="DeleteRole" href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="javascript:void(0);" data-dismiss="modal"
+                                       class="btn btn-primary cancel-btn">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Delete Role Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}
+{% block js %}
+
+{% endblock %}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load static %}
+{% load accounts_tags %}
+<html lang="en">
+<head>
+    {% get_company_object user.id %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="WorkDayStream - A Complete Solution of Employee Management">
+    <meta name="keywords"
+          content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
+    <meta name="author" content="WorkDayStream">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %} - {{ company_name.name | title }}{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'rnr/assets/img/fav.png' %}">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}">
+
+    <!-- Lineawesome CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/line-awesome.min.css' %}">
+
+    <!-- Chart CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/morris/morris.css' %}">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/dataTables.bootstrap4.min.css' %}">
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/select2.min.css' %}">
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+
+    <!-- Tagsinput CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+			<script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
+			<script src="{% static 'assets/js/respond.min.js' %}"></script>
+		<![endif]-->
+</head>
+<body>
+<!-- Main Wrapper -->
+<div class="main-wrapper">
+
+    <!-- Header -->
+    {% include 'base_header.html' %}
+    <!-- /Header -->
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div class="sidebar-menu">
+                <ul id="sidebar-list">
+                    <li>
+                        <a onclick="goBack()"><i class="la la-home"></i> <span>Back</span></a>
+                    </li>
+                    <li class="menu-title">Payroll Settings</li>
+                    <li>
+                        <a href="{% url 'payroll_salary' %}"><i class="la la-money"></i>
+                            <span>Generate PaySlip</span></a>
+                    </li>
+                    <li>
+                        <a href="{% url 'payroll_policies' %}"><i class="la la-cogs"></i>
+                            <span>Payroll Setting</span></a>
+                    </li>
+
+                     <li><a href="{% url 'showClaimType' %}"><i class="la la-building"></i><span>Claim Types</span></a></li>
+
+                    {% if_has_access user.id 'owner health_insurance' %}
+                        <li>
+                            <a href="{% url 'health_insurances' %}"><i class="la la-hospital-o"></i>
+                                <span>Health Insurance Setting</span></a>
+                        </li>
+                    {% endif_has_access %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Sidebar -->
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+<!-- /Main Wrapper -->
+
+<!-- jQuery -->
+<script src="{% static 'assets/js/jquery-3.2.1.min.js' %}"></script>
+
+
+<!-- Bootstrap Core JS -->
+<script src="{% static 'assets/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+
+<!-- Slimscroll JS -->
+<script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+
+
+<!-- Mask JS -->
+<script src="{% static 'assets/js/jquery.maskedinput.min.js' %}"></script>
+<script src="{% static 'assets/js/mask.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'assets/plugins/morris/morris.min.js' %}"></script>
+<script src="{% static 'assets/plugins/raphael/raphael.min.js' %}"></script>
+<script src="{% static 'assets/js/chart.js' %}"></script>
+
+<!-- Select2 JS -->
+<script src="{% static 'assets/js/select2.min.js' %}"></script>
+
+
+<!-- Datetimepicker JS -->
+<script src="{% static 'assets/js/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+<!-- Datatable JS -->
+<script src="{% static 'assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/dataTables.bootstrap4.min.js' %}"></script>
+<!-- Multiselect JS -->
+<script src="{% static 'assets/js/multiselect.min.js' %}"></script>
+s
+<!-- Custom JS -->
+<script src="{% static 'assets/js/app.js' %}"></script>
+<script src="{% static 'assets/js/hrstream.js' %}"></script>
+<script src="{% static 'assets/js/hrstream1.js' %}"></script>
+{% block js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}New Employee {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="page-title">New Employee</h3>
+                                {% include "messages.html" %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+                    {% include "form_errors.html" with form=userForm %}
+                    {% include "form_errors.html" with form=userSalaryForm %}
+                    <!-- Employee Add Form -->
+                    <form method="post">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>First Name<span class="text-danger">*</span></label>
+                                    {% render_field userForm.first_name class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Last Name<span class="text-danger">*</span></label>
+                                    {% render_field userForm.last_name class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Username<span class="text-danger">*</span></label>
+                                    {% render_field userForm.username class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Employee ID<span class="text-danger">*</span></label>
+                                    {% render_field userForm.user_code class="form-control" required="required" %}
+                                    {#                                    <input class="form-control" type="text">#}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                    {% render_field userForm.email class="form-control" required="required" %}
+                                    {#                                    <input class="form-control" type="email">#}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Report To<span class="text-danger">*</span></label>
+                                    {% render_field userForm.report_to class="form-control" required="required" %}
+                                    {#                                    <input class="form-control" type="password">#}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Joining Date <span class="text-danger">*</span></label>
+                                    {% render_field userForm.joining_date class="form-control" required="required" %}
+{#                                    <div class="cal-icon">#}
+                                        {#                                        <input class="form-control datetimepicker" type="text">#}
+{#                                    </div>#}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Department <span class="text-danger">*</span></label>
+                                    {% render_field userForm.department value=userForm.department.id class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Designation <span class="text-danger">*</span></label>
+                                    <select name="designation" required="required" class="form-control" value=""
+                                            id="id_designation">
+                                        <option value="" selected="">---------</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Salary<span class="text-danger">*</span></label>
+                                    {% render_field userSalaryForm.salary class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Salary Type<span class="text-danger">*</span></label>
+                                    {% render_field userSalaryForm.salary_type class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Employment Type<span class="text-danger">*</span></label>
+                                    {% render_field userSalaryForm.employment_type class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Payroll Policy<span
+                                            class="text-danger">*</span></label>
+                                    {% render_field userForm.payroll_policy class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Attendance Policy<span
+                                            class="text-danger">*</span></label>
+                                    {% render_field userForm.attendance_policy class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Leave Policy<span class="text-danger">*</span></label>
+                                    {% render_field userForm.leave_policy class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Role<span class="text-danger">*</span></label>
+                                    {% render_field userForm.role class="form-control" required="required" %}
+                                    {#                                    <input class="form-control" type="password">#}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                    <!-- /Employee Add Form -->
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+
+
+{% endblock %}

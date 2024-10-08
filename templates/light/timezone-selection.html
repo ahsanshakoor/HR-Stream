@@ -1,0 +1,43 @@
+{% extends "base_settings.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Select Timezone {{ block.super }} {% endblock %}
+{% load tz %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="page-title">Select Timezone</h3>
+                                {% include "messages.html" %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+                    <form action="{% url 'change_timezone' %}" method="POST">
+                        {% csrf_token %}
+                        <label for="timezone">Timezone:</label>
+                        <select class="form-control" name="timezone">
+                            {% for tz in timezones %}
+                                <option value="{{ tz }}"{% if tz == request.user.timezone %} selected{% endif %}>{{ tz }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn float-right">Update Timezone</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+
+{% endblock %}

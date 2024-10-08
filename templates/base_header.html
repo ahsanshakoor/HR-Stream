@@ -1,0 +1,95 @@
+{% load static %}
+<div class="header">
+
+    <!-- Logo -->
+    <div class="header-left">
+        <a href="{% url 'index' %}" class="logo">
+            {% if company_name.logo %}
+                <img src="{{ company_name.logo.url }}" height="40" alt="Logo">
+            {% else %}
+                <img src="{% static 'rnr/assets/img/logo3.png' %}" height="40" alt="Logo">
+            {% endif %}
+        </a>
+    </div>
+    <!-- /Logo -->
+
+    <a id="toggle_btn" href="javascript:void(0);">
+					<span class="bar-icon">
+						<span></span>
+						<span></span>
+						<span></span>
+					</span>
+    </a>
+
+
+    <!-- Header Title -->
+    <div class="page-title-box">
+        <h3>{{ company_name.name | title }}</h3>
+    </div>
+    <!-- /Header Title -->
+
+    <a id="mobile_btn" class="mobile_btn" href="{% url 'index' %}#sidebar"><i class="fa fa-bars"></i></a>
+
+    <!-- Header Menu -->
+    <ul class="nav user-menu">
+
+        <!-- Search -->
+        <!-- /Search -->
+
+        <!-- Flag -->
+
+        <!-- /Flag -->
+
+        <!-- Notifications -->
+
+        <!-- /Notifications -->
+
+        <!-- Message Notifications -->
+
+        <!-- /Message Notifications -->
+
+        <li class="nav-item dropdown has-arrow main-drop">
+            <a href="javascript:void(0)" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                    <span class="user-img">
+                        {% if user.profile_pic %}
+                            <img class="avatar" src="{{ user.profile_pic.url }}"
+                                 alt="Profile Pic">
+                        {% else %}
+                            <img class="avatar" src="{% static 'assets/img/user.jpg' %}"
+                                 alt="Profile Pic">
+                        {% endif %}
+                        <span class="status online"></span>
+                    </span>
+                <span>{{ user.username | title }}</span>
+            </a>
+            <div class="dropdown-menu">
+                {% if user.user_type == 'client' %}
+                    <a class="dropdown-item" href="{% url 'clientprofile_detail' user.id %}">My Profile</a>
+                {% else %}
+                    <a class="dropdown-item" href="{% url 'myprofile_detail' user.id %}">My Profile</a>
+                {% endif %}
+                <a class="dropdown-item" href="{% url 'settings_password_change' %}">Settings</a>
+                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            </div>
+        </li>
+    </ul>
+    <!-- /Header Menu -->
+
+    <!-- Mobile Menu -->
+    <div class="dropdown mobile-user-menu">
+        <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-toggle="dropdown"
+           aria-expanded="false"><i
+                class="fa fa-ellipsis-v"></i></a>
+        <div class="dropdown-menu dropdown-menu-right">
+            {% if user.user_type == 'client' %}
+                <a class="dropdown-item" href="{% url 'clientprofile_detail' user.id %}">My Profile</a>
+            {% else %}
+                <a class="dropdown-item" href="{% url 'myprofile_detail' user.id %}">My Profile</a>
+            {% endif %}
+            <a class="dropdown-item" href="{% url 'settings_password_change' %}">Settings</a>
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+    <!-- /Mobile Menu -->
+
+</div>

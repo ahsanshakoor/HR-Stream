@@ -1,0 +1,245 @@
+{% extends "registration/reg_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}On Boarding {{ block.super }} {% endblock %}
+{% block content %}
+
+
+    <div class="container">
+        <!-- Account Logo -->
+        <div class="account-logo">
+            {% if company.logo %}
+                <img src="{{ company.logo.url }}"
+                     alt="WorkDayStream Logo">
+            {% else %}
+                <img src="{% static 'assets/img/logo.png' %}"
+                     alt="WorkDayStream Logo">
+            {% endif %}
+        </div>
+        <!-- /Account Logo -->
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 ">
+
+                        <!-- Page Header -->
+                        <div class="card-title">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <h3 class="page-title text-center">{{ company.name | title }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- /Page Header -->
+
+                        {% include "form_errors.html" %}
+                        <form method="post" enctype="multipart/form-data"
+                              action="{% url 'on_boarding_employee' %}">{% csrf_token %}
+                            <input type="hidden" name="uid" value="{{ uid }}">
+                            <div class="row">
+                                <div class="col-sm-3 text-center">
+                                    <img id="EmployeeProfilePic" src="{% static 'assets/img/user.jpg' %}"
+                                         alt="Profile Pic" style="height: 150px; width: 150px">
+                                    {#                                    style="width: 160px; height: 160px"#}
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>First Name<span class="text-danger">*</span></label>
+                                                {% render_field form.first_name class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Last Name<span class="text-danger">*</span></label>
+                                                {% render_field form.last_name class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Username<span class="text-danger">*</span></label>
+                                                {% render_field form.username class="form-control" required="required" onchange="chechUsername();" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Profile Picture<span class="text-danger">*</span></label>
+                                                {% render_field form.profile_pic class="form-control" required="required" onchange="previewFile();" %}
+                                                <span class="uLabel text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Set Password<span class="text-danger">*</span></label>
+                                                {% render_field form.set_password class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Confirm Password<span class="text-danger">*</span></label>
+                                                {% render_field form.confirm_password class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                        <label>Phone<span class="text-danger">*</span></label>
+                                        {% render_field form.cell class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                        <label>Gender<span class="text-danger">*</span></label>
+                                        {% render_field form.gender class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                        <label>Date of Birth<span class="text-danger">*</span></label>
+                                        {% render_field form.dob class="form-control" required="required" %}
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 col-md-3 col-lg-3">
+                                    <div class="form-group">
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 col-md-3 col-lg-3">
+                                    <div class="form-group">
+                                        <label>401K Percentage<span class="text-danger">*</span></label>
+                                        {% render_field form.percentage_401k class="form-control" required="required" max="100" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 col-md-3 col-lg-3">
+                                    <div class="form-group">
+                                        <label>Apply 401K before tax<span class="text-danger">*</span></label>
+                                        {% render_field form.apply_401k_before_tax class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group">
+                                        <label>Address<span class="text-danger">*</span></label>
+                                        {% render_field form.address class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                        <label>Country<span class="text-danger">*</span></label>
+                                        {% render_field pinfoForm.country class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                        <label>City<span class="text-danger">*</span></label>
+                                        {% render_field pinfoForm.city class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                        <label>State/Province<span class="text-danger">*</span></label>
+                                        {% render_field pinfoForm.state class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-3">
+                                    <div class="form-group">
+                                        <label>Postal Code</label>
+                                        {% render_field pinfoForm.zip_code class="form-control" %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10 offset-md-1">
+                                    <div class="form-group text-center">
+                                        <button class="btn btn-primary theme-btn uButton" type="submit">Register
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // On-Boarding Pic Review
+        function previewFile() {
+            const preview = document.querySelector('#EmployeeProfilePic');
+            const file = document.querySelector('#id_profile_pic').files[0];
+            $(".uButton").attr("disabled", false);
+            $('.uLabel').text("");
+            const reader = new FileReader();
+            if (file && file.size > 5242880) {
+                $(".uButton").attr("disabled", true);
+                $('.uLabel').text("File " + file.name + " of type " + file.type + " must be less than 5Mbs");
+                return false;
+            }
+            reader.addEventListener("load", function () {
+                // convert image file to base64 string
+                preview.src = reader.result;
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+            return false;
+        }
+
+        function chechUsername() {
+            const input = document.querySelector('#id_username');
+            let username = input.value;
+            if (username === '') return;
+            {#alert(username);#}
+
+            {#e.preventDefault();#}
+            $.ajax({
+                type: 'POST',
+                url: 'check/username/',
+                {#url: {% url 'checkUsername' %},#}
+                data: {
+                    "username": username,
+                    "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                },
+
+                success: function (response) {
+                    let msg = response["available"];
+                    $('#id_username').addClass('border');
+                    if (msg) {
+                        {#alert('already used');#}
+                        $('#id_username').removeClass('border-success');
+                        $('#id_username').addClass('border-danger');
+                    } else {
+                        {#alert('available');#}
+                        $('#id_username').removeClass('border-danger');
+                        $('#id_username').addClass('border-success');
+                    }
+
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert(response["error"]);
+                }
+            });
+
+        }
+
+    </script>
+{% endblock %}

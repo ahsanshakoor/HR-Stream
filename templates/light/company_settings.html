@@ -1,0 +1,195 @@
+{% extends "base_company_settings.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Company Settings {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="page-title">Company Settings</h3>
+                                {% include "messages.html" %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+
+                    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Company Name</label>
+                                    {% render_field form.name class="form-control" readonly="true" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Company Logo</label>
+                                    {% render_field form.logo class="form-control-file border" onchange="previewLogoFile();" %}
+                                    <span class="uLabel text-danger"></span>
+                                </div>
+                            </div>
+                            {% if object.logo %}
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <img id="CompanyLogoPreview" src="{{ object.logo.url }}" width="150" style="line-height: 60px;margin-top: 20
+;"
+                                             alt="Company Logo Preview">
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Company Tag Line</label>
+                                    {% render_field form.tag_line class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Company Type</label>
+                                    {% render_field form.company_type class="form-control" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    {% render_field form.description class="form-control" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    {% render_field form.address class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Country</label>
+                                    {% render_field form.country class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>City</label>
+                                    {% render_field form.city class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>State/Province</label>
+                                    {% render_field form.state class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Postal Code</label>
+                                    {% render_field form.zip class="form-control" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    {% render_field form.email class="form-control" type="email" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    {% render_field form.phone class="form-control" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Fax</label>
+                                    {% render_field form.fax class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Date Established</label>
+                                    {% render_field form.date_established class="form-control" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Website Url</label>
+                                    {% render_field form.website_url class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Facebook Url</label>
+                                    {% render_field form.facebook_url class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>LinkedIn Url</label>
+                                    {% render_field form.linkedin_url class="form-control" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Twitter Url</label>
+                                    {% render_field form.twitter_url class="form-control" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submit-section">
+                            <button class="btn btn-primary submit-btn float-right uButton">Save</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+<script>
+        // On-Boarding Pic Review
+        function previewLogoFile() {
+            const preview = document.querySelector('#CompanyLogoPreview');
+            const file = document.querySelector('#id_logo').files[0];
+            $(".uButton").attr("disabled", false);
+            $('.uLabel').text("");
+            if (file && file.size > 5242880) {
+                $(".uButton").attr("disabled", true);
+                $('.uLabel').text("File " + file.name + " of type " + file.type + " must be less than 5Mbs");
+                return false;
+            }
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function () {
+                // convert image file to base64 string
+                preview.src = reader.result;
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+            return false;
+        }
+    </script>
+{% endblock %}

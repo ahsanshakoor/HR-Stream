@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}New Client {{ block.super }} {% endblock %}
+{% block content %}
+
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+
+                    <!-- Page Header -->
+                    <div class="page-header">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3 class="page-title">New Stakeholder</h3>
+                                {% include "messages.html" %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Page Header -->
+                    {% include "form_errors.html" with form=client_form %}
+                    <!-- Employee Add Form -->
+                    <form method="post" enctype="multipart/form-data" action="{% url 'new_client' %}">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="row">
+                                    <div class="col-sm-12 text-center">
+                                        <img id="ClientProfilePic" src="{% static 'assets/img/user.jpg' %}"
+                                             alt="Profile Pic" style="width: 190px; height: 194px">
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Profile Pic<span
+                                                    class="text-danger">*</span></label>
+                                            {% render_field client_form.profile_pic class="form-control" required="required" onchange="previewFile(ClientProfilePic)" %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="col-sm-12 p-0">
+                                    <div class="form-group">
+                                        <label class="col-form-label">First Name<span
+                                                class="text-danger">*</span></label>
+                                        {% render_field client_form.first_name class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 p-0">
+                                    <div class="form-group">
+                                        <label class="col-form-label">Last Name<span
+                                                class="text-danger">*</span></label>
+                                        {% render_field client_form.last_name class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 p-0">
+                                    <div class="form-group">
+                                        <label class="col-form-label">Stakeholder ID<span
+                                                class="text-danger">*</span></label>
+                                        {% render_field client_form.client_code class="form-control" required="required" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Cell No.<span class="text-danger">*</span></label>
+                                    {% render_field client_form.cell class="form-control" required="required" %}
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Password<span class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" name="password" id="id_password" required>
+{#                                    <label class="col-form-label">Gender<span class="text-danger">*</span></label>#}
+{#                                    {% render_field client_form.gender class="form-control" required="required" %}#}
+                                </div>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Stakeholder As <span class="text-danger">*</span></label>
+                                    {% render_field client_form.stakeholder_name class="form-control" required="required" %}
+                                </div>
+                            </div>
+                         </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                                    {% render_field client_form.email class="form-control" required="required" %}
+                                </div>
+                            </div>
+{#                            <div class="col-sm-12">#}
+{#                                <div class="form-group">#}
+{#                                    <label class="col-form-label">Role <span class="text-danger">*</span></label>#}
+{#                                    <select name="role" id="id_role" class="form-control" required>#}
+{#                                        {% for role in roles %}#}
+{#                                            {% if role.name == 'Client' %}#}
+{#                                                <option value="{{ role.id }}">{{ role.name }}</option>#}
+{#                                            {% endif %}#}
+{#                                        {% endfor %}#}
+{#                                    </select>#}
+{#                                </div>#}
+{#                            </div>#}
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-form-label">Address <span class="text-danger">*</span></label>
+                                    {% render_field client_form.address class="form-control" required="required" %}
+                                </div>
+                            </div>
+                        </div>
+{#                        <div class="row">#}
+{#                            <div class="col-sm-12">#}
+{#                                <div class="form-group">#}
+{#                                    #}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                        </div>
+                    </form>
+                    <!-- /Employee Add Form -->
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "registration/reg_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Login {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <div class="account-content">
+            {#            <a href="light/job-list.html" class="btn btn-primary apply-btn">Apply Job</a>#}
+            <div class="container">
+
+                <!-- Account Logo -->
+                <div class="account-logo">
+                    <img src="{% static 'rnr/assets/img/logo3.png' %}"
+                         alt="WorkDayStream Logo">
+                </div>
+                <!-- /Account Logo -->
+
+                <div class="account-box">
+                    <div class="account-wrapper">
+                        <h3 class="account-title">Login</h3>
+                        <p class="account-subtitle">Access to our dashboard</p>
+                        {% include "messages.html" %}
+                        <!-- Account Form -->
+                        <form method="post">{% csrf_token %}
+                            <div class="form-group">
+                                <label>Username</label>
+                                {% render_field form.username required=true class="form-control" %}
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Password</label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a class="text-muted" href="{% url 'password_reset' %}">
+                                            Forgot password?
+                                        </a>
+                                    </div>
+                                </div>
+                                {% render_field form.password required=true class="form-control" %}
+                            </div>
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary account-btn" type="submit">Login</button>
+                            </div>
+                            <div class="account-footer">
+                                <p>Don't have an account yet? <a href="{% url 'signup' %}">Register</a></p>
+                            </div>
+                            {% if form.errors %}
+                                {% for error in form.non_field_errors %}
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>{{ error|escape }}</strong>
+                                        <button type="button" class="close" data-dismiss="alert"
+                                                aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong>{{ error|escape }}</strong>
+                                            <button type="button" class="close" data-dismiss="alert"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+
+                            {% endif %}
+                        </form>
+                        <!-- /Account Form -->
+{#                        {% include "form_errors.html" %}#}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Main Wrapper -->
+{% endblock %}

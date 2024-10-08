@@ -1,0 +1,1029 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% load accounts_tags %}
+{% block title %}My Profile {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+        {% get_company_object user.pk %}
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Profile</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Profile</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+            {% include "messages.html" %}
+
+            <div class="card mb-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-view"
+                                 data-UserProfileEditURL="{% url 'user_profile_form' userProfile.id %}">
+                                <div class="profile-img-wrap">
+                                    <div class="profile-img">
+                                        {% if userProfile.profile_pic %}
+                                            <img src="{{ userProfile.profile_pic.url }}"
+                                                 alt="Profile Pic">
+                                        {% else %}
+                                            <img src="{% static 'assets/img/user.jpg' %}"
+                                                 alt="Profile Pic">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="profile-basic">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="profile-info-left">
+                                                <h3 class="user-name m-t-0 mb-0">{{ userProfile.get_full_name | title }}</h3>
+                                                <h6 class="text-muted">{{ userProfile.designation }}</h6>
+                                                <small class="text-muted">{{ userProfile.department }}</small>
+                                                <div class="staff-id">Employee ID : {{ userProfile.user_code }}</div>
+                                                <div class="small doj text-muted">Date of Join
+                                                    : {{ userProfile.joining_date }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <ul class="personal-info">
+                                                <li>
+                                                    <div class="title">Phone:</div>
+                                                    <div class="text">{{ userProfile.cell }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Email:</div>
+                                                    <div class="text"><a
+                                                            href="mailto:{{ userProfile.email }}">{{ userProfile.email }}</a>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Birthday:</div>
+                                                    <div class="text">{{ userProfile.dob }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Address:</div>
+                                                    <div class="text">{{ userProfile.address }}
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Gender:</div>
+                                                    <div class="text">{{ userProfile.gender | title }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Reports to:</div>
+                                                    <div class="text">
+                                                        <div class="avatar-box">
+                                                            <div class="avatar avatar-xs">
+                                                                {% if userProfile.report_to %}
+                                                                    {% if userProfile.report_to.profile_pic %}
+                                                                        <img src="{{ userProfile.report_to.profile_pic.url }}"
+                                                                             alt="Report To Profile Pic">
+                                                                    {% else %}
+                                                                        <img src="{% static 'assets/img/user.jpg' %}"
+                                                                             alt="Report To Profile Pic">
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        {{ userProfile.report_to.get_full_name | title }}
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Account Status:</div>
+                                                    <div class="text">{% if userProfile.is_active %}Activated {% else %}
+                                                        Deactivated{% endif %}</div>
+
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if_has_access user.id 'owner new_employees' %}
+                                    <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal"
+                                                             class="edit-icon" href="javascript:void(0)"><i
+                                            class="fa fa-pencil"></i></a></div>
+                                {% endif_has_access %}
+                            </div>
+                            {% if_has_access user.id 'owner activation_deactivation' %}
+                                <div class="text">{% if userProfile.is_active %}
+                                    <a href="{% url 'activation_status' pk=userProfile.id %}"
+                                       class="btn btn-danger float-right text-white">Deactivate</a>{% else %}
+                                    <a href="{% url 'activation_status' pk=userProfile.id %}"
+                                       class="btn btn-success float-right text-white">Activate</a>{% endif %}</div>
+                            {% endif_has_access %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card tab-box">
+                <div class="row user-tabs">
+                    <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
+                        <ul class="nav nav-tabs nav-tabs-bottom">
+                            <li class="nav-item">
+                                <a href="#emp_profile" data-toggle="tab"
+                                   class="nav-link active">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#emp_projects" data-toggle="tab"
+                                   class="nav-link">Projects</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#plan_401K" data-toggle="tab"
+                                   class="nav-link">401K Plan</a>
+                            </li>
+                            {% if_has_access user.id 'owner bank_info' %}
+                                {#                            <li class="nav-item">#}
+                                {#                                <a href="#bank_statutory" data-toggle="tab"#}
+                                {#                                   class="nav-link">Bank Info</a>#}
+                                {#                            </li>#}
+                                <li class="nav-item">
+                                    <a href="#increment_salary" data-toggle="tab"
+                                       class="nav-link">Increment</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#salary_history" data-toggle="tab"
+                                       class="nav-link">Salary History</a>
+                                </li>
+                            {% endif_has_access %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content">
+
+                <!-- Profile Info Tab -->
+                <div id="emp_profile" class="pro-overview tab-pane fade show active">
+                    <div class="row">
+                        <div class="col-md-6 d-flex">
+                            <div class="card profile-box flex-fill">
+                                <div class="card-body">
+                                    <h3 class="card-title">Personal Informations
+                                        {% if_has_access user.id 'owner new_employees' %}
+                                            <a id="UserPersonalInfoEdit" href="javascript:void(0)"
+                                               data-UserPersonalInfoEditURL="{% url 'user_personalinfo_form' userProfile.id %}"
+                                               class="edit-icon"
+                                               data-toggle="modal"
+                                               data-target="#personal_info_modal">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        {% endif_has_access %}
+                                    </h3>
+                                    <ul class="personal-info">
+                                        <li>
+                                            <div class="title">City</div>
+                                            <div class="text">{{ userProfile.personalinfo.city | title }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">State</div>
+                                            <div class="text">{{ userProfile.personalinfo.state | title }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Zip Code</div>
+                                            <div class="text">{{ userProfile.personalinfo.zip_code }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Country</div>
+                                            <div class="text">{{ userProfile.personalinfo.country | title }}</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex">
+                            <div class="card profile-box flex-fill">
+                                <div class="card-body">
+                                    <h3 class="card-title">Emergency Contact
+                                        {% if_has_access user.id 'owner new_employees' %}
+                                            <a id="UserEmergencyContactEdit"
+                                               data-UserEmergencyContactEditURL="{% url 'user_emergencycontact_form' userProfile.id %}"
+                                               href="javascript:void(0)" class="edit-icon"
+                                               data-toggle="modal"
+                                               data-target="#emergency_contact_modal">
+                                                <i
+                                                        class="fa fa-pencil"></i>
+                                            </a>
+                                        {% endif_has_access %}
+                                    </h3>
+                                    {#                                <h5 class="section-title">Primary</h5>#}
+                                    <ul class="personal-info">
+                                        <li>
+                                            <div class="title">Name</div>
+                                            <div class="text">{{ userProfile.user_emergency_contact.first.name }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Relationship</div>
+                                            <div class="text">{{ userProfile.user_emergency_contact.first.relationship }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Phone</div>
+                                            <div class="text">{{ userProfile.user_emergency_contact.first.phone }}</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 d-flex">
+                            <div class="card profile-box flex-fill">
+                                <div class="card-body">
+                                    {% if_has_access user.id 'owner bank_info' %}
+                                        <a id="UserBankInfoEdit" href="javascript:void(0)"
+                                           data-UserBankInfoEditURL="{% url 'user_bankinfo_form' userProfile.id %}"
+                                           class="edit-icon"
+                                           data-toggle="modal"
+                                           data-target="#bank_info_modal">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                    {% endif_has_access %}
+                                    <h3 class="card-title">Bank information</h3>
+                                    <ul class="personal-info">
+                                        <li>
+                                            <div class="title">Bank Account Title:</div>
+                                            <div class="text">{{ userProfile.user_bank.first.account_title }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Bank Name:</div>
+                                            <div class="text">{{ userProfile.user_bank.first.name }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Bank Address:</div>
+                                            <div class="text">{{ userProfile.user_bank.first.address }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Bank Account No:</div>
+                                            <div class="text">{{ userProfile.user_bank.first.account_no }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Bank Routing No:</div>
+                                            <div class="text">{{ userProfile.user_bank.first.routing }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Bank Account Type:</div>
+                                            <div class="text">{{ userProfile.user_bank.first.account_type }}</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex">
+                            <div class="card profile-box flex-fill">
+                                <div class="card-body">
+                                    <h3 class="card-title">Salary information</h3>
+                                    <ul class="personal-info">
+                                        <li>
+                                            <div class="title">Salary:</div>
+                                            <div class="text">{{ userProfile.salaries.first.salary }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Employment Type:</div>
+                                            <div class="text">{{ userProfile.salaries.first.employment_type | title }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Salary Type:</div>
+                                            <div class="text">{{ userProfile.salaries.first.salary_type | title }}</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 d-flex">
+                            <div class="card profile-box flex-fill">
+                                <div class="card-body">
+                                    <h3 class="card-title">Education Informations
+                                        <a id="UserEducationInfoEdit"
+                                           data-UserEducationInfoEditURL="{% url 'user_educationinfo_form' userProfile.id %}"
+                                           href="javascript:void(0)"
+                                           class="edit-icon"
+                                           data-toggle="modal"
+                                           data-target="#education_info"><i
+                                                class="fa fa-pencil"></i></a></h3>
+                                    <div class="experience-box">
+                                        <ul class="experience-list">
+                                            {% for info in userProfile.user_edu_info.all %}
+                                                <li>
+                                                    <div class="experience-user">
+                                                        <div class="before-circle"></div>
+                                                    </div>
+                                                    <div class="experience-content">
+                                                        <div class="timeline-content">
+                                                            <a href="javascript:void(0);" class="name">
+                                                                {{ info.institution | title }}</a>
+                                                            <div>{{ info.degree | title }}</div>
+                                                            <span class="time">{{ info.starting_date }} - {{ info.ending_date }}</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex">
+                            <div class="card profile-box flex-fill">
+                                <div class="card-body">
+                                    <h3 class="card-title">Experience
+                                        <a id="UserExperienceEdit"
+                                           data-UserExperienceEditURL="{% url 'user_experience_form' userProfile.id %}"
+                                           href="javascript:void(0)" class="edit-icon"
+                                           data-toggle="modal"
+                                           data-target="#experience_info"><i
+                                                class="fa fa-pencil"></i></a></h3>
+                                    <div class="experience-box">
+                                        <ul class="experience-list">
+                                            {% for exp in userProfile.user_experience.all %}
+                                                <li>
+                                                    <div class="experience-user">
+                                                        <div class="before-circle"></div>
+                                                    </div>
+                                                    <div class="experience-content">
+                                                        <div class="timeline-content">
+                                                            <a href="javascript:void(0)"
+                                                               class="name">{{ exp.job_position }}
+                                                                at {{ exp.company_name }}</a>
+                                                            <span class="time">{{ exp.period_from }} - {{ exp.period_to }}</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 d-flex">
+                            <div class="card profile-box flex-fill">
+                                <div class="card-body">
+                                    <h3 class="card-title">Documents
+                                        <a id="UserDocumentEdit"
+                                           data-UserDocumentEditURL="{% url 'user_document_form' userProfile.id %}"
+                                           href="javascript:void(0)" class="edit-icon"
+                                           data-toggle="modal"
+                                           data-target="#documents_info"><i
+                                                class="fa fa-pencil"></i></a></h3>
+                                    <div class="experience-box">
+                                        <ul class="experience-list">
+                                            {% for file in userProfile.userfiles.all %}
+                                                <li>
+                                                    <div class="experience-user">
+                                                        <div class="before-circle"></div>
+                                                    </div>
+                                                    <div class="experience-content">
+                                                        <div class="timeline-content">
+                                                            <a href="{{ file.file.url }}" target="_blank"
+                                                               class="name">{{ file.name }}</a>
+                                                            <div>{{ file.filename }}</div>
+                                                            <span class="time">{{ file.file.size | filesizeformat }}</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Profile Info Tab -->
+
+                <!-- Projects Tab -->
+                <div class="container tab-pane fade" id="emp_projects">
+                    <div class="card-title">Projects Lead By</div>
+                    <div class="row">
+                        {% for project in projectsLeadBy %}
+                            <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="project-title"><a
+                                                href="{% url 'project' pk=project.id %}">{{ project.name }}</a></h4>
+                                        <p class="text-muted">
+                                            {% autoescape off %}
+                                                {{ project.description  | truncatewords:10 }}{% endautoescape %}
+                                        </p>
+                                        <div class="pro-deadline m-b-15">
+                                            <div class="sub-title">
+                                                Deadline:
+                                            </div>
+                                            <div class="text-muted">
+                                                {{ project.end_date }}
+                                            </div>
+                                        </div>
+                                        <div class="project-members m-b-15">
+                                            <div>Project Leader :</div>
+                                            <ul class="team-members">
+                                                <li>
+                                                    <a href="{% url 'myprofile_detail' pk=project.lead_by.id %}"
+                                                       data-toggle="tooltip" title="{{ project.lead_by }}">
+                                                        {% if project.lead_by.profile_pic %}<img alt="Profile Pic"
+                                                                                                 src="{{ project.lead_by.profile_pic.url }}">{% else %}
+                                                            <img src="{% static 'assets/img/user.jpg' %}"
+                                                                 alt="Profile Pic">{% endif %}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="project-members m-b-15">
+                                            <div>Team :</div>
+                                            <ul class="team-members text-nowrap">
+                                                <li>
+                                                    <a href="{% url 'myprofile_detail' pk=project.team.first.id %}"
+                                                       data-toggle="tooltip" title="{{ project.team.first }}">
+                                                        {% if project.team.first.profile_pic %}<img alt="Profile Pic"
+                                                                                                    src="{{ project.team.first.profile_pic.url }}">{% else %}
+                                                            <img src="{% static 'assets/img/user.jpg' %}">{% endif %}
+                                                    </a>
+                                                </li>
+
+                                                <li class="dropdown avatar-dropdown">
+                                                    <a href="javascript:void(0)" class="all-users dropdown-toggle"
+                                                       data-toggle="dropdown"
+                                                       aria-expanded="false">+{{ project.team.count }}</a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <div class="avatar-group">
+                                                            {% for member in project.team.all %}
+
+                                                                <a class="avatar avatar-xs"
+                                                                   href="{% url 'myprofile_detail' pk=member.id %}"
+                                                                   data-toggle="tooltip" title="{{ member }}">
+                                                                    {% if member.profile_pic %}<img alt="Profile Pic"
+                                                                                                    src="{{ member.profile_pic.url }}">{% else %}
+                                                                        <img src="{% static 'assets/img/user.jpg' %}">{% endif %}
+                                                                </a>
+
+                                                            {% endfor %}
+                                                        </div>
+                                                        <div class="avatar-pagination">
+                                                            <ul class="pagination">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href="#" aria-label="Previous">
+                                                                        <span aria-hidden="true">«</span>
+                                                                        <span class="sr-only">Previous</span>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href="l#" aria-label="Next">
+                                                                        <span aria-hidden="true">»</span>
+                                                                        <span class="sr-only">Next</span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <p class="m-b-5">Progress <span
+                                                class="text-success float-right">{{ project.progress }}</span>
+                                        </p>
+                                        <div class="progress progress-xs mb-0">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                 data-toggle="tooltip"
+                                                 title="{{ project.progress }}"
+                                                 style="width: {{ project.progress }}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <hr>
+                    <div class="card-title">Team Projects</div>
+                    <div class="row">
+                        {% for project in teamProjects %}
+                            <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="project-title"><a
+                                                href="{% url 'project' pk=project.id %}">{{ project.name }}</a></h4>
+                                        <p class="text-muted">
+                                            {% autoescape off %}
+                                                {{ project.description  | truncatewords:10 }}{% endautoescape %}
+                                        </p>
+                                        <div class="pro-deadline m-b-15">
+                                            <div class="sub-title">
+                                                Deadline:
+                                            </div>
+                                            <div class="text-muted">
+                                                {{ project.end_date }}
+                                            </div>
+                                        </div>
+                                        <div class="project-members m-b-15">
+                                            <div>Project Leader :</div>
+                                            <ul class="team-members">
+                                                <li>
+                                                    <a href="{% url 'myprofile_detail' pk=project.lead_by.id %}"
+                                                       data-toggle="tooltip" title="{{ project.lead_by }}">
+                                                        {% if project.lead_by.profile_pic %}<img alt="Profile Pic"
+                                                                                                 src="{{ project.lead_by.profile_pic.url }}">{% else %}
+                                                            <img src="{% static 'assets/img/user.jpg' %}"
+                                                                 alt="Profile Pic">{% endif %}</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="project-members m-b-15">
+                                            <div>Team :</div>
+                                            <ul class="team-members text-nowrap">
+                                                <li>
+                                                    <a href="{% url 'myprofile_detail' pk=project.team.first.id %}"
+                                                       data-toggle="tooltip" title="{{ project.team.first }}">
+                                                        {% if project.team.first.profile_pic %}<img alt="Profile Pic"
+                                                                                                    src="{{ project.team.first.profile_pic.url }}">{% else %}
+                                                            <img src="{% static 'assets/img/user.jpg' %}">{% endif %}
+                                                    </a>
+                                                </li>
+
+                                                <li class="dropdown avatar-dropdown">
+                                                    <a href="javascript:void(0)" class="all-users dropdown-toggle"
+                                                       data-toggle="dropdown"
+                                                       aria-expanded="false">+{{ project.team.count }}</a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <div class="avatar-group">
+                                                            {% for member in project.team.all %}
+
+                                                                <a class="avatar avatar-xs"
+                                                                   href="{% url 'myprofile_detail' pk=member.id %}"
+                                                                   data-toggle="tooltip" title="{{ member }}">
+                                                                    {% if member.profile_pic %}<img alt="Profile Pic"
+                                                                                                    src="{{ member.profile_pic.url }}">{% else %}
+                                                                        <img src="{% static 'assets/img/user.jpg' %}">{% endif %}
+                                                                </a>
+
+                                                            {% endfor %}
+                                                        </div>
+                                                        <div class="avatar-pagination">
+                                                            <ul class="pagination">
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href="#" aria-label="Previous">
+                                                                        <span aria-hidden="true">«</span>
+                                                                        <span class="sr-only">Previous</span>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href="l#" aria-label="Next">
+                                                                        <span aria-hidden="true">»</span>
+                                                                        <span class="sr-only">Next</span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <p class="m-b-5">Progress <span
+                                                class="text-success float-right">{{ project.progress }}</span>
+                                        </p>
+                                        <div class="progress progress-xs mb-0">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                 data-toggle="tooltip"
+                                                 title="{{ project.progress }}"
+                                                 style="width: {{ project.progress }}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- /Projects Tab -->
+                <!-- 401K Plan Tab -->
+                <div class="tab-pane fade" id="plan_401K">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title"> 401K Retirement Plan</h3>
+                            <ul class="personal-info">
+                                <li>
+                                    <div class="title">401K Percentage</div>
+                                    <div class="text">{{ userProfile.percentage_401k }}</div>
+                                </li>
+                                <li>
+                                    <div class="title">Apply Before Tax</div>
+                                    {% if userProfile.apply_401k_before_tax %}
+                                        <div class="text">Yes</div>
+                                    {% else %}
+                                        <div class="text">No</div>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- /401K Plan Tab -->
+                {% if_has_access user.id 'owner bank_info' %}
+                    <!-- Bank Statutory Tab -->
+                    <div class="tab-pane fade" id="bank_statutory">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title"> Bank Information</h3>
+                                <form method="post"
+                                      action="{% url 'myprofile_detail' userProfile.id %}">{% csrf_token %}
+                                    {#                                <h3 class="card-title">Bank Information</h3>#}
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Bank Name</label>
+                                                {% render_field userBankForm.name class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Routing No.</label>
+                                                {% render_field userBankForm.routing class="form-control" %}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Account No.</label>
+                                                {% render_field userBankForm.account_no class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Account title</label>
+                                                {% render_field userBankForm.account_title class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Account type</label>
+                                                {% render_field userBankForm.account_type class="form-control" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Bank Address</label>
+                                                {% render_field userBankForm.address class="form-control" %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="submit-section">
+                                        <button class="btn btn-primary submit-btn float-right" type="submit">Save
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Bank Statutory Tab -->
+                {% endif_has_access %}
+                {% if_has_access user.id 'owner payrolls' %}
+                    <!-- Increment Salary Tab -->
+                    <div class="tab-pane fade" id="increment_salary">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title"> Basic Salary Information</h3>
+                                <form method="post"
+                                      action="{% url 'myprofile_detail' userProfile.id %}">{% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Salary basis <span
+                                                        class="text-danger">*</span></label>
+                                                {% render_field userSalaryForm.salary_type class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Salary amount <small
+                                                        class="text-muted">annual</small></label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ company_name.currency_sym }}</span>
+                                                    </div>
+                                                    {% render_field userSalaryForm.salary class="form-control" required="required" %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Salary raise </label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ company_name.currency_sym }}</span>
+                                                    </div>
+                                                    {% render_field userSalaryForm.salary_raise class="form-control" required="required" %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Employment type</label>
+                                                {% render_field userSalaryForm.employment_type class="form-control" required="required" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="col-form-label">Comment</label>
+                                                {% render_field userSalaryForm.comments class="form-control" %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="submit-section">
+                                        <button class="btn btn-primary submit-btn float-right" type="submit">Save
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Increment Salary Tab -->
+
+                    <!-- Salary History Tab -->
+                    <div class="tab-pane fade" id="salary_history">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped custom-table datatable">
+                                        <thead>
+                                        <tr>
+                                            <th>Salary</th>
+                                            <th>Salary Raise</th>
+                                            <th>Employment Type</th>
+                                            <th>Salary Type</th>
+                                            <th>Comments</th>
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for s in user_salaries %}
+                                            <tr>
+                                                <td>{{ s.salary }}</td>
+                                                <td>{{ s.salary_raise }}</td>
+                                                <td>{{ s.employment_type | title }}</td>
+                                                <td>{{ s.salary_type | title }}</td>
+                                                <td>{{ s.comments | title }}</td>
+                                                <td>{{ s.created }}</td>
+                                                <td>{{ s.updated }}</td>
+                                                <td><a class="EditUserSalary primary-color-used"
+                                                       href="javascript:void(0);"
+                                                       data-EditSalaryURL="{% url 'edit_salary_form' userProfile.id s.id %}"><i
+                                                        class="fa fa-pencil m-r-5"></i></a></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Salary History Tab -->
+
+                    <!-- edit Salary Modal -->
+                    <div id="edit_user_salary_modal" class="modal custom-modal fade" role="dialog">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Salary</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" id="edit_salary">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /edit Salary Modal -->
+                {% endif_has_access %}
+            </div>
+        </div>
+        <!-- /Page Content -->
+        {% if_has_access user.id 'owner new_employees' %}
+            <!-- Profile Modal -->
+            <div id="profile_info" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Profile Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div id="user_form_div" class="modal-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Profile Modal -->
+
+            <!-- Personal Info Modal -->
+            <div id="personal_info_modal" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Personal Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div id="user_personalinfo_form" class="modal-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Personal Info Modal -->
+
+            <!-- Bank Info Modal -->
+            <div id="bank_info_modal" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Bank Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div id="user_bankinfo_form" class="modal-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Bank Info Modal -->
+
+            <!-- Emergency Contact Modal -->
+            <div id="emergency_contact_modal" class="modal custom-modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Emergency Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div id="user_emergency_contact_form" class="modal-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Emergency Contact Modal -->
+        {% endif_has_access %}
+        <!-- Education Modal -->
+        <div id="education_info" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"> Education Informations</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="user_education_info_form" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Education Modal -->
+
+        <!-- Experience Modal -->
+        <div id="experience_info" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Experience Informations</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="user_experience_form" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Experience Modal -->
+
+        <!-- Documents Modal -->
+        <div id="documents_info" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Employee Documents</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="user_documents_form" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Documents Modal -->
+
+    </div>
+    <!-- /Page Wrapper -->
+
+{% endblock %}
+{% block base_js %}
+    <script>
+
+
+        function addRow() {
+            return addForm(this, 'user_edu_info', '.dynamic-form');
+        }
+
+        function deleteRow() {
+            return deleteForm(this, 'user_edu_info', '.dynamic-form');
+        }
+
+        function addRowUserExp() {
+            return addForm(this, 'user_experience', '.dynamic-formExp');
+        }
+
+        function deleteRowUserExp() {
+            return deleteForm(this, 'user_experience', '.dynamic-formExp');
+        }
+
+        function addRowUserDocument() {
+            return addForm(this, 'userfiles', '.dynamic-formDocs');
+        }
+
+        function deleteRowUserDocument() {
+            return deleteForm(this, 'userfiles', '.dynamic-formDocs');
+        }
+
+        {#$('#addFormsetRow').click(function () {#}
+        {#    return addForm(this, 'user_edu_info');#}
+        {# }); #}
+        {#$('.delete-row').click(function () {#}
+        {#    return deleteForm(this, 'user_edu_info');#}
+        {# });#}
+
+        function previewFile() {
+            const preview = document.querySelector('#EditProfilePic');
+            const file = document.querySelector('#id_profile_pic').files[0];
+            $(".uButton").attr("disabled", false);
+            $('.uLabel').text("");
+            if (file && file.size > 5242880) {
+                $(".uButton").attr("disabled", true);
+                $('.uLabel').text("File " + file.name + " of type " + file.type + " must be less than 5Mbs");
+                return false;
+            }
+            const reader = new FileReader();
+
+            reader.addEventListener("load", function () {
+                // convert image file to base64 string
+                preview.src = reader.result;
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+            return false;
+        }
+    </script>
+    <script>
+        {#console.log(sessionStorage.getItem('Profile_selectedTab'), 'before');#}
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+
+            $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
+                var id = $(e.target).attr("href");
+                sessionStorage.setItem('Profile_selectedTab', id)
+            });
+
+            var selectedTab = sessionStorage.getItem('Profile_selectedTab');
+            if (selectedTab != null) {
+                $('a[data-toggle="tab"][href="' + selectedTab + '"]').tab('show');
+            }
+            {#console.log(sessionStorage.getItem('Profile_selectedTab'), 'after');#}
+        });
+
+    </script>
+{% endblock %}

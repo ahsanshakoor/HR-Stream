@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% load static %}
+{% load accounts_tags %}
+{% block title %}My Profile {{ block.super }} {% endblock %}
+{% block content %}
+    <!-- Page Wrapper -->
+    <div class="page-wrapper">
+
+        <!-- Page Content -->
+        <div class="content container-fluid">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Stakeholder Profile</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Stakeholder Profile</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Header -->
+            {% include "messages.html" %}
+            <div class="card mb-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-view">
+                                <div class="profile-img-wrap">
+                                    <div class="profile-img">
+                                        {% if user_client.profile_pic %}
+                                            <img src="{{ user_client.profile_pic.url }}"
+                                                 alt="Profile Pic">
+                                        {% else %}
+                                            <img src="{% static 'assets/img/user.jpg' %}"
+                                                 alt="Profile Pic">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="profile-basic">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="profile-info-left">
+                                                <h3 class="user-name m-t-0">{{ user_client.get_full_name | title }}</h3>
+                                                {#                                                <h5 class="company-role m-t-0 mb-0"><small#}
+                                                {#                                                        class="text-muted">username: </small>{{ user_client.username }}#}
+                                                {#                                                </h5>#}
+                                                <div class="staff-id">Stakeholder ID : {{ user_client.client_code }}</div>
+                                                <div class="staff-mail">Username : {{ user_client.user.username }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <ul class="personal-info">
+                                                <li>
+                                                    <span class="title">Stakeholder As</span>
+                                                    <span class="text">{{ user_client.stakeholder_name }}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Phone:</span>
+                                                    <span class="text">{{ user_client.cell }}</span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Email:</span>
+                                                    <span class="text"><a
+                                                            href="mailto:{{ user_client.email }}">{{ user_client.email }}
+                                                    </a></span>
+                                                </li>
+                                                <li>
+                                                    <span class="title">Address:</span>
+                                                    <span class="text">{{ user_client.address }}</span>
+                                                </li>
+{#                                                <li>#}
+{#                                                    <span class="title">Gender:</span>#}
+{#                                                    <span class="text">{{ user_client.gender | title }}</span>#}
+{#                                                </li>#}
+                                                <li></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if_has_access user.id 'owner new_clients' %}
+                                    <div class="pro-edit"><a
+                                            id="ClientProfileEdit"
+                                            data-ClientProfileEditURL="{% url 'clientprofile_edit' user_client.id %}"
+                                            data-target="#client_profile"
+                                            data-toggle="modal"
+                                            class="edit-icon" href="javascript:void(0)"><i
+                                            class="fa fa-pencil"></i></a></div>
+                                {% endif_has_access %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {#            <div class="card tab-box">#}
+            {#                <div class="row user-tabs">#}
+            {#                    <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">#}
+            {#                        <ul class="nav nav-tabs nav-tabs-bottom">#}
+            {#                            <li class="nav-item col-sm-3"><a class="nav-link active" data-toggle="tab"#}
+            {#                                                             href="#myprojects">Projects</a></li>#}
+            {#                            <li class="nav-item col-sm-3"><a class="nav-link" data-toggle="tab"#}
+            {#                                                             href="#tasks">Tasks</a></li>#}
+            {#                        </ul>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="tab-content profile-tab-content">
+
+                        <!-- Projects Tab -->
+                        <div id="myprojects" class="tab-pane fade show active">
+                            <div class="row">
+                                {% for project in projects %}
+                                    <div class="col-lg-4 col-sm-6 col-md-4 col-xl-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                {#                                                <div class="dropdown profile-action">#}
+                                                {#                                                    <a aria-expanded="false" data-toggle="dropdown"#}
+                                                {#                                                       class="action-icon dropdown-toggle" href="javascript:void(0)"><i#}
+                                                {#                                                            class="material-icons">more_vert</i></a>#}
+                                                {#                                                    <div class="dropdown-menu dropdown-menu-right">#}
+                                                {#                                                        <a data-target="#edit_project" data-toggle="modal"#}
+                                                {#                                                           href="profile.html#"#}
+                                                {#                                                           class="dropdown-item"><i class="fa fa-pencil m-r-5"></i> Edit</a>#}
+                                                {#                                            <a data-target="#delete_project" data-toggle="modal" href="profile.html#"#}
+                                                {#                                               class="dropdown-item"><i class="fa fa-trash-o m-r-5"></i> Delete</a>#}
+                                                {#                                                    </div>#}
+                                                {#                                                </div>#}
+                                                <h4 class="project-title"><a
+                                                        href="{% url 'project' project.id %}">{{ project.name }}</a>
+                                                </h4>
+                                                <small class="block text-ellipsis m-b-15">
+                                                    <span class="text-xs">1</span> <span
+                                                        class="text-muted">open tasks, </span>
+                                                    <span class="text-xs">9</span> <span
+                                                        class="text-muted">tasks completed</span>
+                                                </small>
+                                                <p class="text-muted">
+                                                    {{ project.description | truncatewords:10 }}
+                                                </p>
+                                                <div class="pro-deadline m-b-15">
+                                                    <div class="sub-title">
+                                                        Deadline:
+                                                    </div>
+                                                    <div class="text-muted">
+                                                        {{ project.end_date }}
+                                                    </div>
+                                                </div>
+                                                <div class="project-members m-b-15">
+                                                    <div>Project Leader :</div>
+                                                    <ul class="team-members">
+                                                        <li>
+                                                            <a href="javascript:void(0)" data-toggle="tooltip"
+                                                               title="{{ project.lead_by.get_full_name | title }}">
+                                                                {% if project.lead_by.profile_pic %}
+                                                                    <img alt=""
+                                                                         src="{{ project.lead_by.profile_pic.url }}">
+                                                                {% else %}
+                                                                    <img alt=""
+                                                                         src="{% static 'assets/img/user.jpg' %}">
+                                                                {% endif %}
+                                                            </a>
+
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="project-members m-b-15">
+                                                    <div>Team :</div>
+                                                    <ul class="team-members">
+                                                        {% for member in project.team.all %}
+                                                            <li>
+                                                                <a href="javascript:void(0);" data-toggle="tooltip"
+                                                                   title="{{ member }}"><img alt=""
+                                                                                             {% if member.profile_pic %}src="{{ member.profile_pic.url }}"{% endif %}></a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                                <p class="m-b-5">Progress <span
+                                                        class="text-success float-right">{{ project.progress }}</span>
+                                                </p>
+                                                <div class="progress progress-xs mb-0">
+                                                    <div style="width: {{ project.progress }}" title=""
+                                                         data-toggle="tooltip" role="progressbar"
+                                                         class="progress-bar bg-success"
+                                                         data-original-title="{{ project.progress }}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- /Projects Tab -->
+
+                        <!-- Task Tab -->
+                        <div id="tasks" class="tab-pane fade">
+                            <div class="project-task">
+                                <ul class="nav nav-tabs nav-tabs-top nav-justified mb-0">
+                                    <li class="nav-item"><a class="nav-link active" href="client-profile.html#all_tasks"
+                                                            data-toggle="tab" aria-expanded="true">All Tasks</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="client-profile.html#pending_tasks"
+                                                            data-toggle="tab" aria-expanded="false">Pending Tasks</a>
+                                    </li>
+                                    <li class="nav-item"><a class="nav-link" href="client-profile.html#completed_tasks"
+                                                            data-toggle="tab" aria-expanded="false">Completed Tasks</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane show active" id="all_tasks">
+                                        <div class="task-wrapper">
+                                            <div class="task-list-container">
+                                                <div class="task-list-body">
+                                                    <ul id="task-list">
+                                                        <li class="task">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span class="action-circle large complete-btn"
+                                                                                  title="Mark Complete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label" contenteditable="true">Patient appointment booking</span>
+                                                                <span class="task-action-btn task-btn-right">
+																			<span class="action-circle large"
+                                                                                  title="Assign">
+																				<i class="material-icons">person_add</i>
+																			</span>
+																			<span class="action-circle large delete-btn"
+                                                                                  title="Delete Task">
+																				<i class="material-icons">delete</i>
+																			</span>
+																		</span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span class="action-circle large complete-btn"
+                                                                                  title="Mark Complete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label" contenteditable="true">Appointment booking with payment gateway</span>
+                                                                <span class="task-action-btn task-btn-right">
+																			<span class="action-circle large"
+                                                                                  title="Assign">
+																				<i class="material-icons">person_add</i>
+																			</span>
+																			<span class="action-circle large delete-btn"
+                                                                                  title="Delete Task">
+																				<i class="material-icons">delete</i>
+																			</span>
+																		</span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="completed task">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span class="action-circle large complete-btn"
+                                                                                  title="Mark Complete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label">Doctor available module</span>
+                                                                <span class="task-action-btn task-btn-right">
+																			<span class="action-circle large"
+                                                                                  title="Assign">
+																				<i class="material-icons">person_add</i>
+																			</span>
+																			<span class="action-circle large delete-btn"
+                                                                                  title="Delete Task">
+																				<i class="material-icons">delete</i>
+																			</span>
+																		</span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span class="action-circle large complete-btn"
+                                                                                  title="Mark Complete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label" contenteditable="true">Patient and Doctor video conferencing</span>
+                                                                <span class="task-action-btn task-btn-right">
+																			<span class="action-circle large"
+                                                                                  title="Assign">
+																				<i class="material-icons">person_add</i>
+																			</span>
+																			<span class="action-circle large delete-btn"
+                                                                                  title="Delete Task">
+																				<i class="material-icons">delete</i>
+																			</span>
+																		</span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span class="action-circle large complete-btn"
+                                                                                  title="Mark Complete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label" contenteditable="true">Private chat module</span>
+                                                                <span class="task-action-btn task-btn-right">
+																			<span class="action-circle large"
+                                                                                  title="Assign">
+																				<i class="material-icons">person_add</i>
+																			</span>
+																			<span class="action-circle large delete-btn"
+                                                                                  title="Delete Task">
+																				<i class="material-icons">delete</i>
+																			</span>
+																		</span>
+                                                            </div>
+                                                        </li>
+                                                        <li class="task">
+                                                            <div class="task-container">
+																		<span class="task-action-btn task-check">
+																			<span class="action-circle large complete-btn"
+                                                                                  title="Mark Complete">
+																				<i class="material-icons">check</i>
+																			</span>
+																		</span>
+                                                                <span class="task-label" contenteditable="true">Patient Profile add</span>
+                                                                <span class="task-action-btn task-btn-right">
+																			<span class="action-circle large"
+                                                                                  title="Assign">
+																				<i class="material-icons">person_add</i>
+																			</span>
+																			<span class="action-circle large delete-btn"
+                                                                                  title="Delete Task">
+																				<i class="material-icons">delete</i>
+																			</span>
+																		</span>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="task-list-footer">
+                                                    <div class="new-task-wrapper">
+                                                        <textarea id="new-task"
+                                                                  placeholder="Enter new task here. . ."></textarea>
+                                                        <span class="error-message hidden">You need to enter a task first</span>
+                                                        <span class="add-new-task-btn btn" id="add-task">Add Task</span>
+                                                        <span class="btn" id="close-task-panel">Close</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="pending_tasks"></div>
+                                    <div class="tab-pane" id="completed_tasks"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Task Tab -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Modal -->
+        <div id="client_profile" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Profile Information</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="client_form_div" class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Clietn Modal -->
+
+
+        <!-- /Page Content -->
+
+    </div>
+    <!-- /Page Wrapper -->
+{% endblock %}
